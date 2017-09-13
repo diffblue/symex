@@ -1,0 +1,107 @@
+language: cpp
+
+# Disable the default submodule logic
+git:
+  submodules: false
+
+jobs:
+  include:
+    # CPP linter script
+    - &linter-stage
+      stage: test ubuntu + gcc compilation with extra flags for debug + Linter
+      env:
+      - NAME="CPP-LINT"
+      - BUILD_PURPOSE="lint"
+      addons:
+        apt:
+          packages:
+            - libwww-perl
+      script:
+        - cp -r lib/cbmc/scripts . && scripts/travis_lint.sh
+      before_cache:
+
+    # Test - Ubuntu Linux with glibc using g++-5
+    - stage: test ubuntu + gcc compilation with extra flags for debug + Linter
+      os: linux
+      dist: trusty
+      sudo: false
+      compiler: gcc
+      cache: ccache
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libwww-perl
+            - libthread-pool-simple-perl
+            - g++-5
+            - libubsan0
+            - parallel
+      before_install:
+        - mkdir bin ; ln -s /usr/bin/gcc-5 bin/gcc
+      env:
+        - COMPILER="ccache g++-5"
+        - BUILD_PURPOSE="test"
+        - OS="ubuntu"
+
+    # Test - OS X using g++
+    - stage: compile with extra flags for debug
+      os: osx
+      sudo: false
+      compiler: gcc
+      cache: ccache
+      before_install:
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache parallel cpanm
+        - sudo cpanm Thread::Pool::Simple
+        - export PATH=/usr/local/opt/ccache/libexec:$PATH
+      env:
+        - COMPILER="ccache g++"
+        - BUILD_PURPOSE="test"
+        - OS="osx"
+
+    # Test - OS X using clang++
+    - stage: compile with extra flags for debug
+      os: osx
+      sudo: false
+      compiler: clang
+      cache: ccache
+      before_install:
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache parallel cpanm
+        - sudo cpanm Thread::Pool::Simple
+        - export PATH=/usr/local/opt/ccache/libexec:$PATH
+      env:
+        - COMPILER="ccache clang++ -Qunused-arguments -fcolor-diagnostics"
+        - BUILD_PURPOSE="test"
+        - OS="osx"
+
+    # Test - Ubuntu Linux with glibc using clang++-3.7
+    - stage: compile with extra flags for debug
+      os: linux
+      dist: trusty
+      sudo: false
+      compiler: clang
+      cache: ccache
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - libwww-perl
+            - libthread-pool-simple-perl
+            - clang-3.7
+            - libstdc++-5-dev
+            - libubsan0
+            - parallel
+      before_install:
+        - mkdir bin ; ln -s /usr/bin/clang-3.7 bin/gcc
+      env:
+        - COMPILER="ccache clang++-3.7 -Qunused-arguments -fcolor-diagnostics"
+        - BUILD_PURPOSE="test"
+        - CCACHE_CPP2=yes
+        - OS="ubuntu"
+
+install:
+  - ccache --max-size=1G
+  - make -C src setup-cbmc
+  - make -C src "CXX=${COMPILER}" "CXXFLAGS=-Wall -Werror -pedantic -O2 -g ${EXTRA_CXXFLAGS}" -j2
