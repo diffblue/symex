@@ -4,32 +4,32 @@ SRC = path_search.cpp \
       symex_parse_options.cpp \
       # Empty last line
 
-OBJ += ../ansi-c/ansi-c$(LIBEXT) \
-       ../cpp/cpp$(LIBEXT) \
-       ../java_bytecode/java_bytecode$(LIBEXT) \
-       ../linking/linking$(LIBEXT) \
-       ../big-int/big-int$(LIBEXT) \
-       ../goto-programs/goto-programs$(LIBEXT) \
-       ../analyses/analyses$(LIBEXT) \
-       ../langapi/langapi$(LIBEXT) \
-       ../xmllang/xmllang$(LIBEXT) \
-       ../assembler/assembler$(LIBEXT) \
-       ../solvers/solvers$(LIBEXT) \
-       ../util/util$(LIBEXT) \
-       ../goto-symex/adjust_float_expressions$(OBJEXT) \
-       ../goto-symex/rewrite_union$(OBJEXT) \
-       ../pointer-analysis/dereference$(OBJEXT) \
-       ../goto-instrument/cover$(OBJEXT) \
-       ../path-symex/path-symex$(LIBEXT) \
-       ../miniz/miniz$(OBJEXT) \
-       ../json/json$(LIBEXT)
+OBJ += ../../$(CPROVER_DIR)/ansi-c/ansi-c$(LIBEXT) \
+       ../../$(CPROVER_DIR)/cpp/cpp$(LIBEXT) \
+       ../../$(CPROVER_DIR)/java_bytecode/java_bytecode$(LIBEXT) \
+       ../../$(CPROVER_DIR)/linking/linking$(LIBEXT) \
+       ../../$(CPROVER_DIR)/big-int/big-int$(LIBEXT) \
+       ../../$(CPROVER_DIR)/goto-programs/goto-programs$(LIBEXT) \
+       ../../$(CPROVER_DIR)/analyses/analyses$(LIBEXT) \
+       ../../$(CPROVER_DIR)/langapi/langapi$(LIBEXT) \
+       ../../$(CPROVER_DIR)/xmllang/xmllang$(LIBEXT) \
+       ../../$(CPROVER_DIR)/assembler/assembler$(LIBEXT) \
+       ../../$(CPROVER_DIR)/solvers/solvers$(LIBEXT) \
+       ../../$(CPROVER_DIR)/util/util$(LIBEXT) \
+       ../../$(CPROVER_DIR)/goto-symex/adjust_float_expressions$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-symex/rewrite_union$(OBJEXT) \
+       ../../$(CPROVER_DIR)/pointer-analysis/dereference$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover$(OBJEXT) \
+       ../../$(CPROVER_DIR)/path-symex/path-symex$(LIBEXT) \
+       ../../$(CPROVER_DIR)/miniz/miniz$(OBJEXT) \
+       ../../$(CPROVER_DIR)/json/json$(LIBEXT)
 
-INCLUDES= -I ..
+INCLUDES= -I .. -I ../../$(CPROVER_DIR)
 
 LIBS =
 
-include ../config.inc
-include ../common
+include ../../$(CPROVER_DIR)/config.inc
+include ../../$(CPROVER_DIR)/common
 
 CLEANFILES = symex$(EXEEXT)
 

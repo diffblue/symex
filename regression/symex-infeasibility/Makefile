@@ -1,14 +1,14 @@
 default: tests.log
 
 test:
-	@if ! ../test.pl -c ../../../src/symex/symex ; then \
-		../failed-tests-printer.pl ; \
+	@if ! ../../lib/cbmc/regression/test.pl -c ../../../src/symex/symex ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
 		exit 1 ; \
 	fi
 
 tests.log: ../test.pl
-	@if ! ../test.pl -c ../../../src/symex/symex ; then \
-		../failed-tests-printer.pl ; \
+	@if ! ../../lib/cbmc/regression/test.pl -c ../../../src/symex/symex ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
 		exit 1 ; \
 	fi
 

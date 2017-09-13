@@ -1,0 +1,3 @@
+[submodule "lib/cbmc"]
+	path = lib/cbmc
+	url = git@github.com:diffblue/cbmc.git
