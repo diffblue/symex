@@ -294,6 +294,19 @@ exprt path_symex_statet::instantiate_rec(
     assert(src.type().id()==ID_code ||
            src.get_bool(ID_C_SSA_symbol));
   }
+  else if(src.id()=="dereference_error")
+  {
+    irep_idt id="symex::deref"+std::to_string(var_map.nondet_count);
+    var_map.nondet_count++;
+
+    auxiliary_symbolt nondet_symbol;
+    nondet_symbol.name=id;
+    nondet_symbol.base_name=id;
+    nondet_symbol.type=src.type();
+    var_map.new_symbols.add(nondet_symbol);
+
+    return nondet_symbol.symbol_expr();
+  }
 
   if(!src.has_operands())
     return src;
@@ -584,6 +597,10 @@ exprt path_symex_statet::instantiate_rec_address(
       instantiate_rec_address(if_expr.false_case(), propagate);
     if_expr.cond()=instantiate_rec(if_expr.cond(), propagate);
     return if_expr;
+  }
+  else if(src.id()=="dereference_error")
+  {
+    return src;
   }
   else
   {

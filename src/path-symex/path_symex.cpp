@@ -360,6 +360,10 @@ void path_symext::assign_rec(
 
   if(ssa_lhs.id()==ID_symbol)
   {
+    if(has_prefix(id2string(to_symbol_expr(ssa_lhs).get_identifier()),
+                  "symex::deref"))
+      return; // ignore
+
     // These are expected to be SSA symbols
     assert(ssa_lhs.get_bool(ID_C_SSA_symbol));
 
