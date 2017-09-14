@@ -1,5 +1,6 @@
 DIRS = symex \
        symex-infeasibility \
+       goto-cc-symex \
        # Empty last line
 
 # Check for the existence of $dir. Tests under goto-gcc cannot be run on
