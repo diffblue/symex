@@ -1,36 +1,34 @@
 #!/bin/bash
 
-# Initialize both submodules
-git submodule init
+set -euo pipefail
 
-git submodule update ../lib/cbmc
+# Initialize submodules
+git submodule update --init
 
 # The forks of diffblue/cbmc that should be fetched into the submodule
 # allowing for getting commits that aren't yet merged into the upstream fork
-req_forks=( "$@" )
 
-cd ../lib/cbmc/
+if [ ! -z "$*" ]
+then
+  req_forks=( "$@" )
+  cd ../lib/cbmc/
+  for fork in "${req_forks[@]}"
+  do
+    # We should use the following command to check whether the fork exists:
+    # but it is unreliable so we just assume it exists.
+    # curl https://api.github.com/repos/$fork/cbmc | jq ".id" -e
+    # Return code is 0 if the repos exists
 
-for fork in "${req_forks[@]}"
-do
-  # We should use the following command to check whether the fork exists:
-  # but it is unreliable so we just assume it exists.
-  # curl https://api.github.com/repos/$fork/cbmc | jq ".id" -e
-  # Return code is 0 if the repos exists
+    # Check whether the specific fork is already a remote
+    if ! git remote | grep "${fork}" > /dev/null
+    then
+      # Fork not found - add it
+      echo Adding fork "${fork}"
+      git remote add "${fork}" "https://github.com/${fork}/cbmc.git"
+    fi
 
-  # Check whether the specific fork is already a remote
-  git remote | grep $fork > /dev/null
-  result=$?
-
-  if [ $result -ne 0 ]
-  then
-    # Fork not found - add it
-    echo Adding fork $fork
-    remote_add_result=`git remote add $fork git@github.com:$fork/cbmc.git`
-  fi
-
-  # Fetch all the forks to ensure we are up to date
-  echo Fetching fork $fork
-  git fetch $fork
-
-done
+    # Fetch all the forks to ensure we are up to date
+    echo Fetching fork "${fork}"
+    git fetch "${fork}"
+  done
+fi
