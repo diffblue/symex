@@ -296,10 +296,6 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     // we add the library
     link_to_library(goto_model, ui_message_handler);
 
-    // do partial inlining
-    status() << "Partial Inlining" << eom;
-    goto_partial_inline(goto_model, ui_message_handler);
-
     // add generic checks
     status() << "Generic Property Instrumentation" << eom;
     goto_check(options, goto_model);
