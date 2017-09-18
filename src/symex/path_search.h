@@ -28,6 +28,7 @@ public:
     safety_checkert(_ns),
     show_vcc(false),
     eager_infeasibility(false),
+    stop_on_fail(false),
     number_of_dropped_states(0),
     number_of_paths(0),
     number_of_steps(0),
@@ -76,6 +77,7 @@ public:
 
   bool show_vcc;
   bool eager_infeasibility;
+  bool stop_on_fail;
 
   // statistics
   std::size_t number_of_dropped_states;

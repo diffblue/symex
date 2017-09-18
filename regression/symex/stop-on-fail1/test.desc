@@ -1,0 +1,9 @@
+CORE
+main.c
+--stop-on-fail
+^EXIT=10$
+^SIGNAL=0$
+^VERIFICATION FAILED$
+^\[main.assertion.1\] assertion 0: FAILURE$
+--
+^warning: ignoring

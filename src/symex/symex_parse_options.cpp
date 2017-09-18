@@ -212,6 +212,9 @@ int symex_parse_optionst::doit()
     path_search.eager_infeasibility=
       cmdline.isset("eager-infeasibility");
 
+    path_search.stop_on_fail=
+      cmdline.isset("stop-on-fail");
+
     if(cmdline.isset("cover"))
     {
       // test-suite generation

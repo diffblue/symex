@@ -123,6 +123,10 @@ path_searcht::resultt path_searcht::operator()(
           // all assertions failed?
           if(number_of_failed_properties==property_map.size())
             break;
+
+          // do we stop on failure?
+          if(number_of_failed_properties>=1 && stop_on_fail)
+            break;
         }
       }
 
