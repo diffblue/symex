@@ -303,18 +303,21 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     status() << "Generic Property Instrumentation" << eom;
     goto_check(options, goto_model);
 
-    // remove stuff
-    remove_returns(goto_model);
-    remove_complex(goto_model);
-    remove_vector(goto_model);
     // remove function pointers
     status() << "Removal of function pointers and virtual functions" << eom;
     remove_function_pointers(
       get_message_handler(),
       goto_model,
       cmdline.isset("pointer-check"));
+
     // Java virtual functions -> explicit dispatch tables:
     remove_virtual_functions(goto_model);
+
+    // remove more stuff
+    remove_returns(goto_model);
+    remove_complex(goto_model);
+    remove_vector(goto_model);
+
     // Java throw and catch -> explicit exceptional return variables:
     // This introduces instanceof, so order is important:
     remove_exceptions(goto_model);
