@@ -46,6 +46,7 @@ class optionst;
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
   "(show-locs)(show-vcc)(show-properties)" \
   "(drop-unused-functions)" \
+  "(object-bits):" \
   OPT_SHOW_GOTO_FUNCTIONS \
   "(property):(trace)(show-trace)(stop-on-fail)(eager-infeasibility)" \
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
