@@ -48,6 +48,7 @@ path_searcht::resultt path_searcht::operator()(
 
   // stop the time
   start_time=current_time();
+  absolute_timet last_reported_time=start_time;
 
   initialize_property_map(goto_functions);
 
@@ -102,16 +103,21 @@ path_searcht::resultt path_searcht::operator()(
         continue;
       }
 
-      if(number_of_steps%1000==0)
+      if(number_of_steps%100==0)
       {
-        time_periodt running_time=current_time()-start_time;
-        status() << "Queue " << queue.size()
-                 << " thread " << state.get_current_thread()+1
-                 << '/' << state.threads.size()
-                 << " PC " << state.pc()
-                 << " depth " << state.get_depth()
-                 << " [" << number_of_steps << " steps, "
-                 << running_time << "s]" << messaget::eom;
+        absolute_timet now=current_time();
+        if(now>=last_reported_time+time_periodt(1000))
+        {
+          last_reported_time=now;
+          time_periodt running_time=now-start_time;
+          status() << "Queue " << queue.size()
+                   << " thread " << state.get_current_thread()+1
+                   << '/' << state.threads.size()
+                   << " PC " << state.pc()
+                   << " depth " << state.get_depth()
+                   << " [" << number_of_steps << " steps, "
+                   << running_time << "s]" << messaget::eom;
+        }
       }
 
       // an error, possibly?
