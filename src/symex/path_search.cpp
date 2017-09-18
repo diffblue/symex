@@ -28,6 +28,8 @@ path_searcht::resultt path_searcht::operator()(
 
   locs.build(goto_functions);
 
+  status() << "Starting symbolic simulation" << eom;
+
   // this is the container for the history-forest
   path_symex_historyt history;
 
