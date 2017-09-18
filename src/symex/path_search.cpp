@@ -103,7 +103,7 @@ path_searcht::resultt path_searcht::operator()(
         continue;
       }
 
-      if(number_of_steps%100==0)
+      if(number_of_steps%10==0)
       {
         absolute_timet now=current_time();
         if(now>=last_reported_time+time_periodt(1000))
