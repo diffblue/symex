@@ -265,6 +265,21 @@ exprt path_symex_statet::instantiate_rec(
     // integer addresses. Will transform into __CPROVER_memory[]
     // eventually.
   }
+  else if(src.id()==ID_integer_dereference)
+  {
+    // dereferencet produces these for stuff like *(T *)123.
+    // Will transform into __CPROVER_memory[] eventually.
+    irep_idt id="symex::deref"+std::to_string(var_map.nondet_count);
+    var_map.nondet_count++;
+
+    auxiliary_symbolt nondet_symbol;
+    nondet_symbol.name=id;
+    nondet_symbol.base_name=id;
+    nondet_symbol.type=src.type();
+    var_map.new_symbols.add(nondet_symbol);
+
+    return nondet_symbol.symbol_expr();
+  }
   else if(src.id()==ID_member)
   {
     const typet &compound_type=
@@ -599,6 +614,10 @@ exprt path_symex_statet::instantiate_rec_address(
     return if_expr;
   }
   else if(src.id()=="dereference_error")
+  {
+    return src;
+  }
+  else if(src.id()=="integer_dereference")
   {
     return src;
   }
