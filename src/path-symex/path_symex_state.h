@@ -189,9 +189,19 @@ public:
     return depth;
   }
 
+  void increase_depth()
+  {
+    depth++;
+  }
+
   unsigned get_no_branches() const
   {
     return no_branches;
+  }
+
+  void increase_no_branches()
+  {
+    no_branches++;
   }
 
   bool last_was_branch() const

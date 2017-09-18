@@ -82,12 +82,6 @@ void path_symex_statet::record_step()
      history->thread_nr!=current_thread)
     no_thread_interleavings++;
 
-  // update our statistics
-  depth++;
-
-  if(get_instruction()->is_goto())
-    no_branches++;
-
   // add the step
   history.generate_successor();
   stept &step=*history;

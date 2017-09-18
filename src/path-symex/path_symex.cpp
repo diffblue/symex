@@ -960,6 +960,9 @@ void path_symext::operator()(
             << '\n';
   #endif
 
+  // update some statistics
+  state.increase_depth();
+
   switch(instruction.type)
   {
   case END_FUNCTION:
@@ -1001,6 +1004,7 @@ void path_symext::operator()(
     break;
 
   case GOTO:
+    state.increase_no_branches();
     do_goto(state, further_states);
     break;
 
