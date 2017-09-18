@@ -109,6 +109,7 @@ path_searcht::resultt path_searcht::operator()(
                  << " thread " << state.get_current_thread()+1
                  << '/' << state.threads.size()
                  << " PC " << state.pc()
+                 << " depth " << state.get_depth()
                  << " [" << number_of_steps << " steps, "
                  << running_time << "s]" << messaget::eom;
       }
