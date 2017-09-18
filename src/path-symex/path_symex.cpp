@@ -488,7 +488,8 @@ void path_symext::assign_rec(
     std::cout << "assign_rec ID_dereference\n";
     #endif
 
-    throw "unexpected dereference on lhs";
+    //throw "unexpected dereference on lhs";
+    // ignore
   }
   else if(ssa_lhs.id()==ID_if)
   {
