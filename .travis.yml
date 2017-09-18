@@ -9,16 +9,17 @@ jobs:
     # CPP linter script
     - &linter-stage
       stage: test ubuntu + gcc compilation with extra flags for debug + Linter
-      env:
-      - NAME="CPP-LINT"
-      - BUILD_PURPOSE="lint"
       addons:
         apt:
           packages:
             - libwww-perl
       script:
-        - cp -r lib/cbmc/scripts . && scripts/travis_lint.sh
+        - cp -r lib/cbmc/scripts .
+          && sed -i '/git fetch --unshallow/d' scripts/travis_lint.sh
+          && scripts/travis_lint.sh
       before_cache:
+      env:
+        - BUILD_PURPOSE="lint"
 
     # Test - Ubuntu Linux with glibc using g++-5
     - stage: test ubuntu + gcc compilation with extra flags for debug + Linter
@@ -33,16 +34,12 @@ jobs:
             - ubuntu-toolchain-r-test
           packages:
             - libwww-perl
-            - libthread-pool-simple-perl
             - g++-5
-            - libubsan0
-            - parallel
       before_install:
         - mkdir bin ; ln -s /usr/bin/gcc-5 bin/gcc
       env:
         - COMPILER="ccache g++-5"
         - BUILD_PURPOSE="test"
-        - OS="ubuntu"
 
     # Test - OS X using g++
     - stage: compile with extra flags for debug
@@ -51,13 +48,11 @@ jobs:
       compiler: gcc
       cache: ccache
       before_install:
-        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache parallel cpanm
-        - sudo cpanm Thread::Pool::Simple
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache
         - export PATH=/usr/local/opt/ccache/libexec:$PATH
       env:
         - COMPILER="ccache g++"
         - BUILD_PURPOSE="test"
-        - OS="osx"
 
     # Test - OS X using clang++
     - stage: compile with extra flags for debug
@@ -66,13 +61,11 @@ jobs:
       compiler: clang
       cache: ccache
       before_install:
-        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache parallel cpanm
-        - sudo cpanm Thread::Pool::Simple
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install jq ccache
         - export PATH=/usr/local/opt/ccache/libexec:$PATH
       env:
         - COMPILER="ccache clang++ -Qunused-arguments -fcolor-diagnostics"
         - BUILD_PURPOSE="test"
-        - OS="osx"
 
     # Test - Ubuntu Linux with glibc using clang++-3.7
     - stage: compile with extra flags for debug
@@ -88,20 +81,52 @@ jobs:
             - llvm-toolchain-precise-3.7
           packages:
             - libwww-perl
-            - libthread-pool-simple-perl
             - clang-3.7
             - libstdc++-5-dev
-            - libubsan0
-            - parallel
       before_install:
         - mkdir bin ; ln -s /usr/bin/clang-3.7 bin/gcc
       env:
         - COMPILER="ccache clang++-3.7 -Qunused-arguments -fcolor-diagnostics"
         - BUILD_PURPOSE="test"
         - CCACHE_CPP2=yes
-        - OS="ubuntu"
 
 install:
   - ccache --max-size=1G
+  - perl -pe 's/git\@github.com:/https:\/\/github.com\//' -i .gitmodules
+  - |
+    # Fetch forks. If this is a PR or a master/develop branch, CBMC submodule has to refer to
+    # 'diffblue/cbmc' not to a fork so no need to fetch anything
+    set -euo pipefail
+    if [[ "${TRAVIS_PULL_REQUEST}" == "false" && ! ( "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}" =~ ^(master|develop)$ ) ]]
+    then
+      # Get list of all contributors who have cbmc forks, to fetch these.
+      CONTRIBUTORS=$(mktemp)
+      # Note: the following curl might not return all entries
+      # if there is too many contributors/forks, so we might need
+      # to adapt this as DiffBlue grows :-)
+      curl -H "Authorization: token ${GITHUB_TOKEN}" \
+          "https://api.github.com/repos/diffblue/musketeer/contributors?per_page=100" \
+        | jq -r '.[] | .login' \
+        | sort > ${CONTRIBUTORS}
+
+      export USERS
+      USERS=$(cat ${CONTRIBUTORS} | tr "\n" " ")
+
+      echo "List of forks to pull >${USERS}<"
+    else
+      echo "No forks will be fetched"
+    fi
+    set +u
   - make -C src setup-cbmc
-  - make -C src "CXX=${COMPILER}" "CXXFLAGS=-Wall -Werror -pedantic -O2 -g ${EXTRA_CXXFLAGS}" -j2
+  - |
+    # Compile for test builds
+    ( set -euo pipefail
+      if [[ "${BUILD_PURPOSE}" =~ ^(test)$ ]]
+      then
+        make -C src "CXX=${COMPILER}" "CXXFLAGS=-Wall -Werror -pedantic -O2 -g" -j2
+      fi
+      set +u
+    )
+
+script:
+  - make -C regression test
