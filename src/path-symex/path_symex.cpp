@@ -761,6 +761,11 @@ void path_symext::function_call_rec(
         irep_idt id=id2string(function_identifier)+"::va_arg"
             +std::to_string(va_count);
 
+        // clear the var_state, since the type may have changed
+        auto &var_info=state.var_map(id, irep_idt(), rhs.type());
+        var_info.type=rhs.type();
+        state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
+
         symbolt symbol;
         symbol.name=id;
         symbol.base_name="va_arg"+std::to_string(va_count);
@@ -769,11 +774,7 @@ void path_symext::function_call_rec(
         va_count++;
 
         symbol_exprt lhs=symbol.symbol_expr();
-
-        // lhs/rhs types might not match
-        if(lhs.type()!=rhs.type())
-          rhs.make_typecast(lhs.type());
-
+        assert(lhs.type()==rhs.type());
         assign(state, lhs, rhs);
       }
     }
