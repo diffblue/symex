@@ -267,10 +267,9 @@ void path_symext::symex_malloc(
   assign(state, lhs, rhs);
 }
 
-
 static irep_idt get_old_va_symbol(
-    const path_symex_statet &state,
-    const exprt &src)
+  const path_symex_statet &state,
+  const exprt &src)
 {
   if(src.id()==ID_typecast)
     return get_old_va_symbol(state, to_typecast_expr(src).op());
@@ -286,9 +285,9 @@ static irep_idt get_old_va_symbol(
 }
 
 void path_symext::symex_va_arg_next(
-    path_symex_statet &state,
-    const exprt &lhs,
-    const side_effect_exprt &code)
+  path_symex_statet &state,
+  const exprt &lhs,
+  const side_effect_exprt &code)
 {
   if(code.operands().size()!=1)
     throw "va_arg_next expected to have one operand";
