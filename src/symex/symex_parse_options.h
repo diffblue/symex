@@ -75,7 +75,7 @@ protected:
   void report_failure();
   void report_properties(const path_searcht::property_mapt &);
   void report_cover(const path_searcht::property_mapt &);
-  void show_counterexample(const class goto_tracet &);
+  void show_trace(const irep_idt &, const class goto_tracet &);
 
   void eval_verbosity();
 

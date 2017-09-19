@@ -436,7 +436,7 @@ void symex_parse_optionst::report_properties(
     if((cmdline.isset("show-trace") ||
         cmdline.isset("trace")) &&
        it->second.is_failure())
-      show_counterexample(it->second.error_trace);
+      show_trace(it->first, it->second.error_trace);
   }
 
   if(!cmdline.isset("property"))
@@ -481,7 +481,8 @@ void symex_parse_optionst::report_success()
   }
 }
 
-void symex_parse_optionst::show_counterexample(
+void symex_parse_optionst::show_trace(
+  const irep_idt &property,
   const goto_tracet &error_trace)
 {
   const namespacet ns(goto_model.symbol_table);
@@ -489,7 +490,8 @@ void symex_parse_optionst::show_counterexample(
   switch(get_ui())
   {
   case ui_message_handlert::uit::PLAIN:
-    std::cout << '\n' << "Counterexample:" << '\n';
+    std::cout << '\n' << "Trace for " << property
+              << ":" << '\n';
     show_goto_trace(std::cout, ns, error_trace);
     break;
 
