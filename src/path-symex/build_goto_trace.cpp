@@ -23,7 +23,7 @@ void build_goto_trace(
   std::vector<path_symex_step_reft> steps;
   state.history.build_history(steps);
 
-  unsigned step_nr;
+  std::size_t step_nr;
 
   for(step_nr=0; step_nr<steps.size(); step_nr++)
   {
