@@ -32,6 +32,7 @@ void locst::build(const goto_functionst &goto_functions)
 
     function_entryt &function_entry=function_map[f_it->first];
     function_entry.type=goto_function.type;
+    function_entry.hidden=goto_function.is_hidden();
 
     if(goto_function.body_available())
     {

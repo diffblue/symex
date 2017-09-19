@@ -418,6 +418,7 @@ void path_symext::assign_rec(
 
       if(!guard.empty())
         step.guard=conjunction(guard);
+
       step.full_lhs=full_lhs;
       step.ssa_lhs=new_ssa_lhs;
       step.ssa_rhs=ssa_rhs;
@@ -683,6 +684,7 @@ void path_symext::function_call_rec(
     thread.call_stack.back().return_location=thread.pc.next_loc();
     thread.call_stack.back().return_lhs=call.lhs();
     thread.call_stack.back().return_rhs=nil_exprt();
+    thread.call_stack.back().hidden_function=function_entry.hidden;
 
     #if 0
     for(loc_reft l=function_entry_point; ; ++l)

@@ -72,10 +72,15 @@ public:
   struct framet
   {
     irep_idt current_function;
+    bool hidden_function;
     loc_reft return_location;
     exprt return_lhs;
     exprt return_rhs;
     var_state_mapt saved_local_vars;
+
+    framet():hidden_function(false)
+    {
+    }
   };
 
   // call stack
@@ -147,6 +152,20 @@ public:
   {
     PRECONDITION(current_thread<threads.size());
     return threads[current_thread].pc;
+  }
+
+  bool get_hide() const
+  {
+    // we hide if the function is hidden or the instruction is hidden
+    if(get_instruction()->source_location.get_hide())
+      return true;
+
+    if(!threads.empty() &&
+       !threads[current_thread].call_stack.empty() &&
+       threads[current_thread].call_stack.back().hidden_function)
+      return true;
+
+    return false;
   }
 
   void next_pc()

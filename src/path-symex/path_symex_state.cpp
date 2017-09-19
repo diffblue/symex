@@ -90,6 +90,9 @@ void path_symex_statet::record_step()
   assert(current_thread<threads.size());
   step.pc=threads[current_thread].pc;
   step.thread_nr=current_thread;
+
+  // set hide flag
+  step.hidden=get_hide();
 }
 
 bool path_symex_statet::is_feasible(

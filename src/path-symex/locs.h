@@ -48,6 +48,8 @@ public:
   public:
     loc_reft first_loc;
     code_typet type;
+    bool hidden;
+    function_entryt():hidden(false) { }
   };
 
   typedef std::map<irep_idt, function_entryt> function_mapt;

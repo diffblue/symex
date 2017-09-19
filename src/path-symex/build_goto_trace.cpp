@@ -35,6 +35,7 @@ void build_goto_trace(
     trace_step.pc=state.locs[step.pc].target;
     trace_step.thread_nr=step.thread_nr;
     trace_step.step_nr=step_nr;
+    trace_step.hidden=step.hidden;
 
     const goto_programt::instructiont &instruction=*trace_step.pc;
 
