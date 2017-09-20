@@ -74,6 +74,10 @@ void var_mapt::init(var_infot &var_info)
   {
     var_info.kind=var_infot::SHARED;
   }
+  else if(has_prefix(id2string(var_info.symbol), "symex::dynamic_object_size"))
+  {
+    var_info.kind=var_infot::SHARED;
+  }
   else
   {
     // Check for the presence of va_args
