@@ -434,7 +434,8 @@ void symex_parse_optionst::report_properties(
     }
 
     if((cmdline.isset("show-trace") ||
-        cmdline.isset("trace")) &&
+        cmdline.isset("trace") ||
+        cmdline.isset("stop-on-fail")) &&
        it->second.is_failure())
       show_trace(it->first, it->second.error_trace);
   }
