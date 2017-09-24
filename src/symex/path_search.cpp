@@ -174,7 +174,7 @@ void path_searcht::report_statistics()
       number_of_visited_locations++;
 
   #if 0
-  for(unsigned l=0; l<loc_data.size(); l++)
+  for(std::size_t l=0; l<loc_data.size(); l++)
     if(!loc_data[l].visited)
       status() << "NV: " << l << eom;
   #endif
@@ -239,14 +239,15 @@ void path_searcht::do_show_vcc(statet &state)
   if(instruction.source_location.get_comment()!="")
     out << instruction.source_location.get_comment() << '\n';
 
-  unsigned count=1;
+  std::size_t count=1;
 
   std::vector<path_symex_step_reft> steps;
   state.history.build_history(steps);
 
   for(const auto &step_ref : steps)
   {
-    if(step_ref->guard.is_not_nil())
+    if(step_ref->guard.is_not_nil() &&
+       !step_ref->guard.is_true())
     {
       std::string string_value=from_expr(ns, "", step_ref->guard);
       out << "{-" << count << "} " << string_value << '\n';
