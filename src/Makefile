@@ -1,4 +1,4 @@
-DIRS = symex
+DIRS = symex path-symex
 CPROVER_DIR ?= lib/cbmc/src
 export CPROVER_DIR
 

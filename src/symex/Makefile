@@ -20,9 +20,18 @@ OBJ += ../../$(CPROVER_DIR)/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/goto-symex/rewrite_union$(OBJEXT) \
        ../../$(CPROVER_DIR)/pointer-analysis/dereference$(OBJEXT) \
        ../../$(CPROVER_DIR)/goto-instrument/cover$(OBJEXT) \
-       ../../$(CPROVER_DIR)/path-symex/path-symex$(LIBEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_basic_blocks$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_filter$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_branch$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_condition$(OBJEXT)  \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_decision$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_location$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_mcdc$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_other$(OBJEXT) \
+       ../../$(CPROVER_DIR)/goto-instrument/cover_util$(OBJEXT) \
        ../../$(CPROVER_DIR)/miniz/miniz$(OBJEXT) \
-       ../../$(CPROVER_DIR)/json/json$(LIBEXT)
+       ../../$(CPROVER_DIR)/json/json$(LIBEXT) \
+       ../path-symex/path-symex$(LIBEXT)
 
 INCLUDES= -I .. -I ../../$(CPROVER_DIR)
 
