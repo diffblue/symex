@@ -20,9 +20,9 @@ OBJ += ../../$(CPROVER_DIR)/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/goto-symex/rewrite_union$(OBJEXT) \
        ../../$(CPROVER_DIR)/pointer-analysis/dereference$(OBJEXT) \
        ../../$(CPROVER_DIR)/goto-instrument/cover$(OBJEXT) \
-       ../../$(CPROVER_DIR)/path-symex/path-symex$(LIBEXT) \
        ../../$(CPROVER_DIR)/miniz/miniz$(OBJEXT) \
-       ../../$(CPROVER_DIR)/json/json$(LIBEXT)
+       ../../$(CPROVER_DIR)/json/json$(LIBEXT) \
+       ../path-symex/path-symex$(LIBEXT)
 
 INCLUDES= -I .. -I ../../$(CPROVER_DIR)
 
