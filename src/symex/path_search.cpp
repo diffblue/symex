@@ -20,7 +20,50 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <path-symex/path_symex.h>
 #include <path-symex/build_goto_trace.h>
 
+#include "shortest_path_graph.h"
+
 #include <random>
+
+
+void path_searcht::sort_queue()
+{
+  debug()<< " get shortest path, queue.size = " <<queue.size() <<eom;
+  if(queue.size()==1)
+  {
+    current_distance = queue.front().get_shortest_path();
+    return;
+  }
+
+  unsigned shortest_path = std::numeric_limits<unsigned>::max();
+
+  std::list<statet>::iterator it;
+  std::list<statet>::iterator closest_state;
+
+  for(it=queue.begin(); it!=queue.end(); ++it)
+  {
+    if(it->get_shortest_path() < shortest_path)
+    {
+      shortest_path = it->get_shortest_path();
+      closest_state = it;
+    }
+  }
+
+  if(shortest_path != std::numeric_limits<unsigned>::max())
+  {
+    current_distance = shortest_path;
+    statet tmp = *closest_state;
+    queue.erase(closest_state);
+    queue.push_front(tmp);
+  }
+  else
+  {
+    error() << "all states have shortest path length = MAX_UNSIGNED_INT, "
+             << "try removing function pointers with goto-instrument next time."
+             << "randomly picking state instead"
+             << eom;
+    shuffle_queue(queue);
+  }
+}
 
 void path_searcht::shuffle_queue(queuet &queue)
 {
@@ -54,9 +97,8 @@ path_searcht::resultt path_searcht::operator()(
   // this is the container for the history-forest
   path_symex_historyt history;
 
-  queue.push_back(initial_state(var_map, locs, history));
-
   // set up the statistics
+  current_distance = std::numeric_limits<unsigned>::max();
   number_of_dropped_states=0;
   number_of_paths=0;
   number_of_VCCs=0;
@@ -72,6 +114,15 @@ path_searcht::resultt path_searcht::operator()(
   absolute_timet last_reported_time=start_time;
 
   initialize_property_map(goto_functions);
+  if(search_heuristic == search_heuristict::SHORTEST_PATH ||
+      search_heuristic == search_heuristict::RAN_SHORTEST_PATH )
+  {
+    status()<<"Building shortest path graph" << eom;
+    shortest_path_grapht shortest_path_graph(goto_functions, locs);
+  }
+  statet init_state = initial_state(var_map, locs, history);
+  queue.push_back(init_state);
+  initial_distance_to_property=init_state.get_shortest_path();
 
   while(!queue.empty())
   {
@@ -135,8 +186,13 @@ path_searcht::resultt path_searcht::operator()(
                    << " thread " << state.get_current_thread()+1
                    << '/' << state.threads.size()
                    << " PC " << state.pc()
-                   << " depth " << state.get_depth()
-                   << " [" << number_of_steps << " steps, "
+                   << " depth " << state.get_depth();
+
+          if(search_heuristic == search_heuristict::SHORTEST_PATH
+              || search_heuristic == search_heuristict::RAN_SHORTEST_PATH)
+            status() << " distance to property " << state.get_shortest_path();
+
+          status() << " [" << number_of_steps << " steps, "
                    << running_time << "s]" << messaget::eom;
         }
       }
@@ -243,6 +299,15 @@ void path_searcht::pick_state()
       queue.splice(queue.begin(), queue, --queue.end(), queue.end());
     return;
 
+  case search_heuristict::RAN_SHORTEST_PATH:
+    if(number_of_steps%1000==0)
+      shuffle_queue(queue);
+    else
+      sort_queue();
+    return;
+  case search_heuristict::SHORTEST_PATH:
+    sort_queue();
+    return;
   case search_heuristict::LOCS:
     return;
   }
