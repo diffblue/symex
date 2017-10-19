@@ -625,6 +625,9 @@ void symex_parse_optionst::help()
     " --context-bound nr           limit number of context switches\n"
     " --branch-bound nr            limit number of branches taken\n"
     " --max-search-time s          limit search to approximately s seconds\n"
+    " --dfs                        use depth first search\n"
+    " --bfs                        use breadth first search\n"
+    " --eager-infeasibility        query solver early to determine whether a path is infeasible before searching it\n" // NOLINT(*)
     "\n"
     "Other options:\n"
     " --version                    show version and exit\n"
