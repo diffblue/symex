@@ -265,6 +265,10 @@ int symex_parse_optionst::doit()
       else
         path_search.set_shortest_path();
     }
+
+    if(cmdline.isset("shortest-path-per-function"))
+      path_search.set_shortest_path_per_function();
+
     if(cmdline.isset("show-vcc"))
     {
       path_search.show_vcc=true;
@@ -664,6 +668,7 @@ void symex_parse_optionst::help()
     " --dfs                        use depth first search\n"
     " --bfs                        use breadth first search\n"
     "--shortest-path               use shortest path guided search\n"
+    "--shortest-path-per-function  computes shortest path locally and uses to guide symex search\n" // NOLINT(*)
     " --randomize                  in conjunction with dfs to use randomized dfs\n" // NOLINT(*)
 	  "                              in conjunction with shortest path to use randomized shortest path guided search\n" // NOLINT(*)
     " --eager-infeasibility        query solver early to determine whether a path is infeasible before searching it\n" // NOLINT(*)
