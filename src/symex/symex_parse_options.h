@@ -41,6 +41,7 @@ class optionst;
   "(error-label):(verbosity):(no-library)" \
   "(version)" \
   "(bfs)(dfs)(locs)(shortest-path)" \
+  "(shortest-path-per-function)" \
   "(randomize)" \
   "(cover):" \
   "(i386-linux)(i386-macos)(i386-win32)(win32)(winx64)(gcc)" \

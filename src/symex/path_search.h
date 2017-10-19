@@ -116,6 +116,8 @@ public:
     { search_heuristic=search_heuristict::SHORTEST_PATH; }
   void set_ran_shortest_path()
     { search_heuristic=search_heuristict::RAN_SHORTEST_PATH; }
+  void set_shortest_path_per_function()
+    { search_heuristic=search_heuristict::SHORTEST_PATH_PER_FUNC; }
 
   typedef std::map<irep_idt, property_entryt> property_mapt;
   property_mapt property_map;
@@ -133,6 +135,7 @@ protected:
   /// Move element with shortest distance to property
   /// to the front of the queue
   void sort_queue();
+  void sort_queue_per_function();
   // search heuristic
   void pick_state();
 
@@ -164,7 +167,8 @@ protected:
   unsigned time_limit;
 
   enum class search_heuristict
-  { DFS, RAN_DFS, BFS, LOCS, SHORTEST_PATH, RAN_SHORTEST_PATH } search_heuristic;
+  { DFS, RAN_DFS, BFS, LOCS, SHORTEST_PATH,
+    RAN_SHORTEST_PATH , SHORTEST_PATH_PER_FUNC } search_heuristic;
 
   source_locationt last_source_location;
 };

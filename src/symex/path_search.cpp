@@ -65,6 +65,42 @@ void path_searcht::sort_queue()
   }
 }
 
+// We prioritise remaining in the same function, but if there is no choice
+// we take the next state with the shortest path
+void path_searcht::sort_queue_per_function()
+{
+  debug()<< " get shortest path, queue.size = " <<queue.size() <<eom;
+  if(queue.size()==1)
+  {
+    current_distance = queue.front().get_shortest_path();
+    return;
+  }
+
+  unsigned shortest_path = std::numeric_limits<unsigned>::max();
+
+  std::list<statet>::iterator it;
+  std::list<statet>::iterator closest_state;
+
+  // pick the first state in the queue that is a direct successor, i.e.,
+  // has a path length 1 less than the current path length
+  for(it=queue.begin(); it!=queue.end(); ++it)
+  {
+    if(it->get_shortest_path()+1 == current_distance)
+    {
+      shortest_path = it->get_shortest_path();
+      current_distance = shortest_path;
+      statet tmp = *it;
+      queue.erase(it);
+      queue.push_front(tmp);
+      return;
+    }
+  }
+
+  // if we get here there was no direct successor, we revert to
+  // picking the shortest path
+  sort_queue();
+}
+
 void path_searcht::shuffle_queue(queuet &queue)
 {
   if(queue.size()<=1)
@@ -120,6 +156,12 @@ path_searcht::resultt path_searcht::operator()(
     status()<<"Building shortest path graph" << eom;
     shortest_path_grapht shortest_path_graph(goto_functions, locs);
   }
+  else if(search_heuristic == search_heuristict::SHORTEST_PATH_PER_FUNC)
+  {
+    status()<<"Building shortest path graph per function" << eom;
+    per_function_shortest_patht shortest_path_graph(goto_functions, locs);
+  }
+
   statet init_state = initial_state(var_map, locs, history);
   queue.push_back(init_state);
   initial_distance_to_property=init_state.get_shortest_path();
@@ -307,6 +349,9 @@ void path_searcht::pick_state()
     return;
   case search_heuristict::SHORTEST_PATH:
     sort_queue();
+    return;
+  case search_heuristict::SHORTEST_PATH_PER_FUNC:
+    sort_queue_per_function();
     return;
   case search_heuristict::LOCS:
     return;
