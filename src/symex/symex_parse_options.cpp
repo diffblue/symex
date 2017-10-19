@@ -258,6 +258,13 @@ int symex_parse_optionst::doit()
     if(cmdline.isset("locs"))
       path_search.set_locs();
 
+    if(cmdline.isset("shortest-path"))
+    {
+      if(cmdline.isset("randomize"))
+        path_search.set_ran_shortest_path();
+      else
+        path_search.set_shortest_path();
+    }
     if(cmdline.isset("show-vcc"))
     {
       path_search.show_vcc=true;
@@ -656,7 +663,9 @@ void symex_parse_optionst::help()
     " --max-search-time s          limit search to approximately s seconds\n"
     " --dfs                        use depth first search\n"
     " --bfs                        use breadth first search\n"
-    " --randomize                  used in conjunction with dfs, to search by randomized dfs\n" // NOLINT(*)
+    "--shortest-path               use shortest path guided search\n"
+    " --randomize                  in conjunction with dfs to use randomized dfs\n" // NOLINT(*)
+	  "                              in conjunction with shortest path to use randomized shortest path guided search\n" // NOLINT(*)
     " --eager-infeasibility        query solver early to determine whether a path is infeasible before searching it\n" // NOLINT(*)
     "\n"
     "Other options:\n"
