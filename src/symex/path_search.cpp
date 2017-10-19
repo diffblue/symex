@@ -130,6 +130,31 @@ path_searcht::resultt path_searcht::operator()(
 
   status() << "Starting symbolic simulation" << eom;
 
+  switch(search_heuristic)
+  {
+  case search_heuristict::DFS:
+    status() << "Search heuristic: DFS" << eom;
+    break;
+  case search_heuristict::RAN_DFS:
+    status() << "Search heuristic: randomized DFS" << eom;
+    break;
+  case search_heuristict::BFS:
+    status() << "Search heuristic: BFS" << eom;
+    break;
+  case search_heuristict::SHORTEST_PATH:
+    status() << "Search heuristic: shortest path" << eom;
+    break;
+  case search_heuristict::SHORTEST_PATH_PER_FUNC:
+    status() << "Search heuristic: shortest path per function" << eom;
+    break;
+  case search_heuristict::RAN_SHORTEST_PATH:
+    status() << "Search heuristic: randomized shortest path" << eom;
+    break;
+  case search_heuristict::LOCS:
+    status() << "Search heuristic: LOCS" << eom;
+    break;
+  }
+
   // this is the container for the history-forest
   path_symex_historyt history;
 
@@ -165,6 +190,11 @@ path_searcht::resultt path_searcht::operator()(
   statet init_state = initial_state(var_map, locs, history);
   queue.push_back(init_state);
   initial_distance_to_property=init_state.get_shortest_path();
+
+  time_periodt initialisation_time=current_time()-start_time;
+  status() << "Initialisation took "<< initialisation_time << "s" << eom;
+  start_time=current_time();
+  last_reported_time=start_time;
 
   while(!queue.empty())
   {
