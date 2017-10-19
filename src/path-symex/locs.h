@@ -59,6 +59,7 @@ public:
   explicit locst(const namespacet &_ns);
   void build(const goto_functionst &goto_functions);
   void output(std::ostream &out) const;
+  void output_reachable(std::ostream &out) const;
 
   loct &operator[] (loc_reft l)
   {
