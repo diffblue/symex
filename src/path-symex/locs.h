@@ -27,11 +27,12 @@ public:
     target(_target),
     function(_function)
   {
+    distance_to_property=std::numeric_limits<std::size_t>::max();
   }
 
   goto_programt::const_targett target;
   irep_idt function;
-
+  std::size_t distance_to_property;
   // we only support a single branch target
   loc_reft branch_target;
 };
