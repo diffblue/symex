@@ -1,6 +1,6 @@
-THOROUGH
+CORE
 main.c
-
+--bfs
 ^VERIFICATION FAILED$
 --
 ^warning: ignoring
