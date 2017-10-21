@@ -9,6 +9,56 @@ Author: elizabeth.polgreen@cs.ox.ac.uk
 #include "shortest_path_graph.h"
 
 #include <algorithm>
+
+void shortest_path_grapht::get_path_lengths_in_function()
+{
+  bool found_property = false;
+  bool found_end = false;
+  node_indext end_index;
+  node_indext property_index;
+  node_indext index = 0;
+  for(auto &n : nodes)
+  {
+    if(n.PC->is_assert())
+    {
+      if(found_property == false)
+      {
+        n.is_property = true;
+        n.shortest_path_to_property = 0;
+        found_property = true;
+        property_index = index;
+      }
+      else
+        throw "shortest path search cannot be used with multiple properties";
+    }
+    if(n.PC->is_end_function())
+    {
+      end_index = index;
+      found_end = true;
+    }
+    index++;
+  }
+
+  if(!found_property)
+  {
+    nodes[end_index].shortest_path_to_property = 0;
+    bfs(end_index);
+  }
+  else
+    bfs(property_index);
+
+  write_lengths_to_locs();
+}
+
+void per_function_shortest_patht::build(const goto_functionst &goto_functions)
+{
+  forall_goto_functions(it, goto_functions)
+    if(it->second.body_available())
+    {
+      shortest_path_grapht path_graph(it->second.body, locs);
+    }
+}
+
 void shortest_path_grapht::bfs(node_indext property_index)
 {
   // does BFS, not Dijkstra
