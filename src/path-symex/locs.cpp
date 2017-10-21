@@ -86,19 +86,23 @@ void locst::output(std::ostream &out) const
 {
   irep_idt function;
 
-  for(unsigned l=0; l<loc_vector.size(); l++)
+  for(std::size_t l = 0; l < loc_vector.size(); l++)
   {
-    const loct &loc=loc_vector[l];
-    if(function!=loc.function)
+    const loct &loc = loc_vector[l];
+    if(function != loc.function)
     {
-      function=loc.function;
+      function = loc.function;
       out << "*** " << function << "\n";
     }
 
     out << "  L" << l << ": "
 //        << loc.target->type << " "
 //        << loc.target->location
-        << " " << as_string(ns, *loc.target) << "\n";
+        << " " << as_string(ns, *loc.target);
+    if(loc_vector[l].distance_to_property
+        != std::numeric_limits<std::size_t>::max())
+      out << " path length: " << loc_vector[l].distance_to_property;
+    out << "\n";
 
     if(!loc.branch_target.is_nil())
       out << "    T: " << loc.branch_target << "\n";
