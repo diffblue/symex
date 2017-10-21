@@ -1,6 +1,6 @@
-THOROUGH
+CORE
 main.c
-
+--eager-infeasibility
 ^SIGNAL=0$
 ^VERIFICATION SUCCESSFUL$
 --

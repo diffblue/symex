@@ -17,7 +17,7 @@ int g(int x) {
 int main(void) {
   unsigned int x;
 
-  __CPROVER_assume(x < 50);
+  __CPROVER_assume(x < 20);
 
   if (x >= 0) {
     assert(f(x) == g(x));
