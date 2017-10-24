@@ -319,7 +319,7 @@ bool path_searcht::drop_state(const statet &state)
         break;
       }
 
-    const irep_idt id=goto_programt::loop_id(pc);
+    const irep_idt id=goto_programt::loop_id(*pc);
     path_symex_statet::unwinding_mapt::const_iterator entry=
       state.unwinding_map.find(state.pc());
     debug() << (stop?"Not unwinding":"Unwinding")
