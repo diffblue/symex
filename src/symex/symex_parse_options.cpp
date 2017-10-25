@@ -142,6 +142,16 @@ int symex_parse_optionst::doit()
   {
     goto_model=initialize_goto_model(cmdline, get_message_handler());
   }
+  catch(const std::string error_msg)
+  {
+    error() << error_msg << messaget::eom;
+    return 6;
+  }
+  catch(const char *error_msg)
+  {
+    error() << error_msg << messaget::eom;
+    return 6;
+  }
   catch(...)
   {
     return 6;
