@@ -1,13 +1,26 @@
 default: tests.log
 
 test:
-	@../test.pl -c "../../../src/symex/symex --shortest-path"
-	@../test.pl -c "../../../src/symex/symex --shortest-path --randomize"
+	@if ! ../../lib/cbmc/regression/test.pl -c "../../../src/symex/symex --shortest-path" ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
+		exit 1 ; \
+	fi
+
+		@if ! ../../lib/cbmc/regression/test.pl -c "../../../src/symex/symex --shortest-path --randomize" ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
+		exit 1 ; \
+	fi
 
 tests.log: ../test.pl
-	@../test.pl -c "../../../src/symex/symex --shortest-path"
-	@../test.pl -c "../../../src/symex/symex --shortest-path --randomize"
+	@if ! ../../lib/cbmc/regression/test.pl -c "../../../src/symex/symex --shortest-path" ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
+		exit 1 ; \
+	fi
 
+	@if ! ../../lib/cbmc/regression/test.pl -c ../../../src/symex/symex "--shortest-path --randomize" ; then \
+		../../lib/cbmc/regression/failed-tests-printer.pl ; \
+		exit 1 ; \
+	fi
 
 show:
 	@for dir in *; do \
