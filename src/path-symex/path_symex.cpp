@@ -99,9 +99,9 @@ void path_symext::assign(
     const side_effect_exprt &side_effect_expr=to_side_effect_expr(rhs);
     const irep_idt &statement=side_effect_expr.get_statement();
 
-    if(statement==ID_malloc)
+    if(statement==ID_allocate)
     {
-      symex_malloc(state, lhs, side_effect_expr);
+      symex_allocate(state, lhs, side_effect_expr);
       return;
     }
     else if(statement==ID_nondet)
@@ -153,13 +153,13 @@ inline static typet c_sizeof_type_rec(const exprt &expr)
   return nil_typet();
 }
 
-void path_symext::symex_malloc(
+void path_symext::symex_allocate(
   path_symex_statet &state,
   const exprt &lhs,
   const side_effect_exprt &code)
 {
-  if(code.operands().size()!=1)
-    throw "malloc expected to have one operand";
+  if(code.operands().size()!=2)
+    throw "alloc expected to have two operands";
 
   // increment dynamic object counter
   unsigned dynamic_count=++state.var_map.dynamic_count;
