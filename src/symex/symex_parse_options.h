@@ -42,7 +42,8 @@ class optionst;
   "(cover):" \
   "(i386-linux)(i386-macos)(i386-win32)(win32)(winx64)(gcc)" \
   "(ppc-macos)(unsigned-char)" \
-  "(string-abstraction)(no-arch)(arch):(floatbv)(fixedbv)" \
+  "(string-abstraction)(smt2)(z3)(refine)" \
+  "(no-arch)(arch):(floatbv)(fixedbv)" \
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
   "(show-locs)(show-vcc)(show-properties)" \
   "(drop-unused-functions)" \
