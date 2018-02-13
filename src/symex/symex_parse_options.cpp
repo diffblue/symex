@@ -113,6 +113,9 @@ void symex_parse_optionst::get_command_line_options(optionst &options)
   // magic error label
   if(cmdline.isset("error-label"))
     options.set_option("error-label", cmdline.get_values("error-label"));
+
+  if(cmdline.isset("cover"))
+    parse_cover_options(cmdline, options);
 }
 
 /// invoke main modules
@@ -361,7 +364,7 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     if(cmdline.isset("cover"))
     {
       status() << "Instrumenting coverage goals" << eom;
-      if(instrument_cover_goals(cmdline, goto_model, get_message_handler()))
+      if(instrument_cover_goals(options, goto_model, get_message_handler()))
         return true;
     }
 
