@@ -4,41 +4,42 @@ SRC = path_search.cpp \
       symex_parse_options.cpp \
       # Empty last line
 
-OBJ += ../../$(CPROVER_DIR)/ansi-c/ansi-c$(LIBEXT) \
-       ../../$(CPROVER_DIR)/cpp/cpp$(LIBEXT) \
-       ../../$(CPROVER_DIR)/java_bytecode/java_bytecode$(LIBEXT) \
-       ../../$(CPROVER_DIR)/linking/linking$(LIBEXT) \
-       ../../$(CPROVER_DIR)/big-int/big-int$(LIBEXT) \
-       ../../$(CPROVER_DIR)/goto-programs/goto-programs$(LIBEXT) \
-       ../../$(CPROVER_DIR)/analyses/analyses$(LIBEXT) \
-       ../../$(CPROVER_DIR)/langapi/langapi$(LIBEXT) \
-       ../../$(CPROVER_DIR)/xmllang/xmllang$(LIBEXT) \
-       ../../$(CPROVER_DIR)/assembler/assembler$(LIBEXT) \
-       ../../$(CPROVER_DIR)/solvers/solvers$(LIBEXT) \
-       ../../$(CPROVER_DIR)/util/util$(LIBEXT) \
-       ../../$(CPROVER_DIR)/goto-symex/adjust_float_expressions$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-symex/rewrite_union$(OBJEXT) \
-       ../../$(CPROVER_DIR)/pointer-analysis/dereference$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_filter$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_basic_blocks$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_branch$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_condition$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_decision$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_location$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_mcdc$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_instrument_other$(OBJEXT) \
-       ../../$(CPROVER_DIR)/goto-instrument/cover_util$(OBJEXT) \
-       ../../$(CPROVER_DIR)/miniz/miniz$(OBJEXT) \
-       ../../$(CPROVER_DIR)/json/json$(LIBEXT) \
+OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/cpp/cpp$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/java_bytecode/java_bytecode$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/linking/linking$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/big-int/big-int$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/goto-programs/goto-programs$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/analyses/analyses$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/langapi/langapi$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/xmllang/xmllang$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/assembler/assembler$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/solvers/solvers$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/util/util$(LIBEXT) \
+       ../../$(CPROVER_DIR)/src/goto-symex/adjust_float_expressions$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-symex/rewrite_union$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/pointer-analysis/dereference$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_filter$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_basic_blocks$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_branch$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_condition$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_decision$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_location$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_mcdc$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_other$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/cover_util$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/miniz/miniz$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/json/json$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
 
-INCLUDES= -I .. -I ../../$(CPROVER_DIR)
+INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src
 
 LIBS =
 
-include ../../$(CPROVER_DIR)/config.inc
-include ../../$(CPROVER_DIR)/common
+include ../config.inc
+include ../../$(CPROVER_DIR)/src/config.inc
+include ../../$(CPROVER_DIR)/src/common
 
 CLEANFILES = symex$(EXEEXT)
 

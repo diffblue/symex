@@ -1,6 +1,6 @@
 DIRS = path-symex symex
-CPROVER_DIR ?= lib/cbmc/src
-export CPROVER_DIR
+
+include config.inc
 
 .PHONY: all
 all: symex.dir
@@ -15,12 +15,12 @@ setup-submodules:
 .PHONY: setup-cbmc
 setup-cbmc: setup-submodules
 	# To make a single step build, proactively do the minisat2-download
-	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR) minisat2-download
+	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/src minisat2-download
 
 # building cbmc proper
 .PHONY: cprover.dir
 cprover.dir:
-	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)
+	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/src
 
 .PHONY: path-symex.dir
 path-symex.dir: cprover.dir
@@ -50,4 +50,4 @@ $(patsubst %, %_clean, $(DIRS)):
 
 .PHONY: cprover_clean
 cprover_clean:
-	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR) clean
+	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/src clean

@@ -8,10 +8,11 @@ SRC = build_goto_trace.cpp \
       var_map.cpp \
       # Empty last line
 
-INCLUDES= -I .. -I ../../$(CPROVER_DIR)
+INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src
 
-include ../../$(CPROVER_DIR)/config.inc
-include ../../$(CPROVER_DIR)/common
+include ../config.inc
+include ../../$(CPROVER_DIR)/src/config.inc
+include ../../$(CPROVER_DIR)/src/common
 
 CLEANFILES = path-symex$(LIBEXT)
 
