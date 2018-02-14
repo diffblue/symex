@@ -45,16 +45,24 @@ void path_symex_statet::output(const threadt &thread, std::ostream &out) const
 {
   out << "  PC: " << thread.pc << '\n';
   out << "  Call stack:";
-  for(call_stackt::const_iterator
-      it=thread.call_stack.begin();
-      it!=thread.call_stack.end();
-      it++)
-    out << " " << it->return_location << '\n';
+
+  for(const auto &frame : thread.call_stack)
+    out << " " << frame.return_location;
+
   out << '\n';
 }
 
 void path_symex_statet::output(std::ostream &out) const
 {
+  for(const auto &v : shared_vars)
+    if(!v.ssa_symbol.get_identifier().empty())
+    {
+      out << from_expr(v.ssa_symbol);
+      if(v.value.is_not_nil())
+        out << " = " << from_expr(v.value);
+      out << '\n';
+    }
+
   for(unsigned t=0; t<threads.size(); t++)
   {
     out << "*** Thread " << t << '\n';
