@@ -969,6 +969,10 @@ void path_symext::operator()(
       {
         // ignore for SC
       }
+      else if(statement==ID_havoc_object)
+      {
+        // TODO
+      }
       else if(statement==ID_input)
       {
         // just needs to be recorded
