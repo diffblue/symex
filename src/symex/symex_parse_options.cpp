@@ -28,6 +28,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/goto_inline.h>
 #include <goto-programs/initialize_goto_model.h>
+#include <goto-programs/instrument_preconditions.h>
 #include <goto-programs/link_to_library.h>
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/read_goto_binary.h>
@@ -330,6 +331,9 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
 
     // Java virtual functions -> explicit dispatch tables:
     remove_virtual_functions(goto_model);
+
+    // instrument library preconditions
+    instrument_preconditions(goto_model);
 
     // remove more stuff
     remove_returns(goto_model);
