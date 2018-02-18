@@ -161,10 +161,28 @@ int symex_parse_optionst::doit()
     return 6;
   }
 
+  if(cmdline.isset("show-symbol-table"))
+  {
+    show_symbol_table(goto_model, ui_message_handler.get_ui());
+    return 0;
+  }
+
   if(process_goto_program(options))
     return 6;
 
   label_properties(goto_model);
+
+  if(cmdline.isset("show-loops"))
+  {
+    show_loop_ids(get_ui(), goto_model);
+    return 0;
+  }
+
+  if(cmdline.isset("show-goto-functions"))
+  {
+    show_goto_functions(goto_model, get_message_handler(), get_ui());
+    return 0;
+  }
 
   if(cmdline.isset("show-properties"))
   {
@@ -319,12 +337,6 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     // we add the library
     link_to_library(goto_model, ui_message_handler);
 
-    if(cmdline.isset("show-symbol-table"))
-    {
-      show_symbol_table(goto_model, ui_message_handler.get_ui());
-      return true;
-    }
-
     // add generic checks
     status() << "Generic Property Instrumentation" << eom;
     goto_check(options, goto_model);
@@ -377,20 +389,6 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
       status() << "Instrumenting coverage goals" << eom;
       if(instrument_cover_goals(options, goto_model, get_message_handler()))
         return true;
-    }
-
-    // show it?
-    if(cmdline.isset("show-loops"))
-    {
-      show_loop_ids(get_ui(), goto_model);
-      return true;
-    }
-
-    // show it?
-    if(cmdline.isset("show-goto-functions"))
-    {
-      show_goto_functions(goto_model, get_message_handler(), get_ui());
-      return true;
     }
   }
 
