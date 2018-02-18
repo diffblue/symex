@@ -2,6 +2,7 @@ SRC = build_goto_trace.cpp \
       locs.cpp \
       path_replay.cpp \
       path_symex.cpp \
+      path_symex_allocate.cpp \
       path_symex_history.cpp \
       path_symex_state.cpp \
       path_symex_state_read.cpp \
