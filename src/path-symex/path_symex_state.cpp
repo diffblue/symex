@@ -17,10 +17,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/c_types.h>
 
-#include <pointer-analysis/dereference.h>
-
-#include <goto-symex/adjust_float_expressions.h>
-
 #ifdef DEBUG
 #include <iostream>
 #include <langapi/language_util.h>
