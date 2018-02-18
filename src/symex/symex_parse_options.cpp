@@ -42,6 +42,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/remove_vector.h>
 #include <goto-programs/remove_virtual_functions.h>
 #include <goto-programs/set_properties.h>
+#include <goto-programs/show_symbol_table.h>
 #include <goto-programs/show_properties.h>
 #include <goto-programs/xml_goto_trace.h>
 
@@ -317,6 +318,12 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
   {
     // we add the library
     link_to_library(goto_model, ui_message_handler);
+
+    if(cmdline.isset("show-symbol-table"))
+    {
+      show_symbol_table(goto_model, ui_message_handler.get_ui());
+      return true;
+    }
 
     // add generic checks
     status() << "Generic Property Instrumentation" << eom;
