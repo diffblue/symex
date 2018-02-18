@@ -24,7 +24,7 @@ Author: Daniel Kroening, kroening@kroening.com
 exprt path_symex_statet::read(const exprt &src, bool propagate)
 {
   #ifdef DEBUG
-  // std::cout << "path_symex_statet::read " << src.pretty() << '\n';
+  std::cout << "path_symex_statet::read " << from_expr(src) << '\n';
   #endif
 
   // This has three phases!
@@ -40,7 +40,7 @@ exprt path_symex_statet::read(const exprt &src, bool propagate)
   exprt tmp5=simplify_expr(tmp4, var_map.ns);
 
   #ifdef DEBUG
-  // std::cout << " ==> " << tmp.pretty() << '\n';
+  std::cout << " ==> " << from_expr(tmp5) << '\n';
   #endif
 
   return tmp5;
@@ -533,6 +533,18 @@ exprt path_symex_statet::dereference_rec(
     // the dereferenced address is a mixture of non-SSA and SSA symbols
     // (e.g., if-guards and array indices)
     return address_dereferenced;
+  }
+  else if(src.id()==ID_address_of)
+  {
+    // &*p ==> p, even if pointer p is otherwise garbage.
+    // This is a guarantee in the C standard.
+    auto &address_of_expr=to_address_of_expr(src);
+
+    if(address_of_expr.object().id()==ID_dereference)
+    {
+      return dereference_rec(
+        to_dereference_expr(address_of_expr.object()).pointer(), propagate);
+    }
   }
 
   if(!src.has_operands())
