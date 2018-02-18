@@ -11,6 +11,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_symex_class.h"
 
+#include <linking/zero_initializer.h>
+
 #include <util/arith_tools.h>
 #include <util/c_types.h>
 #include <util/pointer_offset_size.h>
@@ -142,6 +144,23 @@ void path_symext::symex_allocate(
   {
     rhs=address_of_exprt(
       value_symbol.symbol_expr(), pointer_type(value_symbol.type));
+  }
+
+  // zero initialized?
+  exprt initialize=state.read(code.op1());
+  mp_integer initialize_i;
+  if(!to_integer(initialize, initialize_i) &&
+     initialize_i==1)
+  {
+    exprt zero=zero_initializer(
+      value_symbol.type,
+      code.source_location(),
+      state.var_map.ns);
+
+    if(zero.is_not_nil())
+    {
+      assign(state, value_symbol.symbol_expr(), zero);
+    }
   }
 
   if(rhs.type()!=lhs.type())
