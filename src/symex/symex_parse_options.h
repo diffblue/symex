@@ -34,6 +34,8 @@ class optionst;
   "(depth):(context-bound):(branch-bound):(unwind):(max-search-time):" \
   OPT_GOTO_CHECK \
   "(no-assertions)(no-assumptions)" \
+  "(unwinding-assertions)" \
+  "(graphml-witness):" \
   "(16)(32)(64)(LP64)(ILP64)(LLP64)(ILP32)(LP32)" \
   "(little-endian)(big-endian)" \
   "(error-label):(verbosity):(no-library)" \
@@ -42,10 +44,10 @@ class optionst;
   "(cover):" \
   "(i386-linux)(i386-macos)(i386-win32)(win32)(winx64)(gcc)" \
   "(ppc-macos)(unsigned-char)" \
-  "(string-abstraction)(smt2)(z3)(refine)" \
+  "(string-abstraction)(smt2)(z3)(refine)(outfile):" \
   "(no-arch)(arch):(floatbv)(fixedbv)" \
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
-  "(show-locs)(show-vcc)(show-properties)" \
+  "(show-locs)(show-vcc)(show-properties)(show-symbol-table)" \
   "(drop-unused-functions)" \
   "(object-bits):" \
   OPT_SHOW_GOTO_FUNCTIONS \
