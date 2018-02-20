@@ -58,6 +58,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <path-symex/locs.h>
 
 #include "path_search.h"
+#include "shortest_path_graph.h"
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
   parse_options_baset(SYMEX_OPTIONS, argc, argv),
@@ -202,6 +203,18 @@ int symex_parse_optionst::doit()
     return 0;
   }
 
+  if(cmdline.isset("show-distances-to-property"))
+  {
+    const namespacet ns(goto_model.symbol_table);
+    locst locs(ns);
+    locs.build(goto_model.goto_functions);
+
+    shortest_path_grapht path_search_graph(goto_model.goto_functions, locs);
+
+    locs.output_reachable(std::cout);
+    return 0;
+  }
+
   // do actual Symex
 
   try
@@ -232,13 +245,29 @@ int symex_parse_optionst::doit()
         safe_string2unsigned(cmdline.get_value("max-search-time")));
 
     if(cmdline.isset("dfs"))
-      path_search.set_dfs();
+    {
+      if(cmdline.isset("randomize"))
+        path_search.set_randomized_dfs();
+      else
+        path_search.set_dfs();
+    }
 
     if(cmdline.isset("bfs"))
       path_search.set_bfs();
 
     if(cmdline.isset("locs"))
       path_search.set_locs();
+
+    if(cmdline.isset("shortest-path"))
+    {
+      if(cmdline.isset("randomize"))
+        path_search.set_ran_shortest_path();
+      else
+        path_search.set_shortest_path();
+    }
+
+    if(cmdline.isset("shortest-path-per-function"))
+      path_search.set_shortest_path_per_function();
 
     if(cmdline.isset("show-vcc"))
     {
@@ -636,8 +665,17 @@ void symex_parse_optionst::help()
     " --context-bound nr           limit number of context switches\n"
     " --branch-bound nr            limit number of branches taken\n"
     " --max-search-time s          limit search to approximately s seconds\n"
+    " --dfs                        use depth first search\n"
+    " --bfs                        use breadth first search\n"
+    "--shortest-path               use shortest path guided search\n"
+    "--shortest-path-per-function  computes shortest path locally and uses to guide symex search\n" // NOLINT(*)
+    " --randomize                  in conjunction with dfs to use randomized dfs\n" // NOLINT(*)
+	  "                              in conjunction with shortest path to use randomized shortest path guided search\n" // NOLINT(*)
+    " --eager-infeasibility        query solver early to determine whether a path is infeasible before searching it\n" // NOLINT(*)
     "\n"
     "Other options:\n"
+    " --show-distances-to-property\n"
+    "                              shows the (context free) shortest path from every reachable program location to a single property" // NOLINT(*)
     " --version                    show version and exit\n"
     " --xml-ui                     use XML-formatted output\n"
     " --verbosity #                verbosity level\n"

@@ -40,7 +40,9 @@ class optionst;
   "(little-endian)(big-endian)" \
   "(error-label):(verbosity):(no-library)" \
   "(version)" \
-  "(bfs)(dfs)(locs)" \
+  "(bfs)(dfs)(locs)(shortest-path)" \
+  "(shortest-path-per-function)" \
+  "(randomize)" \
   "(cover):" \
   "(i386-linux)(i386-macos)(i386-win32)(win32)(winx64)(gcc)" \
   "(ppc-macos)(unsigned-char)" \
@@ -50,6 +52,7 @@ class optionst;
   "(show-locs)(show-vcc)(show-properties)(show-symbol-table)" \
   "(drop-unused-functions)" \
   "(object-bits):" \
+  "(show-distances-to-property)" \
   OPT_SHOW_GOTO_FUNCTIONS \
   "(property):(trace)(show-trace)(stop-on-fail)(eager-infeasibility)" \
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
