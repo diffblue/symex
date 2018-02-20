@@ -27,11 +27,12 @@ public:
     target(_target),
     function(_function)
   {
+    distance_to_property=std::numeric_limits<std::size_t>::max();
   }
 
   goto_programt::const_targett target;
   irep_idt function;
-
+  std::size_t distance_to_property;
   // we only support a single branch target
   loc_reft branch_target;
 };
@@ -58,6 +59,7 @@ public:
   explicit locst(const namespacet &_ns);
   void build(const goto_functionst &goto_functions);
   void output(std::ostream &out) const;
+  void output_reachable(std::ostream &out) const;
 
   loct &operator[] (loc_reft l)
   {

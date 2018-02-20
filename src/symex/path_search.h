@@ -80,6 +80,8 @@ public:
   bool stop_on_fail;
 
   // statistics
+  unsigned current_distance;
+  unsigned initial_distance_to_property;
   std::size_t number_of_dropped_states;
   std::size_t number_of_paths;
   std::size_t number_of_steps;
@@ -107,8 +109,15 @@ public:
   };
 
   void set_dfs() { search_heuristic=search_heuristict::DFS; }
+  void set_randomized_dfs() { search_heuristic=search_heuristict::RAN_DFS; }
   void set_bfs() { search_heuristic=search_heuristict::BFS; }
   void set_locs() { search_heuristic=search_heuristict::LOCS; }
+  void set_shortest_path()
+    { search_heuristic=search_heuristict::SHORTEST_PATH; }
+  void set_ran_shortest_path()
+    { search_heuristic=search_heuristict::RAN_SHORTEST_PATH; }
+  void set_shortest_path_per_function()
+    { search_heuristic=search_heuristict::SHORTEST_PATH_PER_FUNC; }
 
   typedef std::map<irep_idt, property_entryt> property_mapt;
   property_mapt property_map;
@@ -120,7 +129,13 @@ protected:
   // The states most recently executed are at the head.
   typedef std::list<statet> queuet;
   queuet queue;
-
+  /// Pick random element of queue and move to front
+  /// \param queue  queue to be shuffled
+  void shuffle_queue(queuet &queue);
+  /// Move element with shortest distance to property
+  /// to the front of the queue
+  void sort_queue();
+  void sort_queue_per_function();
   // search heuristic
   void pick_state();
 
@@ -151,7 +166,9 @@ protected:
   unsigned unwind_limit;
   unsigned time_limit;
 
-  enum class search_heuristict { DFS, BFS, LOCS } search_heuristic;
+  enum class search_heuristict
+  { DFS, RAN_DFS, BFS, LOCS, SHORTEST_PATH,
+    RAN_SHORTEST_PATH , SHORTEST_PATH_PER_FUNC } search_heuristic;
 
   source_locationt last_source_location;
 };

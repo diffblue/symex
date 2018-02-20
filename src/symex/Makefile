@@ -2,6 +2,7 @@ SRC = path_search.cpp \
       symex_cover.cpp \
       symex_main.cpp \
       symex_parse_options.cpp \
+      shortest_path_graph.cpp \
       # Empty last line
 
 OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \

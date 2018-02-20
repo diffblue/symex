@@ -82,23 +82,60 @@ void locst::build(const goto_functionst &goto_functions)
   }
 }
 
+void locst::output_reachable(std::ostream &out) const
+{
+  irep_idt function;
+  int reachable_count = 0;
+  int unreachable_count = 0;
+
+  for(unsigned l = 0; l < loc_vector.size(); l++)
+  {
+    const loct &loc = loc_vector[l];
+    if(loc.distance_to_property != -1)
+    {
+      reachable_count++;
+      if(function != loc.function)
+      {
+        function = loc.function;
+        out << "*** " << function << "\n";
+      }
+
+      out << "  L" << l << ": " << " " << as_string(ns, *loc.target)
+          << " path length: " << loc_vector[l].distance_to_property << "\n";
+
+      if(!loc.branch_target.is_nil())
+        out << "    T: " << loc.branch_target << "\n";
+    }
+    else
+      unreachable_count++;
+  }
+  out << "\n";
+  out << "The entry location is L" << entry_loc << ".\n";
+  out << "Number of reachable locs " << reachable_count << "\n";
+  out << "Number of unreachable locs " << unreachable_count << "\n";
+}
+
 void locst::output(std::ostream &out) const
 {
   irep_idt function;
 
-  for(unsigned l=0; l<loc_vector.size(); l++)
+  for(std::size_t l = 0; l < loc_vector.size(); l++)
   {
-    const loct &loc=loc_vector[l];
-    if(function!=loc.function)
+    const loct &loc = loc_vector[l];
+    if(function != loc.function)
     {
-      function=loc.function;
+      function = loc.function;
       out << "*** " << function << "\n";
     }
 
     out << "  L" << l << ": "
 //        << loc.target->type << " "
 //        << loc.target->location
-        << " " << as_string(ns, *loc.target) << "\n";
+        << " " << as_string(ns, *loc.target);
+    if(loc_vector[l].distance_to_property
+        != std::numeric_limits<std::size_t>::max())
+      out << " path length: " << loc_vector[l].distance_to_property;
+    out << "\n";
 
     if(!loc.branch_target.is_nil())
       out << "    T: " << loc.branch_target << "\n";

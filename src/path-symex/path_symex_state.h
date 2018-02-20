@@ -208,6 +208,11 @@ public:
     return depth;
   }
 
+  unsigned get_shortest_path() const
+  {
+    return locs.loc_vector[pc().loc_number].distance_to_property;
+  }
+
   void increase_depth()
   {
     depth++;
