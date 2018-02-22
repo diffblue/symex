@@ -186,7 +186,7 @@ int symex_parse_optionst::doit()
 
   if(cmdline.isset("show-properties"))
   {
-    show_properties(goto_model, get_ui());
+    show_properties(goto_model, get_message_handler(), get_ui());
     return 0;
   }
 
