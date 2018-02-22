@@ -11,15 +11,15 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_symex_state.h"
 
-#include <util/simplify_expr.h>
 #include <util/arith_tools.h>
-#include <util/decision_procedure.h>
-
 #include <util/c_types.h>
+#include <util/decision_procedure.h>
+#include <util/simplify_expr.h>
+
+#include <langapi/language_util.h>
 
 #ifdef DEBUG
 #include <iostream>
-#include <langapi/language_util.h>
 #endif
 
 path_symex_statet initial_state(
