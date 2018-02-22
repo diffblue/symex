@@ -12,7 +12,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "path_search.h"
 
 #include <util/simplify_expr.h>
-#include <util/time_stopping.h>
+
+#include <langapi/language_util.h>
 
 #include <solvers/flattening/bv_pointers.h>
 #include <solvers/sat/satcheck.h>
@@ -47,8 +48,8 @@ path_searcht::resultt path_searcht::operator()(
   number_of_locs=locs.size();
 
   // stop the time
-  start_time=current_time();
-  absolute_timet last_reported_time=start_time;
+  start_time=std::chrono::steady_clock::now();
+  auto last_reported_time=start_time;
 
   initialize_property_map(goto_functions);
 
@@ -105,18 +106,19 @@ path_searcht::resultt path_searcht::operator()(
 
       if(number_of_steps%10==0)
       {
-        absolute_timet now=current_time();
-        if(now>=last_reported_time+time_periodt(1000))
+        auto now=std::chrono::steady_clock::now();
+        if(now>=last_reported_time+std::chrono::seconds(1))
         {
           last_reported_time=now;
-          time_periodt running_time=now-start_time;
+          auto running_time=now-start_time;
           status() << "Queue " << queue.size()
                    << " thread " << state.get_current_thread()+1
                    << '/' << state.threads.size()
                    << " PC " << state.pc()
                    << " depth " << state.get_depth()
                    << " [" << number_of_steps << " steps, "
-                   << running_time << "s]" << messaget::eom;
+                   << std::chrono::duration<double>(running_time).count()
+                   << "s]" << messaget::eom;
         }
       }
 
@@ -198,9 +200,12 @@ void path_searcht::report_statistics()
            << " remaining after simplification"
            << messaget::eom;
 
-  time_periodt total_time=current_time()-start_time;
-  status() << "Runtime: " << total_time << "s total, "
-           << sat_time << "s SAT" << messaget::eom;
+  auto total_time=std::chrono::steady_clock::now()-start_time;
+  status() << "Runtime: "
+           << std::chrono::duration<double>(total_time).count()
+           << "s total, "
+           << std::chrono::duration<double>(solver_time).count()
+           << "s SAT" << messaget::eom;
 }
 
 void path_searcht::pick_state()
@@ -364,7 +369,7 @@ bool path_searcht::drop_state(const statet &state)
 
   // search time limit (--max-search-time)
   if(time_limit!=std::numeric_limits<unsigned>::max() &&
-     current_time().get_t()>start_time.get_t()+time_limit*1000)
+     std::chrono::steady_clock::now()>start_time+std::chrono::seconds(time_limit))
     return true;
 
   if(pc->is_assume() &&
@@ -415,7 +420,7 @@ void path_searcht::check_assertion(statet &state)
   status() << "Checking property " << property_name << eom;
 
   // take the time
-  absolute_timet sat_start_time=current_time();
+  auto solver_start_time=std::chrono::steady_clock::now();
 
   satcheckt satcheck;
   bv_pointerst bv_pointers(ns, satcheck);
@@ -430,7 +435,7 @@ void path_searcht::check_assertion(statet &state)
     number_of_failed_properties++;
   }
 
-  sat_time+=current_time()-sat_start_time;
+  solver_time+=std::chrono::steady_clock::now()-solver_start_time;
 }
 
 bool path_searcht::is_feasible(statet &state)
@@ -438,7 +443,7 @@ bool path_searcht::is_feasible(statet &state)
   status() << "Feasibility check" << eom;
 
   // take the time
-  absolute_timet sat_start_time=current_time();
+  auto solver_start_time=std::chrono::steady_clock::now();
 
   satcheckt satcheck;
   bv_pointerst bv_pointers(ns, satcheck);
@@ -448,7 +453,7 @@ bool path_searcht::is_feasible(statet &state)
 
   bool result=state.is_feasible(bv_pointers);
 
-  sat_time+=current_time()-sat_start_time;
+  solver_time+=std::chrono::steady_clock::now()-solver_start_time;
 
   return result;
 }

@@ -12,7 +12,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_SYMEX_PATH_SEARCH_H
 #define CPROVER_SYMEX_PATH_SEARCH_H
 
-#include <util/time_stopping.h>
+#include <chrono>
+
 #include <util/expanding_vector.h>
 
 #include <goto-programs/safety_checker.h>
@@ -89,8 +90,9 @@ public:
   std::size_t number_of_VCCs_after_simplification;
   std::size_t number_of_failed_properties;
   std::size_t number_of_locs;
-  absolute_timet start_time;
-  time_periodt sat_time;
+
+  std::chrono::time_point<std::chrono::steady_clock> start_time;
+  std::chrono::duration<double> solver_time;
 
   enum statust { NOT_REACHED, SUCCESS, FAILURE };
 
