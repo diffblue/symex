@@ -109,6 +109,7 @@ public:
   };
 
   void set_dfs() { search_heuristic=search_heuristict::DFS; }
+  void set_randomized_dfs() { search_heuristic=search_heuristict::RAN_DFS; }
   void set_bfs() { search_heuristic=search_heuristict::BFS; }
   void set_locs() { search_heuristic=search_heuristict::LOCS; }
 
@@ -122,7 +123,9 @@ protected:
   // The states most recently executed are at the head.
   typedef std::list<statet> queuet;
   queuet queue;
-
+  /// Pick random element of queue and move to front
+  /// \param queue  queue to be shuffled
+  void shuffle_queue(queuet &queue);
   // search heuristic
   void pick_state();
 
@@ -153,7 +156,8 @@ protected:
   unsigned unwind_limit;
   unsigned time_limit;
 
-  enum class search_heuristict { DFS, BFS, LOCS } search_heuristic;
+  enum class search_heuristict
+  { DFS, RAN_DFS, BFS, LOCS } search_heuristic;
 
   source_locationt last_source_location;
 };

@@ -21,6 +21,27 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <path-symex/path_symex.h>
 #include <path-symex/build_goto_trace.h>
 
+#include <random>
+
+void path_searcht::shuffle_queue(queuet &queue)
+{
+  if(queue.size()<=1)
+    return;
+
+  INVARIANT(queue.size()<std::numeric_limits<int>::max(),
+      "Queue size must be less than maximum integer");
+  // pick random state and move to front
+  int rand_i = rand() % queue.size();
+
+  std::list<statet>::iterator it = queue.begin();
+  for(int i=0; i<rand_i; i++)
+    it++;
+
+  statet tmp = *it;
+  queue.push_front(tmp);
+  queue.erase(it);
+}
+
 path_searcht::resultt path_searcht::operator()(
   const goto_functionst &goto_functions)
 {
@@ -144,6 +165,9 @@ path_searcht::resultt path_searcht::operator()(
       // execute
       path_symex(state, tmp_queue);
 
+      if(search_heuristic == search_heuristict::RAN_DFS)
+        shuffle_queue(tmp_queue);
+
       // put at head of main queue
       queue.splice(queue.begin(), tmp_queue);
     }
@@ -213,6 +237,7 @@ void path_searcht::pick_state()
   switch(search_heuristic)
   {
   case search_heuristict::DFS:
+  case search_heuristict::RAN_DFS:
     // Picking the first one (most recently added) is a DFS.
     return;
 
