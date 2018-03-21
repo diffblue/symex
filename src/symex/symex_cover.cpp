@@ -153,7 +153,7 @@ void symex_parse_optionst::report_cover(
 
           if(cmdline.isset("trace"))
           {
-            jsont &json_trace=result["trace"];
+            auto &json_trace=result["trace"].make_array();
             convert(ns, property.error_trace, json_trace);
           }
           else
