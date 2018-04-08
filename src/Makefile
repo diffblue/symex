@@ -1,4 +1,4 @@
-DIRS = path-symex symex
+DIRS = goto-locs path-symex symex
 
 include config.inc
 
@@ -22,11 +22,14 @@ setup-cbmc: setup-submodules
 cprover.dir:
 	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/src
 
+.PHONY: goto-locs.dir
+goto-locs.dir: cprover.dir
+
 .PHONY: path-symex.dir
 path-symex.dir: cprover.dir
 
 .PHONY: symex.dir
-symex.dir: cprover.dir path-symex.dir
+symex.dir: cprover.dir goto-locs.dir path-symex.dir
 
 $(patsubst %, %.dir, $(DIRS)):
 	## Entering $(basename $@)

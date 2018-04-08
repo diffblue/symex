@@ -18,7 +18,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/base_exceptions.h>
 #include <util/std_expr.h>
 
-#include "loc_ref.h"
+#include "goto-locs/loc_ref.h"
 
 class path_symex_stept;
 

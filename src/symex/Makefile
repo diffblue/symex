@@ -31,6 +31,7 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_util$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/miniz/miniz$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/json/json$(LIBEXT) \
+       ../goto-locs/goto-locs$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
 
 INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src

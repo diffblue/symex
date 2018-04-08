@@ -14,7 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/invariant.h>
 
-#include "locs.h"
+#include "../goto-locs/locs.h"
 #include "var_map.h"
 #include "path_symex_history.h"
 

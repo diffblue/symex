@@ -55,8 +55,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <cbmc/version.h>
 
-#include <path-symex/locs.h>
-
 #include "path_search.h"
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
