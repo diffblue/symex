@@ -201,11 +201,12 @@ void path_searcht::report_statistics()
            << messaget::eom;
 
   auto total_time=std::chrono::steady_clock::now()-start_time;
-  status() << "Runtime: "
+  status() << "Runtime total: "
            << std::chrono::duration<double>(total_time).count()
-           << "s total, "
+           << "s\n"
+              "Runtime decision procedure: "
            << std::chrono::duration<double>(solver_time).count()
-           << "s SAT" << messaget::eom;
+           << "s" << messaget::eom;
 }
 
 void path_searcht::pick_state()
