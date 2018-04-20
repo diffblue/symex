@@ -12,10 +12,11 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_GOTO_LOCS_LOOP_HEADS_H
 #define CPROVER_GOTO_LOCS_LOOP_HEADS_H
 
-#include <cassert>
 #include <vector>
 
 #include "locs.h"
+
+#include <util/invariant.h>
 
 struct loop_headst
 {
@@ -24,8 +25,8 @@ public:
 
   bool operator[](const loc_reft loc_ref) const
   {
-    assert(!loc_ref.is_nil());
-    assert(loc_ref.loc_number<map.size());
+    PRECONDITION(!loc_ref.is_nil());
+    DATA_INVARIANT(loc_ref.loc_number<map.size(), "loc_ref ok");
     return map[loc_ref.loc_number];
   }
 
