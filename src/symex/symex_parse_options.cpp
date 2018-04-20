@@ -33,9 +33,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/read_goto_binary.h>
 #include <goto-programs/remove_complex.h>
-#include <goto-programs/remove_exceptions.h>
 #include <goto-programs/remove_function_pointers.h>
-#include <goto-programs/remove_instanceof.h>
 #include <goto-programs/remove_returns.h>
 #include <goto-programs/remove_skip.h>
 #include <goto-programs/remove_unused_functions.h>
@@ -56,6 +54,9 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <cbmc/version.h>
 
 #include "path_search.h"
+
+#include <java_bytecode/remove_exceptions.h>
+#include <java_bytecode/remove_instanceof.h>
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
   parse_options_baset(SYMEX_OPTIONS, argc, argv),
