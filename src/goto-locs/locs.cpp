@@ -9,6 +9,8 @@ Author: Daniel Kroening, kroening@kroening.com
 /// \file
 /// Program Locations
 
+#include <langapi/language_util.h>
+
 #include "locs.h"
 
 locst::locst(
@@ -91,21 +93,34 @@ void locst::output(std::ostream &out) const
     if(f.second.first_loc.is_not_nil())
       entry_locs[f.second.first_loc]=f.first;
 
+  irep_idt function;
+
   for(unsigned l=0; l<loc_vector.size(); l++)
   {
     auto f_it=entry_locs.find(loc_reft(l));
     if(f_it!=entry_locs.end())
-      out << "*** " << f_it->second << "\n";
+    {
+      function=f_it->second;
+      out << "*** " << function << "\n";
+    }
 
     const loct &loc=loc_vector[l];
 
-    out << "  L" << l << ": "
-//        << loc.target->type << " "
-//        << loc.target->location
-        << " " << as_string(ns, *loc.target) << "\n";
+    out << "  L" << l << ": ";
+    //        << loc.target->type << " "
+    //        << loc.target->location
 
-    if(!loc.branch_target.is_nil())
-      out << "    T: " << loc.branch_target << "\n";
+    if(loc.target->is_goto())
+    {
+      out << "IF " << from_expr(ns, function, loc.target->guard)
+          << " THEN GOTO " << loc.branch_target;
+    }
+    else
+    {
+      out << as_string(ns, *loc.target);
+    }
+
+    out << '\n';
   }
 
   out << "\n";
