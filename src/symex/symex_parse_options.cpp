@@ -556,6 +556,14 @@ void symex_parse_optionst::report_failure()
     }
     break;
 
+  case ui_message_handlert::uit::JSON_UI:
+    {
+      json_objectt json_result;
+      json_result["cProverStatus"]=json_stringt("failure");
+      result() << json_result;
+    }
+    break;
+
   default:
     UNREACHABLE;
   }
