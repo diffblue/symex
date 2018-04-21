@@ -100,8 +100,10 @@ void locst::output(std::ostream &out) const
     auto f_it=entry_locs.find(loc_reft(l));
     if(f_it!=entry_locs.end())
     {
+      if(l!=0)
+        out << '\n';
       function=f_it->second;
-      out << "*** " << function << "\n";
+      out << "*** " << function << '\n';
     }
 
     const loct &loc=loc_vector[l];
