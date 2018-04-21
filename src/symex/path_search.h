@@ -30,6 +30,7 @@ public:
     show_vcc(false),
     eager_infeasibility(false),
     stop_on_fail(false),
+    unwinding_assertions(false),
     number_of_dropped_states(0),
     number_of_paths(0),
     number_of_steps(0),
@@ -79,6 +80,7 @@ public:
   bool show_vcc;
   bool eager_infeasibility;
   bool stop_on_fail;
+  bool unwinding_assertions;
 
   // statistics
   std::size_t number_of_dropped_states;
@@ -112,6 +114,11 @@ public:
   void set_bfs() { search_heuristic=search_heuristict::BFS; }
   void set_locs() { search_heuristic=search_heuristict::LOCS; }
 
+  void set_unwinding_assertions(bool _unwinding_assertions)
+  {
+    unwinding_assertions=_unwinding_assertions;
+  }
+
   typedef std::map<irep_idt, property_entryt> property_mapt;
   property_mapt property_map;
 
@@ -136,9 +143,9 @@ protected:
 
   bool execute(queuet::iterator state);
 
-  void check_assertion(statet &state);
-  bool is_feasible(statet &state);
-  void do_show_vcc(statet &state);
+  void check_assertion(statet &);
+  bool is_feasible(const statet &);
+  void do_show_vcc(statet &);
 
   bool drop_state(const statet &state);
 

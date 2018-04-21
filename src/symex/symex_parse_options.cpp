@@ -226,6 +226,9 @@ int symex_parse_optionst::doit()
       path_search.set_unwind_limit(
         unsafe_string2unsigned(cmdline.get_value("unwind")));
 
+    path_search.set_unwinding_assertions(
+      cmdline.isset("unwinding-assertions"));
+
     if(cmdline.isset("max-search-time"))
       path_search.set_time_limit(
         safe_string2unsigned(cmdline.get_value("max-search-time")));

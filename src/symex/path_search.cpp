@@ -335,6 +335,22 @@ bool path_searcht::drop_state(const statet &state)
       << " " << source_location
       << " thread " << state.get_current_thread() << eom;
 
+    if(stop && unwinding_assertions && is_feasible(state))
+    {
+      // record that failure
+      status() << "Unwinding assertion failed: " << id << eom;
+      irep_idt property=id2string(pc->function)+".unwind."+
+                        std::to_string(pc->loop_number);
+      auto &p=property_map[property];
+      if(p.description.empty())
+      {
+        p.source_location=pc->source_location;
+        p.description="unwinding assertion loop "+std::to_string(pc->loop_number);
+        number_of_failed_properties++;
+        p.status=FAILURE;
+      }
+    }
+
     if(stop)
       return true;
   }
@@ -439,7 +455,7 @@ void path_searcht::check_assertion(statet &state)
   solver_time+=std::chrono::steady_clock::now()-solver_start_time;
 }
 
-bool path_searcht::is_feasible(statet &state)
+bool path_searcht::is_feasible(const statet &state)
 {
   status() << "Feasibility check" << eom;
 
