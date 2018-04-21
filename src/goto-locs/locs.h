@@ -21,16 +21,12 @@ Author: Daniel Kroening, kroening@kroening.com
 struct loct
 {
 public:
-  loct(
-    goto_programt::const_targett _target,
-    const irep_idt &_function):
-    target(_target),
-    function(_function)
+  explicit loct(goto_programt::const_targett _target):
+    target(_target)
   {
   }
 
   goto_programt::const_targett target;
-  irep_idt function;
 
   // we only support a single branch target
   loc_reft branch_target;
@@ -73,16 +69,12 @@ public:
 
   static inline loc_reft begin()
   {
-    loc_reft tmp;
-    tmp.loc_number=0;
-    return tmp;
+    return loc_reft(0);
   }
 
   loc_reft end() const
   {
-    loc_reft tmp;
-    tmp.loc_number=loc_vector.size();
-    return tmp;
+    return loc_reft(loc_vector.size());
   }
 
   std::size_t size() const

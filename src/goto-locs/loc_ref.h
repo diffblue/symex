@@ -19,6 +19,11 @@ class loc_reft
 public:
   unsigned loc_number;
 
+  explicit loc_reft(std::size_t _number):
+    loc_number(_number) // potentially go down to unsigned
+  {
+  }
+
   loc_reft next_loc() const
   {
     loc_reft tmp=*this;
@@ -39,6 +44,11 @@ public:
   bool is_nil() const
   {
     return loc_number==nil().loc_number;
+  }
+
+  bool is_not_nil() const
+  {
+    return !is_nil();
   }
 
   loc_reft():loc_number(-1) // ugly conversion
