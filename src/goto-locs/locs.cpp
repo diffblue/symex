@@ -42,7 +42,7 @@ void locst::build(const goto_functionst &goto_functions)
       forall_goto_program_instructions(i_it, goto_function.body)
       {
         target_map[i_it]=end();
-        loc_vector.push_back(loct(i_it, f_it->first));
+        loc_vector.push_back(loct(i_it));
       }
     }
     else
@@ -84,16 +84,20 @@ void locst::build(const goto_functionst &goto_functions)
 
 void locst::output(std::ostream &out) const
 {
-  irep_idt function;
+  // first build a map of function entry locs
+  std::map<loc_reft, irep_idt> entry_locs;
+
+  for(const auto &f : function_map)
+    if(f.second.first_loc.is_not_nil())
+      entry_locs[f.second.first_loc]=f.first;
 
   for(unsigned l=0; l<loc_vector.size(); l++)
   {
+    auto f_it=entry_locs.find(loc_reft(l));
+    if(f_it!=entry_locs.end())
+      out << "*** " << f_it->second << "\n";
+
     const loct &loc=loc_vector[l];
-    if(function!=loc.function)
-    {
-      function=loc.function;
-      out << "*** " << function << "\n";
-    }
 
     out << "  L" << l << ": "
 //        << loc.target->type << " "
