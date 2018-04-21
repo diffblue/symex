@@ -47,7 +47,7 @@ class optionst;
   "(string-abstraction)(smt2)(z3)(refine)(outfile):" \
   "(no-arch)(arch):(floatbv)(fixedbv)" \
   "(round-to-nearest)(round-to-plus-inf)(round-to-minus-inf)(round-to-zero)" \
-  "(show-locs)(show-vcc)(show-properties)(show-symbol-table)" \
+  "(show-locs)(show-vcc)(show-loops)(show-properties)(show-symbol-table)" \
   "(drop-unused-functions)" \
   "(object-bits):" \
   OPT_SHOW_GOTO_FUNCTIONS \
