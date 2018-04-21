@@ -123,7 +123,7 @@ install:
     ( set -euo pipefail
       if [[ "${BUILD_PURPOSE}" =~ ^(test)$ ]]
       then
-        make -C src "CXX=${COMPILER}" "CXXFLAGS=-Wall -Werror -pedantic -O2 -g" -j2
+        make -C src "CXX=${COMPILER}" "CXXFLAGS=-Wall -Werror -Wno-deprecated-declarations -pedantic -O2 -g" -j2
       fi
       set +u
     )
