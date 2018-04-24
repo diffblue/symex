@@ -99,6 +99,12 @@ void symex_parse_optionst::get_command_line_options(optionst &options)
   // all checks supported by goto_check
   PARSE_OPTIONS_GOTO_CHECK(cmdline, options);
 
+  // simplification in goto_check
+  if(cmdline.isset("no-simplify"))
+    options.set_option("simplify", false);
+  else
+    options.set_option("simplify", true);
+
   // check assertions
   if(cmdline.isset("no-assertions"))
     options.set_option("assertions", false);
