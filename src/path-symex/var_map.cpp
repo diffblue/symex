@@ -17,6 +17,18 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/std_expr.h>
 #include <util/prefix.h>
 
+irep_idt ID_C_full_identifier;
+
+var_mapt::var_mapt(const namespacet &_ns):
+  ns(_ns.get_symbol_table(), new_symbols),
+  shared_count(0),
+  local_count(0),
+  nondet_count(0),
+  dynamic_count(0)
+{
+  ID_C_full_identifier="#full_identifier";
+}
+
 var_mapt::var_infot &var_mapt::operator()(
   const irep_idt &symbol,
   const irep_idt &suffix,
