@@ -142,17 +142,12 @@ protected:
   expanding_vectort<loc_datat> loc_data;
 
   bool execute(queuet::iterator state);
-
   void check_assertion(statet &);
   bool is_feasible(const statet &);
   void do_show_vcc(statet &);
-
-  bool drop_state(const statet &state);
-
+  bool drop_state(const statet &);
   void report_statistics();
-
-  void initialize_property_map(
-    const goto_functionst &goto_functions);
+  void initialize_property_map(const goto_functionst &);
 
   unsigned depth_limit;
   unsigned context_bound;
