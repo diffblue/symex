@@ -20,17 +20,12 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/std_expr.h>
 #include <util/symbol_table.h>
 
+extern irep_idt ID_C_full_identifier;
+
 class var_mapt
 {
 public:
-  explicit var_mapt(const namespacet &_ns):
-    ns(_ns.get_symbol_table(), new_symbols),
-    shared_count(0),
-    local_count(0),
-    nondet_count(0),
-    dynamic_count(0)
-  {
-  }
+  explicit var_mapt(const namespacet &_ns);
 
   struct var_infot
   {
