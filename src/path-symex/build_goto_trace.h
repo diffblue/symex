@@ -18,9 +18,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_symex_state.h"
 
-void build_goto_trace(
-  const path_symex_statet &state,
-  const decision_proceduret &decision_procedure,
-  goto_tracet &goto_trace);
+goto_tracet build_goto_trace(
+  const path_symex_statet &,
+  const decision_proceduret &);
 
 #endif // CPROVER_PATH_SYMEX_BUILD_GOTO_TRACE_H

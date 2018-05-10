@@ -12,10 +12,9 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "build_goto_trace.h"
 
 /// follow state history to build a goto trace
-void build_goto_trace(
+goto_tracet build_goto_trace(
   const path_symex_statet &state,
-  const decision_proceduret &decision_procedure,
-  goto_tracet &goto_trace)
+  const decision_proceduret &decision_procedure)
 {
   // follow the history in the state,
   // but in a forwards-fashion
@@ -23,6 +22,7 @@ void build_goto_trace(
   std::vector<path_symex_step_reft> steps;
   state.history.build_history(steps);
 
+  goto_tracet goto_trace;
   std::size_t step_nr;
 
   for(step_nr=0; step_nr<steps.size(); step_nr++)
@@ -113,4 +113,6 @@ void build_goto_trace(
 
     goto_trace.add_step(trace_step);
   }
+
+  return goto_trace;
 }

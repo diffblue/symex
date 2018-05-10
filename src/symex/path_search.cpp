@@ -437,7 +437,7 @@ void path_searcht::check_assertion(statet &state)
 
   if(!state.check_assertion(bv_pointers))
   {
-    build_goto_trace(state, bv_pointers, property_entry.error_trace);
+    property_entry.error_trace=build_goto_trace(state, bv_pointers);
     property_entry.status=FAILURE;
     number_of_failed_properties++;
   }
