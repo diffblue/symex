@@ -82,6 +82,14 @@ path_searcht::resultt path_searcht::operator()(
 
       debug() << eom;
 
+      // dead already?
+      if(!state.is_executable())
+      {
+        number_of_paths++;
+        continue;
+      }
+
+      // drop deliberately?
       if(drop_state(state))
       {
         number_of_dropped_states++;
@@ -89,12 +97,7 @@ path_searcht::resultt path_searcht::operator()(
         continue;
       }
 
-      if(!state.is_executable())
-      {
-        number_of_paths++;
-        continue;
-      }
-
+      // check feasibility
       if(eager_infeasibility &&
          state.last_was_branch() &&
          !is_feasible(state))
@@ -282,7 +285,7 @@ void path_searcht::do_show_vcc(statet &state)
   out << eom;
 }
 
-/// decide whether to drop a state
+/// decide whether to drop an overwise viable state
 bool path_searcht::drop_state(const statet &state)
 {
   goto_programt::const_targett pc=state.get_instruction();

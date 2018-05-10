@@ -699,6 +699,10 @@ void path_symext::return_from_function(path_symex_statet &state)
   if(thread.call_stack.empty())
   {
     state.disable_current_thread();
+
+    // main thread?
+    if(state.get_current_thread()==0)
+      state.make_terminated();
   }
   else
   {
@@ -895,7 +899,7 @@ void path_symext::operator()(
     state.record_step();
     state.next_pc();
     if(instruction.guard.is_false())
-      state.disable_current_thread();
+      state.make_infeasible();
     else
     {
       exprt guard=state.read(instruction.guard);

@@ -29,6 +29,7 @@ public:
     locs(_locs),
     inside_atomic_section(false),
     history(_path_symex_history),
+    status(statust::ACTIVE),
     current_thread(0),
     no_thread_interleavings(0),
     no_branches(0),
@@ -103,6 +104,31 @@ public:
   typedef std::vector<threadt> threadst;
   threadst threads;
 
+  void make_terminated()
+  {
+    status=statust::TERMINATED;
+  }
+
+  void make_infeasible()
+  {
+    status=statust::INFEASIBLE;
+  }
+
+  bool is_terminated() const
+  {
+    return status==statust::TERMINATED;
+  }
+
+  bool is_active() const
+  {
+    return status==statust::ACTIVE;
+  }
+
+  bool is_infeasible() const
+  {
+    return status==statust::INFEASIBLE;
+  }
+
   // warning: reference is not stable
   var_statet &get_var_state(const var_mapt::var_infot &var_info);
 
@@ -125,7 +151,8 @@ public:
 
   bool is_executable() const
   {
-    return !threads.empty() &&
+    return is_active() &&
+           !threads.empty() &&
            threads[current_thread].active;
   }
 
@@ -241,6 +268,7 @@ public:
   recursion_mapt recursion_map;
 
 protected:
+  enum class statust { ACTIVE, INFEASIBLE, TERMINATED } status;
   unsigned current_thread;
   unsigned no_thread_interleavings;
   unsigned no_branches;
