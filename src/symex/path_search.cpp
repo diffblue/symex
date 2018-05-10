@@ -400,13 +400,13 @@ bool path_searcht::drop_state(const statet &state)
 
 void path_searcht::check_assertion(statet &state)
 {
-  // keep statistics
-  number_of_VCCs++;
-
   const goto_programt::instructiont &instruction=
     *state.get_instruction();
 
-  assert(instruction.is_assert());
+  PRECONDITION(instruction.is_assert());
+
+  // keep statistics
+  number_of_VCCs++;
 
   irep_idt property_name=instruction.source_location.get_property_id();
   property_entryt &property_entry=property_map[property_name];

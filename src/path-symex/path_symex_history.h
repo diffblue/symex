@@ -12,7 +12,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_PATH_SYMEX_PATH_SYMEX_HISTORY_H
 #define CPROVER_PATH_SYMEX_PATH_SYMEX_HISTORY_H
 
-#include <cassert>
 #include <limits>
 
 #include <util/base_exceptions.h>
@@ -175,7 +174,7 @@ inline path_symex_stept &path_symex_step_reft::get() const
 {
   INVARIANT_STRUCTURED(
     history!=nullptr, nullptr_exceptiont, "history is null");
-  assert(!is_nil());
+  PRECONDITION(!is_nil());
   return history->step_container[index];
 }
 
