@@ -406,6 +406,8 @@ void path_searcht::check_assertion(statet &state)
   const goto_programt::instructiont &instruction=
     *state.get_instruction();
 
+  assert(instruction.is_assert());
+
   irep_idt property_name=instruction.source_location.get_property_id();
   property_entryt &property_entry=property_map[property_name];
 
@@ -438,6 +440,25 @@ void path_searcht::check_assertion(statet &state)
   if(!state.check_assertion(bv_pointers))
   {
     property_entry.error_trace=build_goto_trace(state, bv_pointers);
+
+    // add the assertion
+    goto_trace_stept trace_step;
+
+    trace_step.pc=state.get_instruction();
+    trace_step.thread_nr=state.get_current_thread();
+    trace_step.step_nr=property_entry.error_trace.steps.size();
+    trace_step.type=goto_trace_stept::typet::ASSERT;
+
+    const irep_idt &comment=
+      instruction.source_location.get_comment();
+
+    if(!comment.empty())
+      trace_step.comment=id2string(comment);
+    else
+      trace_step.comment="assertion";
+
+    property_entry.error_trace.add_step(trace_step);
+
     property_entry.status=FAILURE;
     number_of_failed_properties++;
   }

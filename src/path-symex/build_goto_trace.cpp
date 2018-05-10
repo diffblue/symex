@@ -23,9 +23,8 @@ goto_tracet build_goto_trace(
   state.history.build_history(steps);
 
   goto_tracet goto_trace;
-  std::size_t step_nr;
 
-  for(step_nr=0; step_nr<steps.size(); step_nr++)
+  for(std::size_t step_nr=0; step_nr<steps.size(); step_nr++)
   {
     const path_symex_stept &step=*steps[step_nr];
 
@@ -85,31 +84,6 @@ goto_tracet build_goto_trace(
     default:
       trace_step.type=goto_trace_stept::typet::LOCATION;
     }
-
-    goto_trace.add_step(trace_step);
-  }
-
-  // add assertion
-  const goto_programt::instructiont &instruction=
-    *state.get_instruction();
-
-  assert(instruction.is_assert());
-
-  {
-    goto_trace_stept trace_step;
-
-    trace_step.pc=state.get_instruction();
-    trace_step.thread_nr=state.get_current_thread();
-    trace_step.step_nr=step_nr;
-    trace_step.type=goto_trace_stept::typet::ASSERT;
-
-    const irep_idt &comment=
-      instruction.source_location.get_comment();
-
-    if(!comment.empty())
-      trace_step.comment=id2string(comment);
-    else
-      trace_step.comment="assertion";
 
     goto_trace.add_step(trace_step);
   }
