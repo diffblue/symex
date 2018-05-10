@@ -11,8 +11,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_search.h"
 
-#include <util/simplify_expr.h>
-
 #include <langapi/language_util.h>
 
 #include <solvers/flattening/bv_pointers.h>
@@ -85,6 +83,11 @@ path_searcht::resultt path_searcht::operator()(
       // dead already?
       if(!state.is_executable())
       {
+        goto_programt::const_targett pc=state.get_instruction();
+        debug() << "path is dead at "
+                << pc->source_location
+                << " thread " << state.get_current_thread()
+                << eom;
         number_of_paths++;
         continue;
       }
@@ -391,22 +394,6 @@ bool path_searcht::drop_state(const statet &state)
   if(time_limit!=std::numeric_limits<unsigned>::max() &&
      std::chrono::steady_clock::now()>start_time+std::chrono::seconds(time_limit))
     return true;
-
-  if(pc->is_assume() &&
-     simplify_expr(pc->guard, ns).is_false())
-  {
-    debug() << "aborting path on assume(false) at "
-            << pc->source_location
-            << " thread " << state.get_current_thread();
-
-    const irep_idt &c=pc->source_location.get_comment();
-    if(!c.empty())
-      debug() << ": " << c;
-
-    debug() << eom;
-
-    return true;
-  }
 
   return false;
 }
