@@ -49,6 +49,15 @@ void path_symext::symex_allocate(
   if(code.type().id()!=ID_pointer)
     throw "allocate expected to return a pointer";
 
+  // get a mode, from the call site
+  const goto_programt::instructiont &instruction=
+    *state.get_instruction();
+
+  const symbolt &calling_function=
+    state.var_map.ns.lookup(instruction.function);
+
+  const irep_idt &mode=calling_function.mode;
+
   // increment dynamic object counter
   unsigned dynamic_count=++state.var_map.dynamic_count;
 
@@ -119,7 +128,7 @@ void path_symext::symex_allocate(
       size_symbol.name="symex::"+id2string(size_symbol.base_name);
       size_symbol.is_lvalue=true;
       size_symbol.type=tmp_size.type();
-      size_symbol.mode=ID_C;
+      size_symbol.mode=mode;
 
       assign(state,
              size_symbol.symbol_expr(),
@@ -138,7 +147,7 @@ void path_symext::symex_allocate(
   value_symbol.is_lvalue=true;
   value_symbol.type=object_type;
   value_symbol.type.set("#dynamic", true);
-  value_symbol.mode=ID_C;
+  value_symbol.mode=mode;
 
   exprt rhs;
 
