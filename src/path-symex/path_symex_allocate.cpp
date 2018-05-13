@@ -44,7 +44,10 @@ void path_symext::symex_allocate(
   const side_effect_exprt &code)
 {
   if(code.operands().size()!=2)
-    throw "alloc expected to have two operands";
+    throw "allocate expected to have two operands";
+
+  if(code.type().id()!=ID_pointer)
+    throw "allocate expected to return a pointer";
 
   // increment dynamic object counter
   unsigned dynamic_count=++state.var_map.dynamic_count;
@@ -52,6 +55,13 @@ void path_symext::symex_allocate(
   exprt size=code.op0();
   typet object_type=nil_typet();
 
+  // is the object type given as return type?
+  if(code.type().id()==ID_pointer &&
+     code.type().subtype().id()!=ID_empty)
+  {
+    object_type=code.type().subtype();
+  }
+  else
   {
     exprt tmp_size=state.read(size); // to allow constant propagation
 
