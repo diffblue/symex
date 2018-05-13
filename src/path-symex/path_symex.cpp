@@ -118,18 +118,24 @@ void path_symext::assign(
   }
 
   // read the address of the lhs, with propagation
-  exprt lhs_address=state.read(address_of_exprt(lhs));
+  const exprt lhs_address=state.read(address_of_exprt(lhs));
+
+  // get object we are assigning to
+  const exprt dereferenced_lhs=
+    lhs_address.id()==ID_address_of?
+      to_address_of_expr(lhs_address).object():
+      dereference_exprt(lhs_address);
 
   // now SSA the lhs, no propagation
-  exprt ssa_lhs=
-    state.read_no_propagate(dereference_exprt(lhs_address));
+  const exprt ssa_lhs=
+    state.read_no_propagate(dereferenced_lhs);
 
   // read the rhs
-  exprt ssa_rhs=state.read(rhs);
+  const exprt ssa_rhs=state.read(rhs);
 
-  // start recursion on lhs
+  // start recursion on ssa_lhs
   exprt::operandst _guard; // start with empty guard
-  assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
+  assign_rec(state, _guard, dereferenced_lhs, ssa_lhs, ssa_rhs);
 }
 
 static irep_idt get_old_va_symbol(
@@ -211,7 +217,7 @@ void path_symext::symex_va_arg_next(
 void path_symext::assign_rec(
   path_symex_statet &state,
   exprt::operandst &guard,
-  const exprt &full_lhs,
+  const exprt &dereferenced_lhs,
   const exprt &ssa_lhs,
   const exprt &ssa_rhs)
 {
@@ -287,7 +293,7 @@ void path_symext::assign_rec(
     stept &step=*state.history;
 
     step.ssa_guard=conjunction(guard);
-    step.full_lhs=full_lhs;
+    step.full_lhs=dereferenced_lhs;
     step.ssa_lhs=new_ssa_lhs;
 
     if(ssa_rhs.is_nil())
@@ -302,7 +308,7 @@ void path_symext::assign_rec(
     const exprt &new_ssa_lhs=to_typecast_expr(ssa_lhs).op();
     typecast_exprt new_rhs(ssa_rhs, new_ssa_lhs.type());
 
-    assign_rec(state, guard, full_lhs, new_ssa_lhs, new_rhs);
+    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_rhs);
   }
   else if(ssa_lhs.id()==ID_member)
   {
@@ -328,7 +334,7 @@ void path_symext::assign_rec(
 
       with_exprt new_rhs(struct_op, member_name, ssa_rhs);
 
-      assign_rec(state, guard, full_lhs, struct_op, new_rhs);
+      assign_rec(state, guard, dereferenced_lhs, struct_op, new_rhs);
     }
     else if(compound_type.id()==ID_union)
     {
@@ -338,7 +344,7 @@ void path_symext::assign_rec(
       byte_extract_exprt
         new_ssa_lhs(byte_update_id(), struct_op, offset, ssa_rhs.type());
 
-      assign_rec(state, guard, full_lhs, new_ssa_lhs, ssa_rhs);
+      assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, ssa_rhs);
     }
     else
       throw "assign_rec: member expects struct or union type";
@@ -371,12 +377,12 @@ void path_symext::assign_rec(
 
     // true
     guard.push_back(cond);
-    assign_rec(state, guard, full_lhs, lhs_if_expr.true_case(), ssa_rhs);
+    assign_rec(state, guard, dereferenced_lhs, lhs_if_expr.true_case(), ssa_rhs);
     guard.pop_back();
 
     // false
     guard.push_back(not_exprt(cond));
-    assign_rec(state, guard, full_lhs, lhs_if_expr.false_case(), ssa_rhs);
+    assign_rec(state, guard, dereferenced_lhs, lhs_if_expr.false_case(), ssa_rhs);
     guard.pop_back();
   }
   else if(ssa_lhs.id()==ID_byte_extract_little_endian ||
@@ -410,7 +416,7 @@ void path_symext::assign_rec(
 
     const exprt new_ssa_lhs=byte_extract_expr.op();
 
-    assign_rec(state, guard, full_lhs, new_ssa_lhs, new_rhs);
+    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_rhs);
   }
   else if(ssa_lhs.id()==ID_struct)
   {
@@ -430,7 +436,7 @@ void path_symext::assign_rec(
       exprt::operandst::const_iterator lhs_it=operands.begin();
       forall_operands(it, ssa_rhs)
       {
-        assign_rec(state, guard, full_lhs, *lhs_it, *it);
+        assign_rec(state, guard, dereferenced_lhs, *lhs_it, *it);
         ++lhs_it;
       }
     }
@@ -446,7 +452,7 @@ void path_symext::assign_rec(
               components[i].get_name(),
               components[i].type()),
             state.var_map.ns);
-        assign_rec(state, guard, full_lhs, operands[i], new_rhs);
+        assign_rec(state, guard, dereferenced_lhs, operands[i], new_rhs);
       }
     }
   }
@@ -469,7 +475,7 @@ void path_symext::assign_rec(
       exprt::operandst::const_iterator lhs_it=operands.begin();
       forall_operands(it, ssa_rhs)
       {
-        assign_rec(state, guard, full_lhs, *lhs_it, *it);
+        assign_rec(state, guard, dereferenced_lhs, *lhs_it, *it);
         ++lhs_it;
       }
     }
@@ -485,7 +491,7 @@ void path_symext::assign_rec(
               from_integer(i, index_type()),
               array_type.subtype()),
             state.var_map.ns);
-        assign_rec(state, guard, full_lhs, operands[i], new_rhs);
+        assign_rec(state, guard, dereferenced_lhs, operands[i], new_rhs);
       }
     }
   }
