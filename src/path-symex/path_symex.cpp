@@ -293,7 +293,7 @@ void path_symext::assign_rec(
     stept &step=*state.history;
 
     step.ssa_guard=conjunction(guard);
-    step.full_lhs=dereferenced_lhs;
+    step.lhs=dereferenced_lhs;
     step.ssa_lhs=new_ssa_lhs;
 
     if(ssa_rhs.is_nil())
@@ -430,30 +430,29 @@ void path_symext::assign_rec(
 
     assert(operands.size()==components.size());
 
-    if(ssa_rhs.id()==ID_struct &&
-       ssa_rhs.operands().size()==components.size())
+    for(std::size_t i=0; i<components.size(); i++)
     {
-      exprt::operandst::const_iterator lhs_it=operands.begin();
-      forall_operands(it, ssa_rhs)
+      exprt new_rhs;
+
+      if(ssa_rhs.is_nil())
+        new_rhs=nil_exprt();
+      else if(ssa_rhs.id()==ID_struct &&
+              ssa_rhs.operands().size()==components.size())
+        new_rhs=ssa_rhs.operands()[i];
+      else
       {
-        assign_rec(state, guard, dereferenced_lhs, *lhs_it, *it);
-        ++lhs_it;
-      }
-    }
-    else
-    {
-      for(std::size_t i=0; i<components.size(); i++)
-      {
-        exprt new_rhs=
-          ssa_rhs.is_nil()?ssa_rhs:
-          simplify_expr(
+        new_rhs=simplify_expr(
             member_exprt(
               ssa_rhs,
               components[i].get_name(),
               components[i].type()),
             state.var_map.ns);
-        assign_rec(state, guard, dereferenced_lhs, operands[i], new_rhs);
       }
+
+      member_exprt new_dereferenced_lhs(
+        dereferenced_lhs, components[i].get_name(), components[i].type());
+
+      assign_rec(state, guard, new_dereferenced_lhs, operands[i], new_rhs);
     }
   }
   else if(ssa_lhs.id()==ID_array)

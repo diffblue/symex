@@ -42,15 +42,18 @@ goto_tracet build_goto_trace(
     {
     case ASSIGN:
       trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
-      trace_step.full_lhs=step.full_lhs;
+      trace_step.full_lhs=step.lhs;
       trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      // trace_step.lhs_object and trace_step.lhs_object_value
+      // are not filled
       break;
 
     case DECL:
       trace_step.type=goto_trace_stept::typet::DECL;
-      trace_step.full_lhs=step.full_lhs;
-      trace_step.lhs_object=ssa_exprt(step.full_lhs);
+      trace_step.full_lhs=step.lhs;
       trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      // trace_step.lhs_object and trace_step.lhs_object_value
+      // are not filled
       break;
 
     case DEAD:

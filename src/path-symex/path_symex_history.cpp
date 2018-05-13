@@ -30,7 +30,7 @@ void path_symex_stept::output(std::ostream &out) const
   out << "\n";
 
   out << "SSA Guard: " << from_expr(ssa_guard) << "\n";
-  out << "Full LHS: " << from_expr(full_lhs) << "\n";
+  out << "LHS: " << from_expr(lhs) << "\n";
   out << "SSA LHS: " << from_expr(ssa_lhs) << "\n";
   out << "SSA RHS: " << from_expr(ssa_rhs) << "\n";
   out << "\n";
