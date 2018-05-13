@@ -44,6 +44,7 @@ goto_tracet build_goto_trace(
       trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
       trace_step.full_lhs=step.lhs;
       trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      trace_step.assignment_type=goto_trace_stept::assignment_typet::STATE;
       // trace_step.lhs_object and trace_step.lhs_object_value
       // are not filled
       break;
@@ -52,6 +53,7 @@ goto_tracet build_goto_trace(
       trace_step.type=goto_trace_stept::typet::DECL;
       trace_step.full_lhs=step.lhs;
       trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      trace_step.assignment_type=goto_trace_stept::assignment_typet::STATE;
       // trace_step.lhs_object and trace_step.lhs_object_value
       // are not filled
       break;
@@ -65,11 +67,26 @@ goto_tracet build_goto_trace(
       break;
 
     case FUNCTION_CALL:
-      trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
+      // these have parameter assignments!
+      if(step.lhs.is_not_nil())
+      {
+        trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
+        trace_step.full_lhs=step.lhs;
+        trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+        trace_step.assignment_type=goto_trace_stept::assignment_typet::ACTUAL_PARAMETER;
+        // trace_step.lhs_object and trace_step.lhs_object_value
+        // are not filled
+      }
+      else
+      {
+        trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
+        trace_step.identifier=step.function_identifier;
+      }
       break;
 
     case END_FUNCTION:
       trace_step.type=goto_trace_stept::typet::FUNCTION_RETURN;
+      trace_step.identifier=step.function_identifier;
       break;
 
     case START_THREAD:

@@ -114,6 +114,9 @@ public:
 
   bool hidden;
 
+  // for function call and return
+  irep_idt function_identifier;
+
   path_symex_stept():
     branch(NON_BRANCH),
     thread_nr(0),

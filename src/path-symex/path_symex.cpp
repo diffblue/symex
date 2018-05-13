@@ -532,6 +532,9 @@ void path_symext::function_call_rec(
       throw
         "failed to find `"+id2string(function_identifier)+"' in function_map";
 
+    // record the function we call
+    state.history->function_identifier=function_identifier;
+
     const locst::function_entryt &function_entry=f_it->second;
 
     loc_reft function_entry_point=function_entry.first_loc;
@@ -711,6 +714,9 @@ void path_symext::return_from_function(path_symex_statet &state)
   }
   else
   {
+    // return function from which we return
+    state.history->function_identifier=thread.call_stack.back().current_function;
+
     // update statistics
     state.recursion_map[thread.call_stack.back().current_function]--;
 
@@ -854,7 +860,7 @@ void path_symext::operator()(
     break;
 
   case RETURN:
-    // sets the return value
+    // sets the return value, but doesn't actually return
     state.record_step();
     state.next_pc();
 
