@@ -715,7 +715,8 @@ void path_symext::return_from_function(path_symex_statet &state)
   else
   {
     // return function from which we return
-    state.history->function_identifier=thread.call_stack.back().current_function;
+    state.history->function_identifier=
+      thread.call_stack.back().current_function;
 
     // update statistics
     state.recursion_map[thread.call_stack.back().current_function]--;
