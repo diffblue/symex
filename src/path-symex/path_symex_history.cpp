@@ -29,7 +29,7 @@ void path_symex_stept::output(std::ostream &out) const
  */
   out << "\n";
 
-  out << "Guard: " << from_expr(guard) << "\n";
+  out << "SSA Guard: " << from_expr(ssa_guard) << "\n";
   out << "Full LHS: " << from_expr(full_lhs) << "\n";
   out << "SSA LHS: " << from_expr(ssa_lhs) << "\n";
   out << "SSA RHS: " << from_expr(ssa_rhs) << "\n";
@@ -41,8 +41,8 @@ void path_symex_stept::convert(decision_proceduret &dest) const
   if(ssa_rhs.is_not_nil())
     dest << equal_exprt(ssa_lhs, ssa_rhs);
 
-  if(guard.is_not_nil())
-    dest << guard;
+  if(ssa_guard.is_not_nil())
+    dest << ssa_guard;
 }
 
 void path_symex_step_reft::build_history(

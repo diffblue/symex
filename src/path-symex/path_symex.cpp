@@ -286,7 +286,7 @@ void path_symext::assign_rec(
     state.record_step();
     stept &step=*state.history;
 
-    step.guard=conjunction(guard);
+    step.ssa_guard=conjunction(guard);
     step.full_lhs=full_lhs;
     step.ssa_lhs=new_ssa_lhs;
 
@@ -660,7 +660,7 @@ void path_symext::function_call_rec(
   else if(function.id()==ID_if)
   {
     const if_exprt &if_expr=to_if_expr(function);
-    exprt guard=if_expr.cond();
+    exprt ssa_guard=if_expr.cond();
 
     // add a 'further state' for the false-case
 
@@ -668,7 +668,7 @@ void path_symext::function_call_rec(
       further_states.push_back(state);
       path_symex_statet &false_state=further_states.back();
       false_state.record_step();
-      false_state.history->guard=not_exprt(guard);
+      false_state.history->ssa_guard=not_exprt(ssa_guard);
       function_call_rec(
         further_states.back(), call, if_expr.false_case(), further_states);
     }
@@ -676,7 +676,7 @@ void path_symext::function_call_rec(
     // do the true-case in 'state'
     {
       state.record_step();
-      state.history->guard=guard;
+      state.history->ssa_guard=ssa_guard;
       function_call_rec(state, call, if_expr.true_case(), further_states);
     }
   }
@@ -758,9 +758,9 @@ void path_symext::do_goto(
   const loct &loc=state.locs[state.pc()];
   assert(!loc.branch_target.is_nil());
 
-  exprt guard=state.read(instruction.guard);
+  exprt ssa_guard=state.read(instruction.guard);
 
-  if(guard.is_true()) // branch taken always
+  if(ssa_guard.is_true()) // branch taken always
   {
     state.record_step();
     state.history->branch=stept::BRANCH_TAKEN;
@@ -768,7 +768,7 @@ void path_symext::do_goto(
     return; // we are done
   }
 
-  if(!guard.is_false())
+  if(!ssa_guard.is_false())
   {
     // branch taken case
     // copy the state into 'further_states'
@@ -776,15 +776,15 @@ void path_symext::do_goto(
     further_states.back().record_step();
     state.history->branch=stept::BRANCH_TAKEN;
     further_states.back().set_pc(loc.branch_target);
-    further_states.back().history->guard=guard;
+    further_states.back().history->ssa_guard=ssa_guard;
   }
 
   // branch not taken case
-  exprt negated_guard=not_exprt(guard);
+  exprt negated_ssa_guard=not_exprt(ssa_guard);
   state.record_step();
   state.history->branch=stept::BRANCH_NOT_TAKEN;
   state.next_pc();
-  state.history->guard=negated_guard;
+  state.history->ssa_guard=negated_ssa_guard;
 }
 
 void path_symext::do_goto(
@@ -802,7 +802,7 @@ void path_symext::do_goto(
     state.unwinding_map[state.pc()]++;
   }
 
-  exprt guard=state.read(instruction.guard);
+  exprt ssa_guard=state.read(instruction.guard);
 
   if(taken)
   {
@@ -810,15 +810,15 @@ void path_symext::do_goto(
     const loct &loc=state.locs[state.pc()];
     assert(!loc.branch_target.is_nil());
     state.set_pc(loc.branch_target);
-    state.history->guard=guard;
+    state.history->ssa_guard=ssa_guard;
     state.history->branch=stept::BRANCH_TAKEN;
   }
   else
   {
     // branch not taken case
-    exprt negated_guard=not_exprt(guard);
+    exprt negated_ssa_guard=not_exprt(ssa_guard);
     state.next_pc();
-    state.history->guard=negated_guard;
+    state.history->ssa_guard=negated_ssa_guard;
     state.history->branch=stept::BRANCH_NOT_TAKEN;
   }
 }
@@ -902,8 +902,8 @@ void path_symext::operator()(
       state.make_infeasible();
     else
     {
-      exprt guard=state.read(instruction.guard);
-      state.history->guard=guard;
+      exprt ssa_guard=state.read(instruction.guard);
+      state.history->ssa_guard=ssa_guard;
     }
     break;
 

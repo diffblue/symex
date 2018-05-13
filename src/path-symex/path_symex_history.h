@@ -104,8 +104,8 @@ public:
   // the instruction that was executed
   loc_reft pc;
 
-  exprt guard, ssa_rhs;
-  exprt full_lhs;
+  exprt ssa_guard, ssa_rhs;
+  exprt full_lhs; // pre SSA, but dereferenced
   symbol_exprt ssa_lhs;
 
   bool hidden;
@@ -113,7 +113,7 @@ public:
   path_symex_stept():
     branch(NON_BRANCH),
     thread_nr(0),
-    guard(nil_exprt()),
+    ssa_guard(nil_exprt()),
     ssa_rhs(nil_exprt()),
     full_lhs(nil_exprt()),
     hidden(false)

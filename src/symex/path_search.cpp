@@ -258,10 +258,10 @@ void path_searcht::do_show_vcc(statet &state)
 
   for(const auto &step_ref : steps)
   {
-    if(step_ref->guard.is_not_nil() &&
-       !step_ref->guard.is_true())
+    if(step_ref->ssa_guard.is_not_nil() &&
+       !step_ref->ssa_guard.is_true())
     {
-      std::string string_value=from_expr(ns, "", step_ref->guard);
+      std::string string_value=from_expr(ns, "", step_ref->ssa_guard);
       out << "{-" << count << "} " << string_value << '\n';
       count++;
     }

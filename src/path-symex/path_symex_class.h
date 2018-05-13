@@ -38,8 +38,8 @@ public:
 
     state.record_step();
     state.next_pc();
-    exprt guard=state.read(not_exprt(instruction.guard));
-    state.history->guard=guard;
+    exprt ssa_guard=state.read(not_exprt(instruction.guard));
+    state.history->ssa_guard=ssa_guard;
   }
 
   typedef path_symex_stept stept;
