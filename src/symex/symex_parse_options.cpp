@@ -25,6 +25,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <cpp/cpp_language.h>
 #include <java_bytecode/java_bytecode_language.h>
 
+#include <goto-programs/adjust_float_expressions.h>
 #include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/goto_inline.h>
 #include <goto-programs/initialize_goto_model.h>
@@ -45,7 +46,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/xml_goto_trace.h>
 
 #include <goto-symex/rewrite_union.h>
-#include <goto-symex/adjust_float_expressions.h>
 
 #include <goto-instrument/cover.h>
 
