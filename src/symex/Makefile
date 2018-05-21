@@ -6,7 +6,7 @@ SRC = path_search.cpp \
 
 OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/cpp/cpp$(LIBEXT) \
-       ../../$(CPROVER_DIR)/src/java_bytecode/java_bytecode$(LIBEXT) \
+       ../../$(CPROVER_DIR)/jbmc/src/java_bytecode/java_bytecode$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/linking/linking$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/big-int/big-int$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-programs/goto-programs$(LIBEXT) \
