@@ -21,8 +21,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <analyses/goto_check.h>
 
-#include <java_bytecode/java_bytecode_language.h>
-
 #include "path_search.h"
 
 class goto_functionst;

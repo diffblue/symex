@@ -34,7 +34,7 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../goto-locs/goto-locs$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
 
-INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src
+INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src -I ../../$(CPROVER_DIR)/jbmc/src
 
 LIBS =
 
