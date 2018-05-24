@@ -16,7 +16,7 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/assembler/assembler$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/solvers/solvers$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/util/util$(LIBEXT) \
-       ../../$(CPROVER_DIR)/src/goto-symex/adjust_float_expressions$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-programs/adjust_float_expressions$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-symex/rewrite_union$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/pointer-analysis/dereference$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover$(OBJEXT) \
@@ -29,8 +29,8 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_mcdc$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_other$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_util$(OBJEXT) \
-       ../../$(CPROVER_DIR)/src/miniz/miniz$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/json/json$(LIBEXT) \
+       ../../$(CPROVER_DIR)/jbmc/src/miniz/miniz$(OBJEXT) \
        ../goto-locs/goto-locs$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
 
