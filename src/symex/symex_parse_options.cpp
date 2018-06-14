@@ -22,6 +22,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/unicode.h>
 
 #include <ansi-c/ansi_c_language.h>
+#include <ansi-c/cprover_library.h>
 #include <cpp/cpp_language.h>
 #include <java_bytecode/java_bytecode_language.h>
 
@@ -343,7 +344,7 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
   try
   {
     // we add the library
-    link_to_library(goto_model, ui_message_handler);
+    link_to_library(goto_model, ui_message_handler, cprover_c_library_factory);
 
     // add generic checks
     status() << "Generic Property Instrumentation" << eom;

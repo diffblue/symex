@@ -12,6 +12,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "path_symex.h"
 
 #include <util/arith_tools.h>
+#include <util/expr_initializer.h>
 #include <util/simplify_expr.h>
 #include <util/string2int.h>
 #include <util/byte_operators.h>
@@ -19,8 +20,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/base_type.h>
 #include <util/prefix.h>
 #include <util/c_types.h>
-
-#include <linking/zero_initializer.h>
 
 #include <pointer-analysis/dereference.h>
 

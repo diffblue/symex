@@ -11,10 +11,9 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_symex_class.h"
 
-#include <linking/zero_initializer.h>
-
 #include <util/arith_tools.h>
 #include <util/c_types.h>
+#include <util/expr_initializer.h>
 #include <util/pointer_offset_size.h>
 
 inline static typet c_sizeof_type_rec(const exprt &expr)
