@@ -52,8 +52,6 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <langapi/mode.h>
 
-#include <cbmc/version.h>
-
 #include "path_search.h"
 
 #include <java_bytecode/remove_exceptions.h>
@@ -580,12 +578,7 @@ void symex_parse_optionst::report_failure()
 void symex_parse_optionst::help()
 {
   std::cout <<
-    "\n"
-    "* *     Symex " CBMC_VERSION " - Copyright (C) 2013 ";
-
-  std::cout << "(" << (sizeof(void *)*8) << "-bit version)";
-
-  std::cout << "     * *\n";
+    '\n' << banner_string("Symex", CBMC_VERSION) << '\n';
 
   std::cout <<
     "* *                    Daniel Kroening                      * *\n"
