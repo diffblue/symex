@@ -103,6 +103,13 @@ void path_symext::assign(
       symex_allocate(state, lhs, side_effect_expr);
       return;
     }
+    else if(statement==ID_java_new_array_data ||
+            statement==ID_cpp_new ||
+            statement==ID_cpp_new_array)
+    {
+      symex_new(state, lhs, side_effect_expr);
+      return;
+    }
     else if(statement==ID_nondet)
     {
       // done in statet:instantiate_rec

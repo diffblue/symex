@@ -186,3 +186,65 @@ void path_symext::symex_allocate(
 
   assign(state, lhs, rhs);
 }
+
+void path_symext::symex_new(
+  path_symex_statet &state,
+  const exprt &lhs,
+  const side_effect_exprt &code)
+{
+  if(code.operands().size()!=2)
+    throw "new expected to have two operands";
+
+  if(code.type().id()!=ID_pointer)
+    throw "new expected to return a pointer";
+
+  const auto &pointer_type = to_pointer_type(code.type());
+
+  const irep_idt &statement=code.get_statement();
+
+  const irep_idt mode=
+    statement==ID_java_new_array_data?ID_java:ID_C;
+
+  const bool do_array =
+    (code.get(ID_statement) == ID_cpp_new_array ||
+     code.get(ID_statement) == ID_java_new_array_data);
+
+  typet type;
+
+  if(do_array)
+  {
+    exprt size_arg = static_cast<const exprt &>(code.find(ID_size));
+    type = array_typet(pointer_type.subtype(), size_arg);
+  }
+  else
+    type = pointer_type.subtype();
+
+  // increment dynamic object counter
+  const unsigned dynamic_count=++state.var_map.dynamic_count;
+
+  // value
+  symbolt value_symbol;
+
+  value_symbol.base_name="dynamic_object"+std::to_string(dynamic_count);
+  value_symbol.name="symex_dynamic::"+id2string(value_symbol.base_name);
+  value_symbol.is_lvalue=true;
+  value_symbol.type=type;
+  value_symbol.type.set("#dynamic", true);
+  value_symbol.mode=mode;
+
+  exprt rhs;
+
+  if(do_array)
+  {
+    index_exprt index_expr(pointer_type.subtype());
+    index_expr.array()=value_symbol.symbol_expr();
+    index_expr.index()=from_integer(0, index_type());
+    rhs=address_of_exprt(index_expr, pointer_type);
+  }
+  else
+  {
+    rhs=address_of_exprt(value_symbol.symbol_expr(), pointer_type);
+  }
+
+  assign(state, lhs, rhs);
+}
