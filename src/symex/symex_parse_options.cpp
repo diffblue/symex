@@ -25,6 +25,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <ansi-c/cprover_library.h>
 #include <cpp/cpp_language.h>
 #include <java_bytecode/java_bytecode_language.h>
+#include <java_bytecode/remove_exceptions.h>
+#include <java_bytecode/remove_instanceof.h>
 
 #include <goto-programs/adjust_float_expressions.h>
 #include <goto-programs/goto_convert_functions.h>
@@ -52,10 +54,9 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <langapi/mode.h>
 
-#include "path_search.h"
+#include <cbmc/version.h>
 
-#include <java_bytecode/remove_exceptions.h>
-#include <java_bytecode/remove_instanceof.h>
+#include "path_search.h"
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
   parse_options_baset(SYMEX_OPTIONS, argc, argv),
@@ -368,9 +369,9 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
 
     // Java throw and catch -> explicit exceptional return variables:
     // This introduces instanceof, so order is important:
-    remove_exceptions(goto_model);
+    remove_exceptions(goto_model, get_message_handler());
     // Java instanceof -> clsid comparison:
-    remove_instanceof(goto_model);
+    remove_instanceof(goto_model, get_message_handler());
     rewrite_union(goto_model);
     adjust_float_expressions(goto_model);
 
