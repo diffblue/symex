@@ -9,25 +9,25 @@ Author: Daniel Kroening, kroening@kroening.com
 /// \file
 /// Concrete Symbolic Transformer
 
-#include "path_symex.h"
-
 #include <util/arith_tools.h>
-#include <util/expr_initializer.h>
-#include <util/simplify_expr.h>
-#include <util/string2int.h>
-#include <util/byte_operators.h>
-#include <util/pointer_offset_size.h>
 #include <util/base_type.h>
-#include <util/prefix.h>
+#include <util/byte_operators.h>
 #include <util/c_types.h>
+#include <util/expr_initializer.h>
+#include <util/pointer_offset_size.h>
+#include <util/prefix.h>
+#include <util/simplify_expr.h>
+#include <util/std_expr.h>
+#include <util/string2int.h>
 
 #include <pointer-analysis/dereference.h>
-
-#include "path_symex_class.h"
 
 #ifdef DEBUG
 #include <iostream>
 #endif
+
+#include "path_symex.h"
+#include "path_symex_class.h"
 
 bool path_symext::propagate(const exprt &src)
 {
@@ -975,7 +975,35 @@ void path_symext::operator()(
       const codet &code=instruction.code;
       const irep_idt &statement=code.get_statement();
 
-      if(statement==ID_expression)
+      if(statement==ID_array_set)
+      {
+        if(code.operands().size()!=2)
+          throw "array_set expects two operands";
+
+        // read the address of the lhs, with propagation
+        const exprt lhs=state.read(code.op0());
+
+        // must be address_of index of array symbol
+        if(lhs.id()!=ID_address_of ||
+           lhs.operands().size()!=1)
+          throw "array_set expects address";
+
+        if(lhs.op0().id()!=ID_index ||
+           lhs.op0().operands().size()!=2)
+          throw "array_set expects address_of index";
+
+        const exprt &array=lhs.op0().op0();
+
+        if(array.id()!=ID_symbol)
+          throw "array_set expects address_of of index of symbol";
+
+        const auto &array_type=to_array_type(array.type());
+
+        const exprt rhs=array_of_exprt(code.op1(), array_type);
+
+        assign(state, array, rhs);
+      }
+      else if(statement==ID_expression)
       {
         // like SKIP
       }
