@@ -192,8 +192,8 @@ void path_symext::symex_new(
   const exprt &lhs,
   const side_effect_exprt &code)
 {
-  if(code.operands().size()!=2)
-    throw "new expected to have two operands";
+  if(code.operands().size()!=0)
+    throw "new expected to have no operands";
 
   if(code.type().id()!=ID_pointer)
     throw "new expected to return a pointer";
