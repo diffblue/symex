@@ -20,6 +20,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/options.h>
 #include <util/memory_info.h>
 #include <util/unicode.h>
+#include <util/version.h>
 
 #include <ansi-c/ansi_c_language.h>
 #include <ansi-c/cprover_library.h>
@@ -53,8 +54,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-instrument/cover.h>
 
 #include <langapi/mode.h>
-
-#include <cbmc/version.h>
 
 #include "path_search.h"
 
