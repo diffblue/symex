@@ -22,20 +22,16 @@ Author: Daniel Kroening, kroening@kroening.com
 path_searcht::resultt path_searcht::operator()(
   const goto_functionst &goto_functions)
 {
-  locst locs(ns);
-  var_mapt var_map(ns);
-
-  locs.build(goto_functions);
+  path_symex_configt config(ns);
+  config.set_message_handler(get_message_handler());
+  config.locs.build(goto_functions);
 
   status() << "Starting symbolic simulation" << eom;
-
-  path_symex_configt config;
-  config.set_message_handler(get_message_handler());
 
   // this is the container for the history-forest
   path_symex_historyt history;
 
-  queue.push_back(initial_state(config, var_map, locs, history));
+  queue.push_back(initial_state(config));
 
   // set up the statistics
   number_of_dropped_states=0;
@@ -46,7 +42,7 @@ path_searcht::resultt path_searcht::operator()(
   number_of_infeasible_paths=0;
   number_of_VCCs_after_simplification=0;
   number_of_failed_properties=0;
-  number_of_locs=locs.size();
+  number_of_locs=config.locs.size();
 
   // stop the time
   start_time=std::chrono::steady_clock::now();

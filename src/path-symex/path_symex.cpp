@@ -178,7 +178,7 @@ void path_symext::symex_va_arg_next(
     zero_initializer(
       lhs.type(),
       code.source_location(),
-      state.var_map.ns);
+      state.config.ns);
 
   if(!id.empty())
   {
@@ -202,7 +202,7 @@ void path_symext::symex_va_arg_next(
       else
         id=base+"0";
 
-      const var_mapt::var_infot &var_info=state.var_map[id];
+      const var_mapt::var_infot &var_info=state.config.var_map[id];
 
       if(var_info.full_identifier==id)
       {
@@ -225,7 +225,7 @@ void path_symext::assign_rec(
   const exprt &ssa_lhs,
   const exprt &ssa_rhs)
 {
-  // const typet &ssa_lhs_type=state.var_map.ns.follow(ssa_lhs.type());
+  // const typet &ssa_lhs_type=state.config.ns.follow(ssa_lhs.type());
 
   #ifdef DEBUG
   std::cout << "assign_rec: " << ssa_lhs.pretty() << '\n';
@@ -250,7 +250,7 @@ void path_symext::assign_rec(
     std::cout << "full identifier: " << full_identifier << '\n';
     #endif
 
-    var_mapt::var_infot &var_info=state.var_map[full_identifier];
+    var_mapt::var_infot &var_info=state.config.var_map[full_identifier];
     assert(var_info.full_identifier==full_identifier);
 
     // increase the SSA counter and produce new SSA symbol expression
@@ -277,7 +277,7 @@ void path_symext::assign_rec(
     else
     {
       // consistency check
-      if(!base_type_eq(ssa_rhs.type(), new_ssa_lhs.type(), state.var_map.ns))
+      if(!base_type_eq(ssa_rhs.type(), new_ssa_lhs.type(), state.config.ns))
       {
         #ifdef DEBUG
         std::cout << "ssa_rhs: " << ssa_rhs.pretty() << '\n';
@@ -324,7 +324,7 @@ void path_symext::assign_rec(
     const exprt &struct_op=ssa_lhs_member_expr.struct_op();
 
     const typet &compound_type=
-      state.var_map.ns.follow(struct_op.type());
+      state.config.ns.follow(struct_op.type());
 
     if(compound_type.id()==ID_struct)
     {
@@ -425,7 +425,7 @@ void path_symext::assign_rec(
   else if(ssa_lhs.id()==ID_struct)
   {
     const struct_typet &struct_type=
-      to_struct_type(state.var_map.ns.follow(ssa_lhs.type()));
+      to_struct_type(state.config.ns.follow(ssa_lhs.type()));
     const struct_typet::componentst &components=
       struct_type.components();
 
@@ -450,7 +450,7 @@ void path_symext::assign_rec(
               ssa_rhs,
               components[i].get_name(),
               components[i].type()),
-            state.var_map.ns);
+            state.config.ns);
       }
 
       member_exprt new_dereferenced_lhs(
@@ -461,7 +461,7 @@ void path_symext::assign_rec(
   }
   else if(ssa_lhs.id()==ID_array)
   {
-    const typet &ssa_lhs_type=state.var_map.ns.follow(ssa_lhs.type());
+    const typet &ssa_lhs_type=state.config.ns.follow(ssa_lhs.type());
 
     if(ssa_lhs_type.id()!=ID_array)
       throw "array constructor must have array type";
@@ -493,7 +493,7 @@ void path_symext::assign_rec(
               ssa_rhs,
               from_integer(i, index_type()),
               array_type.subtype()),
-            state.var_map.ns);
+            state.config.ns);
         assign_rec(state, guard, dereferenced_lhs, operands[i], new_rhs);
       }
     }
@@ -530,9 +530,9 @@ void path_symext::function_call_rec(
 
     // find the function
     locst::function_mapt::const_iterator f_it=
-      state.locs.function_map.find(function_identifier);
+      state.config.locs.function_map.find(function_identifier);
 
-    if(f_it==state.locs.function_map.end())
+    if(f_it==state.config.locs.function_map.end())
       throw
         "failed to find `"+id2string(function_identifier)+"' in function_map";
 
@@ -585,7 +585,7 @@ void path_symext::function_call_rec(
         it!=function_entry.local_variables.end();
         it++)
     {
-      unsigned nr=state.var_map[*it].number;
+      unsigned nr=state.config.var_map[*it].number;
       thread.call_stack.back().saved_local_vars[nr]=thread.local_vars[nr];
     }
     #endif
@@ -640,7 +640,7 @@ void path_symext::function_call_rec(
             +std::to_string(va_count);
 
         // clear the var_state, since the type may have changed
-        auto &var_info=state.var_map(id, irep_idt(), rhs.type());
+        auto &var_info=state.config.var_map(id, irep_idt(), rhs.type());
         var_info.type=rhs.type();
         state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
 
@@ -770,7 +770,7 @@ void path_symext::do_goto(
     state.unwinding_map[state.pc()]++;
   }
 
-  const loct &loc=state.locs[state.pc()];
+  const loct &loc=state.get_loc();
   assert(!loc.branch_target.is_nil());
 
   exprt ssa_guard=state.read(instruction.guard);
@@ -822,7 +822,7 @@ void path_symext::do_goto(
   if(taken)
   {
     // branch taken case
-    const loct &loc=state.locs[state.pc()];
+    const loct &loc=state.get_loc();
     assert(!loc.branch_target.is_nil());
     state.set_pc(loc.branch_target);
     state.history->ssa_guard=ssa_guard;
@@ -875,7 +875,7 @@ void path_symext::operator()(
 
   case START_THREAD:
     {
-      const loct &loc=state.locs[state.pc()];
+      const loct &loc=state.get_loc();
       assert(!loc.branch_target.is_nil());
 
       state.record_step();

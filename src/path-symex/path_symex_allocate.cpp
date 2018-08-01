@@ -53,12 +53,12 @@ void path_symext::symex_allocate(
     *state.get_instruction();
 
   const symbolt &calling_function=
-    state.var_map.ns.lookup(instruction.function);
+    state.config.ns.lookup(instruction.function);
 
   const irep_idt &mode=calling_function.mode;
 
   // increment dynamic object counter
-  unsigned dynamic_count=++state.var_map.dynamic_count;
+  unsigned dynamic_count=++state.config.var_map.dynamic_count;
 
   exprt size=code.op0();
   typet object_type=nil_typet();
@@ -89,7 +89,7 @@ void path_symext::symex_allocate(
       if(tmp_type.is_not_nil())
       {
         // Did the size get multiplied?
-        mp_integer elem_size=pointer_offset_size(tmp_type, state.var_map.ns);
+        mp_integer elem_size=pointer_offset_size(tmp_type, state.config.ns);
         mp_integer alloc_size;
         if(elem_size<0 || to_integer(tmp_size, alloc_size))
         {
@@ -141,7 +141,7 @@ void path_symext::symex_allocate(
   symbolt value_symbol;
 
   value_symbol.base_name=
-    "dynamic_object"+std::to_string(state.var_map.dynamic_count);
+    "dynamic_object"+std::to_string(state.config.var_map.dynamic_count);
   value_symbol.name="symex_dynamic::"+id2string(value_symbol.base_name);
   value_symbol.is_lvalue=true;
   value_symbol.type=object_type;
@@ -173,7 +173,7 @@ void path_symext::symex_allocate(
     exprt zero=zero_initializer(
       value_symbol.type,
       code.source_location(),
-      state.var_map.ns);
+      state.config.ns);
 
     if(zero.is_not_nil())
     {
@@ -220,7 +220,7 @@ void path_symext::symex_new(
     type = pointer_type.subtype();
 
   // increment dynamic object counter
-  const unsigned dynamic_count=++state.var_map.dynamic_count;
+  const unsigned dynamic_count=++state.config.var_map.dynamic_count;
 
   // value
   symbolt value_symbol;

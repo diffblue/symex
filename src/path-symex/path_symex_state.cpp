@@ -31,18 +31,15 @@ void path_symex_configt::no_body(const irep_idt &identifier)
   }
 }
 
-path_symex_statet initial_state(
-  path_symex_configt &config,
-  var_mapt &var_map,
-  const locst &locs,
-  path_symex_historyt &path_symex_history)
+path_symex_statet initial_state(path_symex_configt &config)
 {
-  path_symex_statet s(config, var_map, locs, path_symex_history);
+  path_symex_statet s(config);
 
   // create one new thread
   path_symex_statet::threadt &thread=s.add_thread();
-  thread.pc=locs.entry_loc; // set its PC
+  thread.pc=config.locs.entry_loc; // set its PC
   s.set_current_thread(0);
+  s.history=path_symex_step_reft(config.path_symex_history);
 
   return s;
 }

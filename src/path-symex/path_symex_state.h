@@ -12,26 +12,14 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 #define CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 
-#include <util/invariant.h>
-
-#include "../goto-locs/locs.h"
-#include "var_map.h"
 #include "path_symex_config.h"
-#include "path_symex_history.h"
 
 struct path_symex_statet
 {
 public:
-  path_symex_statet(
-    path_symex_configt &_config,
-    var_mapt &_var_map,
-    const locst &_locs,
-    path_symex_historyt &_path_symex_history):
+  explicit path_symex_statet(path_symex_configt &_config):
     config(_config),
-    var_map(_var_map),
-    locs(_locs),
     inside_atomic_section(false),
-    history(_path_symex_history),
     status(statust::ACTIVE),
     current_thread(0),
     no_thread_interleavings(0),
@@ -40,13 +28,9 @@ public:
   {
   }
 
-  typedef path_symex_stept stept;
-
-  // These are tied to a particular var_map
-  // and a particular program.
   path_symex_configt &config;
-  var_mapt &var_map;
-  const locst &locs;
+
+  typedef path_symex_stept stept;
 
   // the value of a variable
   struct var_statet
@@ -148,9 +132,14 @@ public:
     current_thread=_thread;
   }
 
+  loct &get_loc() const
+  {
+    return config.locs[pc()];
+  }
+
   goto_programt::const_targett get_instruction() const
   {
-    return locs[pc()].target;
+    return get_loc().target;
   }
 
   bool is_executable() const
@@ -304,10 +293,6 @@ protected:
   bool is_symbol_member_index(const exprt &src) const;
 };
 
-path_symex_statet initial_state(
-  path_symex_configt &,
-  var_mapt &var_map,
-  const locst &locs,
-  path_symex_historyt &);
+path_symex_statet initial_state(path_symex_configt &);
 
 #endif // CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H

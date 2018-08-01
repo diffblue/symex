@@ -37,7 +37,7 @@ exprt path_symex_statet::read(const exprt &src, bool propagate)
 
   exprt tmp4=instantiate_rec(tmp3, propagate);
 
-  exprt tmp5=simplify_expr(tmp4, var_map.ns);
+  exprt tmp5=simplify_expr(tmp4, config.ns);
 
   #ifdef DEBUG
   std::cout << " ==> " << from_expr(tmp5) << '\n';
@@ -50,10 +50,10 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
 {
   #ifdef DEBUG
   std::cout << "expand_structs_and_arrays: "
-            << from_expr(var_map.ns, "", src) << '\n';
+            << from_expr(config.ns, "", src) << '\n';
   #endif
 
-  const typet &src_type=var_map.ns.follow(src.type());
+  const typet &src_type=config.ns.follow(src.type());
 
   if(src_type.id()==ID_struct) // src is a struct
   {
@@ -108,7 +108,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
 
         // array constructor?
         if(src.id()==ID_array)
-          new_src=simplify_expr(new_src, var_map.ns);
+          new_src=simplify_expr(new_src, config.ns);
 
         // recursive call
         result.operands()[i]=expand_structs_and_arrays(new_src);
@@ -147,7 +147,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
 
       // vector constructor?
       if(src.id()==ID_vector)
-        new_src=simplify_expr(new_src, var_map.ns);
+        new_src=simplify_expr(new_src, config.ns);
 
       // recursive call
       operands[i]=expand_structs_and_arrays(new_src);
@@ -167,7 +167,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
   {
     const index_exprt &index_expr=to_index_expr(src);
     exprt index_tmp1=read(index_expr.index(), propagate);
-    exprt index_tmp2=simplify_expr(index_tmp1, var_map.ns);
+    exprt index_tmp2=simplify_expr(index_tmp1, config.ns);
 
     if(!index_tmp2.is_constant())
     {
@@ -217,7 +217,7 @@ exprt path_symex_statet::instantiate_rec(
 {
   #ifdef DEBUG
   std::cout << "instantiate_rec: "
-            << from_expr(var_map.ns, "", src) << '\n';
+            << from_expr(config.ns, "", src) << '\n';
   #endif
 
   // check whether this is a symbol(.member|[index])*
@@ -245,14 +245,14 @@ exprt path_symex_statet::instantiate_rec(
 
     if(statement==ID_nondet)
     {
-      irep_idt id="symex::nondet"+std::to_string(var_map.nondet_count);
-      var_map.nondet_count++;
+      irep_idt id="symex::nondet"+std::to_string(config.var_map.nondet_count);
+      config.var_map.nondet_count++;
 
       auxiliary_symbolt nondet_symbol;
       nondet_symbol.name=id;
       nondet_symbol.base_name=id;
       nondet_symbol.type=src.type();
-      var_map.new_symbols.add(nondet_symbol);
+      config.var_map.new_symbols.add(nondet_symbol);
 
       return nondet_symbol.symbol_expr();
     }
@@ -269,21 +269,21 @@ exprt path_symex_statet::instantiate_rec(
   {
     // dereferencet produces these for stuff like *(T *)123.
     // Will transform into __CPROVER_memory[] eventually.
-    irep_idt id="symex::deref"+std::to_string(var_map.nondet_count);
-    var_map.nondet_count++;
+    irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
+    config.var_map.nondet_count++;
 
     auxiliary_symbolt nondet_symbol;
     nondet_symbol.name=id;
     nondet_symbol.base_name=id;
     nondet_symbol.type=src.type();
-    var_map.new_symbols.add(nondet_symbol);
+    config.var_map.new_symbols.add(nondet_symbol);
 
     return nondet_symbol.symbol_expr();
   }
   else if(src.id()==ID_member)
   {
     const typet &compound_type=
-      var_map.ns.follow(to_member_expr(src).struct_op().type());
+      config.ns.follow(to_member_expr(src).struct_op().type());
 
     if(compound_type.id()==ID_struct)
     {
@@ -311,14 +311,14 @@ exprt path_symex_statet::instantiate_rec(
   }
   else if(src.id()=="dereference_error")
   {
-    irep_idt id="symex::deref"+std::to_string(var_map.nondet_count);
-    var_map.nondet_count++;
+    irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
+    config.var_map.nondet_count++;
 
     auxiliary_symbolt nondet_symbol;
     nondet_symbol.name=id;
     nondet_symbol.base_name=id;
     nondet_symbol.type=src.type();
-    var_map.new_symbols.add(nondet_symbol);
+    config.var_map.new_symbols.add(nondet_symbol);
 
     return nondet_symbol.symbol_expr();
   }
@@ -342,7 +342,7 @@ exprt path_symex_statet::read_symbol_member_index(
   const exprt &src,
   bool propagate)
 {
-  const typet &src_type=var_map.ns.follow(src.type());
+  const typet &src_type=config.ns.follow(src.type());
 
   // don't touch function symbols
   if(src_type.id()==ID_code)
@@ -385,7 +385,7 @@ exprt path_symex_statet::read_symbol_member_index(
       const member_exprt &member_expr=to_member_expr(current);
 
       const typet &compound_type=
-        var_map.ns.follow(member_expr.struct_op().type());
+        config.ns.follow(member_expr.struct_op().type());
 
       if(compound_type.id()==ID_struct)
       {
@@ -425,7 +425,7 @@ exprt path_symex_statet::read_symbol_member_index(
     to_symbol_expr(current).get_identifier();
 
   var_mapt::var_infot &var_info=
-    var_map(identifier, suffix, src.type());
+    config.var_map(identifier, suffix, src.type());
 
   #ifdef DEBUG
   std::cout << "read_symbol_member_index_rec " << identifier
@@ -457,7 +457,7 @@ bool path_symex_statet::is_symbol_member_index(const exprt &src) const
   const typet final_type=src.type();
 
   // don't touch function symbols
-  if(var_map.ns.follow(final_type).id()==ID_code)
+  if(config.ns.follow(final_type).id()==ID_code)
     return false;
 
   const exprt *current=&src;
@@ -479,7 +479,7 @@ bool path_symex_statet::is_symbol_member_index(const exprt &src) const
       const member_exprt &member_expr=to_member_expr(*current);
 
       const typet &compound_type=
-        var_map.ns.follow(member_expr.struct_op().type());
+        config.ns.follow(member_expr.struct_op().type());
 
       if(compound_type.id()==ID_struct)
       {
@@ -507,7 +507,7 @@ bool path_symex_statet::is_symbol_member_index(const exprt &src) const
 
 std::string path_symex_statet::array_index_as_string(const exprt &src) const
 {
-  exprt tmp=simplify_expr(src, var_map.ns);
+  exprt tmp=simplify_expr(src, config.ns);
   mp_integer i;
 
   if(!to_integer(tmp, i))
@@ -528,7 +528,7 @@ exprt path_symex_statet::dereference_rec(
     exprt address=read(dereference_expr.pointer(), propagate);
 
     // now hand over to dereference
-    exprt address_dereferenced=::dereference(address, var_map.ns);
+    exprt address_dereferenced=::dereference(address, config.ns);
 
     // the dereferenced address is a mixture of non-SSA and SSA symbols
     // (e.g., if-guards and array indices)
