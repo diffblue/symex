@@ -21,7 +21,7 @@ setup-cbmc: setup-submodules
 .PHONY: cprover.dir
 cprover.dir:
 	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/src
-	$(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/jbmc/src
+	# $(MAKE) $(MAKEARGS) -C ../$(CPROVER_DIR)/jbmc/src
 
 .PHONY: goto-locs.dir
 goto-locs.dir: cprover.dir
