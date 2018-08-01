@@ -368,20 +368,15 @@ bool path_searcht::drop_state(const statet &state)
   if(unwind_limit!=std::numeric_limits<unsigned>::max() &&
      pc->is_function_call())
   {
-    bool stop=false;
-
-    for(const auto &rec_info : state.recursion_map)
-      if(rec_info.second>=unwind_limit)
-      {
-        stop=true;
-        break;
-      }
-
     exprt function=to_code_function_call(pc->code).function();
     const irep_idt id=function.get(ID_identifier); // could be nil
     path_symex_statet::recursion_mapt::const_iterator entry=
       state.recursion_map.find(id);
+
     if(entry!=state.recursion_map.end())
+    {
+      const bool stop=entry->second>=unwind_limit;
+
       debug() << (stop?"Not unwinding":"Unwinding")
         << " recursion " << id << " iteration "
         << entry->second
@@ -389,8 +384,9 @@ bool path_searcht::drop_state(const statet &state)
         << " " << source_location
         << " thread " << state.get_current_thread() << eom;
 
-    if(stop)
-      return true;
+      if(stop)
+        return true;
+    }
   }
 
   // search time limit (--max-search-time)
