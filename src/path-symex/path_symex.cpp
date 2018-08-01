@@ -20,8 +20,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/std_expr.h>
 #include <util/string2int.h>
 
-#include <pointer-analysis/dereference.h>
-
 #ifdef DEBUG
 #include <iostream>
 #endif

@@ -536,15 +536,16 @@ exprt path_symex_statet::dereference_rec(
   }
   else if(src.id()==ID_address_of)
   {
+    const auto &address_of_expr=to_address_of_expr(src);
+    exprt tmp=dereference_rec_address(address_of_expr.object(), propagate);
+
     // &*p ==> p, even if pointer p is otherwise garbage.
     // This is a guarantee in the C standard.
-    auto &address_of_expr=to_address_of_expr(src);
 
     if(address_of_expr.object().id()==ID_dereference)
-    {
-      return dereference_rec(
-        to_dereference_expr(address_of_expr.object()).pointer(), propagate);
-    }
+      return to_dereference_expr(address_of_expr.object()).pointer();
+    else
+      return src;
   }
 
   if(!src.has_operands())
@@ -562,6 +563,33 @@ exprt path_symex_statet::dereference_rec(
   }
 
   return src2;
+}
+
+exprt path_symex_statet::dereference_rec_address(
+  const exprt &src,
+  bool propagate)
+{
+  if(src.id()==ID_dereference)
+  {
+    auto d=to_dereference_expr(src);
+    d.pointer()=dereference_rec(d.pointer(), propagate);
+    return d;
+  }
+  else if(src.id()==ID_index)
+  {
+    auto i=to_index_expr(src);
+    i.index()=dereference_rec(i.index(), propagate);
+    i.array()=dereference_rec_address(i.array(), propagate);
+    return i;
+  }
+  else if(src.id()==ID_member)
+  {
+    auto m=to_member_expr(src);
+    m.struct_op()=dereference_rec_address(m.struct_op(), propagate);
+    return m;
+  }
+  else
+    return src;
 }
 
 exprt path_symex_statet::instantiate_rec_address(
