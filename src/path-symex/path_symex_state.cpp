@@ -22,28 +22,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <iostream>
 #endif
 
-void path_symex_configt::no_body(const irep_idt &identifier)
-{
-  if(body_warnings.insert(identifier).second)
-  {
-    warning() << "**** WARNING: no body for function "
-              << identifier << eom;
-  }
-}
-
-path_symex_statet initial_state(path_symex_configt &config)
-{
-  path_symex_statet s(config);
-
-  // create one new thread
-  path_symex_statet::threadt &thread=s.add_thread();
-  thread.pc=config.locs.entry_loc; // set its PC
-  s.set_current_thread(0);
-  s.history=path_symex_step_reft(config.path_symex_history);
-
-  return s;
-}
-
 void path_symex_statet::output(const threadt &thread, std::ostream &out) const
 {
   out << "  PC: " << thread.pc << '\n';

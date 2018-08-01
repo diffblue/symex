@@ -20,6 +20,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <set>
 
+struct path_symex_statet;
+
 struct path_symex_configt:public messaget
 {
 public:
@@ -34,6 +36,8 @@ public:
   var_mapt var_map;
   locst locs;
   path_symex_historyt path_symex_history;
+
+  path_symex_statet initial_state();
 
 protected:
   std::set<irep_idt> body_warnings;

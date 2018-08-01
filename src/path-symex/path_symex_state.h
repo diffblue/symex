@@ -293,6 +293,4 @@ protected:
   bool is_symbol_member_index(const exprt &src) const;
 };
 
-path_symex_statet initial_state(path_symex_configt &);
-
 #endif // CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H

@@ -31,7 +31,7 @@ path_searcht::resultt path_searcht::operator()(
   // this is the container for the history-forest
   path_symex_historyt history;
 
-  queue.push_back(initial_state(config));
+  queue.push_back(config.initial_state());
 
   // set up the statistics
   number_of_dropped_states=0;
