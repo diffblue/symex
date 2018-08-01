@@ -1020,7 +1020,23 @@ void path_symext::operator()(
       }
       else if(statement==ID_havoc_object)
       {
-        // TODO
+        DATA_INVARIANT(code.operands().size()==1,
+          "havoc_object must have one operand");
+        DATA_INVARIANT(code.op0().type().id()==ID_pointer,
+          "havoc_object gets pointer operand");
+
+        // get object we are assigning to
+        const exprt dereferenced_lhs=
+          dereference_exprt(code.op0());
+
+        const exprt ssa_lhs=
+          state.read_no_propagate(dereferenced_lhs);
+
+        const exprt ssa_rhs=
+          nil_exprt();
+
+        exprt::operandst _guard;
+        assign_rec(state, _guard, dereferenced_lhs, ssa_lhs, ssa_rhs);
       }
       else if(statement==ID_input)
       {
