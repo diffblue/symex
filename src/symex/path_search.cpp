@@ -339,7 +339,7 @@ bool path_searcht::drop_state(const statet &state)
       state.unwinding_map.find(state.pc());
     debug() << (stop?"Not unwinding":"Unwinding")
       << " loop " << id << " iteration "
-      << (entry==state.unwinding_map.end()?-1:entry->second)
+      << (entry==state.unwinding_map.end()?1:entry->second)
       << " (" << unwind_limit << " max)"
       << " " << source_location
       << " thread " << state.get_current_thread() << eom;
@@ -373,13 +373,14 @@ bool path_searcht::drop_state(const statet &state)
     path_symex_statet::recursion_mapt::const_iterator entry=
       state.recursion_map.find(id);
 
-    if(entry!=state.recursion_map.end())
+    if(entry!=state.recursion_map.end() &&
+       entry->second!=0)
     {
       const bool stop=entry->second>=unwind_limit;
 
       debug() << (stop?"Not unwinding":"Unwinding")
         << " recursion " << id << " iteration "
-        << entry->second
+        << entry->second+1
         << " (" << unwind_limit << " max)"
         << " " << source_location
         << " thread " << state.get_current_thread() << eom;
