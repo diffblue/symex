@@ -22,12 +22,22 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <iostream>
 #endif
 
+void path_symex_configt::no_body(const irep_idt &identifier)
+{
+  if(body_warnings.insert(identifier).second)
+  {
+    warning() << "**** WARNING: no body for function "
+              << identifier << eom;
+  }
+}
+
 path_symex_statet initial_state(
+  path_symex_configt &config,
   var_mapt &var_map,
   const locst &locs,
   path_symex_historyt &path_symex_history)
 {
-  path_symex_statet s(var_map, locs, path_symex_history);
+  path_symex_statet s(config, var_map, locs, path_symex_history);
 
   // create one new thread
   path_symex_statet::threadt &thread=s.add_thread();

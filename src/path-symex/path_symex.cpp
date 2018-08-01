@@ -549,8 +549,7 @@ void path_symext::function_call_rec(
     if(function_entry_point==loc_reft())
     {
       // no body
-      //warning() << "**** WARNING: no body for function "
-      //          << function_identifier << eom;
+      state.config.no_body(function_identifier);
 
       // this is a skip
       if(call.lhs().is_not_nil())

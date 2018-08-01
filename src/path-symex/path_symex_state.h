@@ -16,15 +16,18 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "../goto-locs/locs.h"
 #include "var_map.h"
+#include "path_symex_config.h"
 #include "path_symex_history.h"
 
 struct path_symex_statet
 {
 public:
   path_symex_statet(
+    path_symex_configt &_config,
     var_mapt &_var_map,
     const locst &_locs,
     path_symex_historyt &_path_symex_history):
+    config(_config),
     var_map(_var_map),
     locs(_locs),
     inside_atomic_section(false),
@@ -41,6 +44,7 @@ public:
 
   // These are tied to a particular var_map
   // and a particular program.
+  path_symex_configt &config;
   var_mapt &var_map;
   const locst &locs;
 
@@ -158,6 +162,9 @@ public:
 
   // execution history
   path_symex_step_reft history;
+
+  // message logging
+  message_handlert *message_handler;
 
   // adds an entry to the history
   void record_step();
@@ -297,6 +304,7 @@ protected:
 };
 
 path_symex_statet initial_state(
+  path_symex_configt &,
   var_mapt &var_map,
   const locst &locs,
   path_symex_historyt &);

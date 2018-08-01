@@ -29,10 +29,13 @@ path_searcht::resultt path_searcht::operator()(
 
   status() << "Starting symbolic simulation" << eom;
 
+  path_symex_configt config;
+  config.set_message_handler(get_message_handler());
+
   // this is the container for the history-forest
   path_symex_historyt history;
 
-  queue.push_back(initial_state(var_map, locs, history));
+  queue.push_back(initial_state(config, var_map, locs, history));
 
   // set up the statistics
   number_of_dropped_states=0;
