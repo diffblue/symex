@@ -1,4 +1,5 @@
 SRC = build_goto_trace.cpp \
+      evaluate_address_of.cpp \
       path_replay.cpp \
       path_symex.cpp \
       path_symex_allocate.cpp \
