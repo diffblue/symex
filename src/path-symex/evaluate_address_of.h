@@ -13,7 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 class namespacet;
 
-exprt evaludate_address_of(const address_of_exprt &, const namespacet &);
+exprt evaluate_address_of(const address_of_exprt &, const namespacet &);
 
 #endif // CPROVER_EVALUATE_ADDRESS_OF_H
 

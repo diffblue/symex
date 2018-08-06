@@ -21,6 +21,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <langapi/language_util.h>
 #endif
 
+#include "evaluate_address_of.h"
+
 exprt path_symex_statet::read(const exprt &src, bool propagate)
 {
   #ifdef DEBUG
@@ -233,10 +235,8 @@ exprt path_symex_statet::instantiate_rec(
 
   if(src.id()==ID_address_of)
   {
-    assert(src.operands().size()==1);
-    exprt tmp=src;
-    tmp.op0()=instantiate_rec_address(tmp.op0(), propagate);
-    return tmp;
+    // these have already been flattened out by dereference_rec
+    return src;
   }
   else if(src.id()==ID_side_effect)
   {
@@ -537,15 +537,12 @@ exprt path_symex_statet::dereference_rec(
   else if(src.id()==ID_address_of)
   {
     const auto &address_of_expr=to_address_of_expr(src);
-    exprt tmp=dereference_rec_address(address_of_expr.object(), propagate);
+    const exprt tmp=evaluate_address_of(address_of_expr, config.ns);
 
-    // &*p ==> p, even if pointer p is otherwise garbage.
-    // This is a guarantee in the C standard.
-
-    if(address_of_expr.object().id()==ID_dereference)
-      return to_dereference_expr(address_of_expr.object()).pointer();
+    if(tmp.id()==ID_address_of)
+      return src; // no change
     else
-      return src;
+      return dereference_rec(tmp, propagate);
   }
 
   if(!src.has_operands())
@@ -565,108 +562,3 @@ exprt path_symex_statet::dereference_rec(
   return src2;
 }
 
-exprt path_symex_statet::dereference_rec_address(
-  const exprt &src,
-  bool propagate)
-{
-  if(src.id()==ID_dereference)
-  {
-    auto d=to_dereference_expr(src);
-    d.pointer()=dereference_rec(d.pointer(), propagate);
-    return d;
-  }
-  else if(src.id()==ID_index)
-  {
-    auto i=to_index_expr(src);
-    i.index()=dereference_rec(i.index(), propagate);
-    i.array()=dereference_rec_address(i.array(), propagate);
-    return i;
-  }
-  else if(src.id()==ID_member)
-  {
-    auto m=to_member_expr(src);
-    m.struct_op()=dereference_rec_address(m.struct_op(), propagate);
-    return m;
-  }
-  else
-    return src;
-}
-
-exprt path_symex_statet::instantiate_rec_address(
-  const exprt &src,
-  bool propagate)
-{
-  #ifdef DEBUG
-  std::cout << "instantiate_rec_address: " << src.id() << '\n';
-  #endif
-
-  if(src.id()==ID_symbol)
-  {
-    return src;
-  }
-  else if(src.id()==ID_index)
-  {
-    assert(src.operands().size()==2);
-    exprt tmp=src;
-    tmp.op0()=instantiate_rec_address(src.op0(), propagate);
-    tmp.op1()=instantiate_rec(src.op1(), propagate);
-    return tmp;
-  }
-  else if(src.id()==ID_dereference)
-  {
-    // dereferenct ran before, and this can only be *(type *)integer-address,
-    // which we simply instantiate as non-address
-    dereference_exprt tmp=to_dereference_expr(src);
-    tmp.pointer()=instantiate_rec(tmp.pointer(), propagate);
-    return tmp;
-  }
-  else if(src.id()==ID_member)
-  {
-    member_exprt tmp=to_member_expr(src);
-    tmp.struct_op()=instantiate_rec_address(tmp.struct_op(), propagate);
-    return tmp;
-  }
-  else if(src.id()==ID_string_constant)
-  {
-    return src;
-  }
-  else if(src.id()==ID_label)
-  {
-    return src;
-  }
-  else if(src.id()==ID_byte_extract_big_endian ||
-          src.id()==ID_byte_extract_little_endian)
-  {
-    assert(src.operands().size()==2);
-    exprt tmp=src;
-    tmp.op0()=instantiate_rec_address(src.op0(), propagate);
-    tmp.op1()=instantiate_rec(src.op1(), propagate);
-    return tmp;
-  }
-  else if(src.id()==ID_if)
-  {
-    if_exprt if_expr=to_if_expr(src);
-    if_expr.true_case()=
-      instantiate_rec_address(if_expr.true_case(), propagate);
-    if_expr.false_case()=
-      instantiate_rec_address(if_expr.false_case(), propagate);
-    if_expr.cond()=instantiate_rec(if_expr.cond(), propagate);
-    return if_expr;
-  }
-  else if(src.id()=="dereference_error")
-  {
-    return src;
-  }
-  else if(src.id()=="integer_dereference")
-  {
-    return src;
-  }
-  else
-  {
-    // this shouldn't really happen
-    #ifdef DEBUG
-    std::cout << "SRC: " << src.pretty() << '\n';
-    #endif
-    throw "address of unexpected `"+src.id_string()+"'";
-  }
-}

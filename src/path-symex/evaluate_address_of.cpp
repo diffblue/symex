@@ -8,21 +8,16 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "evaluate_address_of.h"
 
-#include <util/pointer_offset_size.h>
+#include <util/arith_tools.h>
 #include <util/c_types.h>
+#include <util/pointer_offset_size.h>
 
-exprt add_offset(const exprt &base, const exprt &offset)
+static exprt add_offset(const exprt &base, const exprt &offset)
 {
   pointer_typet char_pointer=pointer_type(char_type());
   const exprt base_casted=
     typecast_exprt::conditional_cast(base, char_pointer);
   return plus_exprt();
-}
-
-exprt index_offset_expr(const index_exprt &src, const namespacet &ns)
-{
-  const exprt element_size=size_of_expr(src.type(), ns);
-  return mult_exprt(src.index(), element_size);
 }
 
 exprt evaluate_address_of_rec(
@@ -39,16 +34,33 @@ exprt evaluate_address_of_rec(
   else if(src.id()==ID_index)
   {
     const auto &index_expr=to_index_expr(src);
-    const exprt offset=index_offset_expr(index_expr, ns);
-    const exprt base=evaluate_address_of_rec(index_expr.array(), ns);
-    return plus_exprt(base, offset);
+    const exprt base=
+      typecast_exprt::conditional_cast(
+        evaluate_address_of_rec(index_expr.array(), ns),
+        pointer_type(index_expr.type()));
+    return plus_exprt(base, index_expr.index());
   }
   else if(src.id()==ID_dereference)
   {
     return to_dereference_expr(src).pointer();
   }
+  else if(src.id()==ID_if)
+  {
+    if_exprt new_if_expr=to_if_expr(src);
+    new_if_expr.true_case()=
+      evaluate_address_of_rec(new_if_expr.true_case(), ns);
+    new_if_expr.false_case()=
+      evaluate_address_of_rec(new_if_expr.false_case(), ns);
+    new_if_expr.type()=pointer_type(src.type());
+    return new_if_expr;
+  }
   else
-    return address_of_exprt(src);
+  {
+    if(src.type().id()==ID_array)
+      return typecast_exprt(address_of_exprt(src), pointer_type(src.type().subtype()));
+    else
+      return address_of_exprt(src);
+  }
 }
 
 exprt evaluate_address_of(
