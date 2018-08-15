@@ -1,9 +1,5 @@
 language: cpp
 
-# Disable the default submodule logic
-git:
-  submodules: false
-
 jobs:
   include:
     # CPP linter script
