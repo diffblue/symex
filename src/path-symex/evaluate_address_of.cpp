@@ -17,7 +17,7 @@ static exprt add_offset(const exprt &base, const exprt &offset)
   pointer_typet char_pointer=pointer_type(char_type());
   const exprt base_casted=
     typecast_exprt::conditional_cast(base, char_pointer);
-  return plus_exprt();
+  return plus_exprt(base_casted, offset);
 }
 
 exprt evaluate_address_of_rec(
@@ -29,7 +29,8 @@ exprt evaluate_address_of_rec(
     const auto &member_expr=to_member_expr(src);
     const exprt offset=member_offset_expr(member_expr, ns);
     const exprt base=evaluate_address_of_rec(member_expr.compound(), ns);
-    return add_offset(base, offset);
+    return typecast_exprt::conditional_cast(
+      add_offset(base, offset), pointer_type(src.type()));
   }
   else if(src.id()==ID_index)
   {
