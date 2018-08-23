@@ -117,6 +117,9 @@ public:
   // for function call and return
   irep_idt function_identifier;
 
+  // for function call
+  std::vector<exprt> ssa_function_arguments;
+
   path_symex_stept():
     branch(NON_BRANCH),
     thread_nr(0),
