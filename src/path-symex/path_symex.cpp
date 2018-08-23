@@ -536,6 +536,12 @@ void path_symext::function_call_rec(
     // record the function we call
     state.history->function_identifier=function_identifier;
 
+    // record the arguments
+    {
+      const exprt::operandst &call_arguments=call.arguments();
+      state.history->ssa_function_arguments=call_arguments;
+    }
+
     const locst::function_entryt &function_entry=f_it->second;
 
     loc_reft function_entry_point=function_entry.first_loc;
