@@ -471,7 +471,11 @@ void symex_parse_optionst::report_properties(
         cmdline.isset("trace") ||
         cmdline.isset("stop-on-fail")) &&
        it->second.is_failure())
-      show_trace(it->first, it->second.error_trace);
+    {
+      optionst options;
+      PARSE_OPTIONS_GOTO_TRACE(cmdline, options);
+      show_trace(it->first, it->second.error_trace, options);
+    }
   }
 
   if(!cmdline.isset("property"))
@@ -518,16 +522,18 @@ void symex_parse_optionst::report_success()
 
 void symex_parse_optionst::show_trace(
   const irep_idt &property,
-  const goto_tracet &error_trace)
+  const goto_tracet &error_trace,
+  const optionst &options)
 {
   const namespacet ns(goto_model.symbol_table);
+  trace_optionst trace_options(options);
 
   switch(get_ui())
   {
   case ui_message_handlert::uit::PLAIN:
     std::cout << '\n' << "Trace for " << property
               << ":" << '\n';
-    show_goto_trace(std::cout, ns, error_trace);
+    show_goto_trace(std::cout, ns, error_trace, trace_options);
     break;
 
   case ui_message_handlert::uit::XML_UI:
