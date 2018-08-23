@@ -81,13 +81,13 @@ goto_tracet build_goto_trace(
       else
       {
         trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
-        trace_step.identifier=step.function_identifier;
+        trace_step.function_identifier=step.function_identifier;
       }
       break;
 
     case END_FUNCTION:
       trace_step.type=goto_trace_stept::typet::FUNCTION_RETURN;
-      trace_step.identifier=step.function_identifier;
+      trace_step.function_identifier=step.function_identifier;
       break;
 
     case START_THREAD:
