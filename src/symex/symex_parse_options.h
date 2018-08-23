@@ -16,6 +16,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/parse_options.h>
 
 #include <goto-programs/goto_model.h>
+#include <goto-programs/goto_trace.h>
 #include <goto-programs/show_goto_functions.h>
 #include <goto-programs/rebuild_goto_start_function.h>
 
@@ -49,7 +50,8 @@ class optionst;
   "(drop-unused-functions)" \
   "(object-bits):" \
   OPT_SHOW_GOTO_FUNCTIONS \
-  "(property):(trace)(show-trace)(stop-on-fail)(eager-infeasibility)" \
+  "(property):(trace)(stop-on-fail)(eager-infeasibility)" \
+  OPT_GOTO_TRACE \
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
   "(json-ui)" \
   JAVA_BYTECODE_LANGUAGE_OPTIONS
