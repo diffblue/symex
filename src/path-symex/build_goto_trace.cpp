@@ -82,9 +82,9 @@ goto_tracet build_goto_trace(
       {
         trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
         trace_step.function_identifier=step.function_identifier;
-        trace_step.function_arguments=step.ssa_function_arguments;
-        for(auto &arg : trace_step.function_arguments)
-          arg=decision_procedure.get(arg);
+        trace_step.function_arguments.resize(step.function_arguments.size());
+        for(std::size_t i=0; i<trace_step.function_arguments.size(); i++)
+          trace_step.function_arguments[i]=decision_procedure.get(step.function_arguments[i].ssa_lhs);
       }
       break;
 

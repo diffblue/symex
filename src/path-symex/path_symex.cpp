@@ -533,22 +533,44 @@ void path_symext::function_call_rec(
       throw
         "failed to find `"+id2string(function_identifier)+"' in function_map";
 
-    // record the function we call
-    state.history->function_identifier=function_identifier;
 
     // turn the arguments into SSA
     exprt::operandst ssa_arguments=call.arguments();
     for(auto &arg : ssa_arguments)
       arg=state.read(arg);
 
-    // record those arguments
-    state.history->ssa_function_arguments=ssa_arguments;
+    // Fix types of the arguments, if needed
+    {
+      const code_typet::parameterst &parameters=
+        to_code_type(function.type()).parameters();
 
-    const locst::function_entryt &function_entry=f_it->second;
+      for(std::size_t i=0; i<ssa_arguments.size(); i++)
+        if(i<parameters.size())
+        {
+          ssa_arguments[i]=typecast_exprt::conditional_cast(
+            ssa_arguments[i], parameters[i].type());
+        }
+    }
 
-    loc_reft function_entry_point=function_entry.first_loc;
+    // record the function we call and the arguments
+    state.history->function_identifier=function_identifier;
+    state.history->function_arguments.resize(ssa_arguments.size());
+
+    for(std::size_t i=0; i<ssa_arguments.size(); i++)
+    {
+      // store rhs
+      state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
+
+      // assign an lhs for every argument
+      irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
+      auto &var_info=state.config.var_map(id, irep_idt(), ssa_arguments[i].type());
+      state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
+      var_info.increment_ssa_counter();
+    }
 
     // do we have a body?
+    const locst::function_entryt &function_entry=f_it->second;
+    loc_reft function_entry_point=function_entry.first_loc;
     if(function_entry_point==loc_reft())
     {
       // no body
@@ -615,15 +637,9 @@ void path_symext::function_call_rec(
 
         symbol_exprt lhs(identifier, function_parameter.type());
 
-        exprt ssa_rhs=ssa_arguments[i];
-
-        // lhs/rhs types might not match
-        if(lhs.type()!=ssa_rhs.type())
-          ssa_rhs.make_typecast(lhs.type());
-
-        // ssa the lhs
-        const exprt ssa_lhs=
-          state.read_no_propagate(lhs);
+        const exprt ssa_rhs=ssa_arguments[i];
+        const exprt ssa_lhs=state.read_no_propagate(lhs);
+        assert(ssa_rhs.type()==ssa_lhs.type());
 
         exprt::operandst _guard; // start with empty guard
         assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);

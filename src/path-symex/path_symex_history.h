@@ -118,7 +118,9 @@ public:
   irep_idt function_identifier;
 
   // for function call
-  std::vector<exprt> ssa_function_arguments;
+
+  struct function_argumentt { symbol_exprt ssa_lhs; exprt ssa_rhs; };
+  std::vector<function_argumentt> function_arguments;
 
   path_symex_stept():
     branch(NON_BRANCH),
