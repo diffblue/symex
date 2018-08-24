@@ -38,6 +38,9 @@ void path_symex_stept::output(std::ostream &out) const
 
 void path_symex_stept::convert(decision_proceduret &dest) const
 {
+  for(const auto &arg : function_arguments)
+    dest << equal_exprt(arg.ssa_lhs, arg.ssa_rhs);
+
   if(ssa_rhs.is_not_nil())
     dest << equal_exprt(ssa_lhs, ssa_rhs);
 
