@@ -539,11 +539,13 @@ void path_symext::function_call_rec(
     // record the function we call
     state.history->function_identifier=function_identifier;
 
-    // record the arguments
-    {
-      const exprt::operandst &call_arguments=call.arguments();
-      state.history->ssa_function_arguments=call_arguments;
-    }
+    // turn the arguments into SSA
+    exprt::operandst ssa_arguments=call.arguments();
+    for(auto &arg : ssa_arguments)
+      arg=state.read(arg);
+
+    // record those arguments
+    state.history->ssa_function_arguments=ssa_arguments;
 
     const locst::function_entryt &function_entry=f_it->second;
 
@@ -597,16 +599,13 @@ void path_symext::function_call_rec(
     #endif
 
     const code_typet &code_type=function_entry.type;
-
     const code_typet::parameterst &function_parameters=code_type.parameters();
-
-    const exprt::operandst &call_arguments=call.arguments();
 
     // keep track when va arguments begin.
     std::size_t va_args_start_index=0;
 
     // now assign the argument values to parameters
-    for(std::size_t i=0; i<call_arguments.size(); i++)
+    for(std::size_t i=0; i<ssa_arguments.size(); i++)
     {
       if(i<function_parameters.size())
       {
@@ -618,13 +617,19 @@ void path_symext::function_call_rec(
               + " no identifier for function parameter";
 
         symbol_exprt lhs(identifier, function_parameter.type());
-        exprt rhs=call_arguments[i];
+
+        exprt ssa_rhs=ssa_arguments[i];
 
         // lhs/rhs types might not match
-        if(lhs.type()!=rhs.type())
-          rhs.make_typecast(lhs.type());
+        if(lhs.type()!=ssa_rhs.type())
+          ssa_rhs.make_typecast(lhs.type());
 
-        assign(state, lhs, rhs);
+        // ssa the lhs
+        const exprt ssa_lhs=
+          state.read_no_propagate(lhs);
+
+        exprt::operandst _guard; // start with empty guard
+        assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
       }
       else if(va_args_start_index==0)
         va_args_start_index=i;
@@ -634,32 +639,34 @@ void path_symext::function_call_rec(
     {
       std::size_t va_count=0;
 
-      auto call_arguments_it = std::begin(call_arguments);
-      std::advance(call_arguments_it, va_args_start_index);
-      auto call_arguments_end = std::end(call_arguments);
-
-      for(; call_arguments_it!=call_arguments_end; ++call_arguments_it)
+      for(std::size_t i=va_args_start_index; i<ssa_arguments.size(); i++)
       {
-        exprt rhs=*call_arguments_it;
+        const exprt ssa_rhs=ssa_arguments[i];
 
         irep_idt id=id2string(function_identifier)+"::va_arg"
             +std::to_string(va_count);
 
         // clear the var_state, since the type may have changed
-        auto &var_info=state.config.var_map(id, irep_idt(), rhs.type());
-        var_info.type=rhs.type();
+        auto &var_info=state.config.var_map(id, irep_idt(), ssa_rhs.type());
+        var_info.type=ssa_rhs.type();
         state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
 
         symbolt symbol;
         symbol.name=id;
         symbol.base_name="va_arg"+std::to_string(va_count);
-        symbol.type=rhs.type();
+        symbol.type=ssa_rhs.type();
 
         va_count++;
 
-        symbol_exprt lhs=symbol.symbol_expr();
-        assert(lhs.type()==rhs.type());
-        assign(state, lhs, rhs);
+        const symbol_exprt lhs=symbol.symbol_expr();
+
+        // ssa the lhs
+        const exprt ssa_lhs=
+          state.read_no_propagate(lhs);
+
+        assert(lhs.type()==ssa_rhs.type());
+        exprt::operandst _guard; // start with empty guard
+        assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
       }
     }
 
