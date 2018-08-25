@@ -1,13 +1,11 @@
-CORE
+KNOWNBUG
 main.c
 --trace
 ^EXIT=10$
 ^SIGNAL=0$
 ^VERIFICATION FAILED$
-^  i=2 .*$
-^  j=3 .*$
-^  k=6 .*$
+^  dynamic_object1.a=1 .*$
+^  dynamic_object1.b=2 .*$
 --
 ^warning: ignoring
 --
-diffblue/cbmc#1361
