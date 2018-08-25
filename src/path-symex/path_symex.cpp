@@ -563,7 +563,8 @@ void path_symext::function_call_rec(
 
       // assign an lhs for every argument
       irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
-      auto &var_info=state.config.var_map(id, irep_idt(), ssa_arguments[i].type());
+      symbol_exprt arg_symbol(id, ssa_arguments[i].type());
+      auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
       state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
       var_info.increment_ssa_counter();
     }
@@ -642,7 +643,7 @@ void path_symext::function_call_rec(
         assert(ssa_rhs.type()==ssa_lhs.type());
 
         exprt::operandst _guard; // start with empty guard
-        assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
+        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
       }
       else if(va_args_start_index==0)
         va_args_start_index=i;
@@ -660,9 +661,9 @@ void path_symext::function_call_rec(
             +std::to_string(va_count);
 
         // clear the var_state, since the type may have changed
-        const symbol_exprt symbol_expr(id, rhs.type());
+        const symbol_exprt symbol_expr(id, ssa_rhs.type());
         auto &var_info=state.config.var_map(id, irep_idt(), symbol_expr);
-        var_info.type=ssa_rhs.type();
+        var_info.original=symbol_expr;
         state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
 
         va_count++;
