@@ -1,0 +1,16 @@
+CORE
+arrays.c
+--trace
+^EXIT=10$
+^SIGNAL=0$
+^VERIFICATION FAILED$
+^  global_array\[1l?\]=1 .*$
+^  global_array\[2l?\]=2 .*$
+^  s.some_array\[1l?\]=1 .*$
+^  s.some_array\[2l?\]=2 .*$
+^  s.some_array\[5l?\]=5 .*$
+^  local_array\[1l?\]=1 .*$
+^  local_array\[2l?\]=2 .*$
+--
+^warning: ignoring
+--
