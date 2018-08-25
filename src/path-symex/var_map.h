@@ -42,8 +42,8 @@ public:
     // full_identifier=symbol+suffix
     irep_idt full_identifier, symbol, suffix;
 
-    // the type of the identifier (struct member or array)
-    typet type;
+    // the symbol-member-index expression
+    exprt original;
 
     unsigned ssa_counter;
 
@@ -55,7 +55,7 @@ public:
 
     symbol_exprt ssa_symbol() const
     {
-      symbol_exprt s=symbol_exprt(ssa_identifier(), type);
+      symbol_exprt s=symbol_exprt(ssa_identifier(), original.type());
       s.set(ID_C_SSA_symbol, true);
       s.set(ID_C_full_identifier, full_identifier);
       return s;
@@ -75,7 +75,7 @@ public:
   var_infot &operator()(
     const irep_idt &symbol,
     const irep_idt &suffix,
-    const typet &type);
+    const exprt &original);
 
   var_infot &operator[](const irep_idt &full_identifier)
   {

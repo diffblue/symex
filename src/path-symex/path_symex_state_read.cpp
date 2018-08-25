@@ -425,7 +425,7 @@ exprt path_symex_statet::read_symbol_member_index(
     to_symbol_expr(current).get_identifier();
 
   var_mapt::var_infot &var_info=
-    config.var_map(identifier, suffix, src.type());
+    config.var_map(identifier, suffix, src);
 
   #ifdef DEBUG
   std::cout << "read_symbol_member_index_rec " << identifier
