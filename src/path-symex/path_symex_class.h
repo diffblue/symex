@@ -98,7 +98,6 @@ protected:
   void assign_rec(
     path_symex_statet &state,
     exprt::operandst &guard, // SSAed
-    const exprt &dereferenced_lhs, // not SSAed, no recursion here
     const exprt &ssa_lhs, // SSAed, recursion here
     const exprt &ssa_rhs); // SSAed
 

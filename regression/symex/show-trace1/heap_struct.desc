@@ -1,5 +1,5 @@
-KNOWNBUG
-main.c
+CORE
+heap_struct.c
 --trace
 ^EXIT=10$
 ^SIGNAL=0$
