@@ -121,6 +121,21 @@ void path_symext::assign(
       throw "unexpected side-effect on rhs: "+id2string(statement);
   }
 
+  // The Java frontend generates nondet on the lhs
+  if(lhs.id()==ID_side_effect)
+  {
+    const side_effect_exprt &side_effect_expr=to_side_effect_expr(lhs);
+    const irep_idt &statement=side_effect_expr.get_statement();
+
+    if(statement==ID_nondet)
+    {
+      // ignore
+      return;
+    }
+    else
+      throw "unexpected side-effect on lhs: "+id2string(statement);
+  }
+
   // read the address of the lhs, with propagation
   const exprt lhs_address=state.read(address_of_exprt(lhs));
 
