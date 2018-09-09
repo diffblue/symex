@@ -577,11 +577,16 @@ void path_symext::function_call_rec(
       state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
 
       // assign an lhs for every argument
-      irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
-      symbol_exprt arg_symbol(id, ssa_arguments[i].type());
-      auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
-      state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
-      var_info.increment_ssa_counter();
+      if(ssa_arguments[i].id()==ID_symbol)
+        state.history->function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
+      else
+      {
+        irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
+        symbol_exprt arg_symbol(id, ssa_arguments[i].type());
+        auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
+        state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
+        var_info.increment_ssa_counter();
+      }
     }
 
     // do we have a body?
