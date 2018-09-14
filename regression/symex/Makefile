@@ -1,16 +1,10 @@
 default: tests.log
 
 test:
-	@if ! ../../lib/cbmc/regression/test.pl -c ../../../src/symex/symex ; then \
-		../../lib/cbmc/regression/failed-tests-printer.pl ; \
-		exit 1 ; \
-	fi
+	@../../lib/cbmc/regression/test.pl -p -c ../../../src/symex/symex
 
 tests.log: ../test.pl
-	@if ! ../../lib/cbmc/regression/test.pl -c ../../../src/symex/symex ; then \
-		../../lib/cbmc/regression/failed-tests-printer.pl ; \
-		exit 1 ; \
-	fi
+	@../../lib/cbmc/regression/test.pl -p -c ../../../src/symex/symex
 
 show:
 	@for dir in *; do \

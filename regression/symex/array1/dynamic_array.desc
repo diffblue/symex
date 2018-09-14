@@ -1,0 +1,11 @@
+KNOWNBUG
+dynamic_array.c
+--trace
+^EXIT=10$
+^SIGNAL=0$
+^VERIFICATION FAILED$
+^  some_array\[0[ul]+\]=0 .*
+^  some_array\[1[ul]+\]=1 .*
+^  some_array\[2[ul]+\]=2 .*
+--
+^warning: ignoring

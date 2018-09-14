@@ -32,7 +32,7 @@ var_mapt::var_mapt(const namespacet &_ns):
 var_mapt::var_infot &var_mapt::operator()(
   const irep_idt &symbol,
   const irep_idt &suffix,
-  const typet &type)
+  const exprt &original)
 {
   assert(!symbol.empty());
 
@@ -49,7 +49,7 @@ var_mapt::var_infot &var_mapt::operator()(
     result.first->second.full_identifier=full_identifier;
     result.first->second.symbol=symbol;
     result.first->second.suffix=suffix;
-    result.first->second.type=type;
+    result.first->second.original=original;
     init(result.first->second);
   }
 
@@ -75,7 +75,7 @@ void var_mapt::var_infot::output(std::ostream &out) const
 
   out << "number: " << number << "\n";
 
-  out << "type: " << type.pretty() << "\n";
+  out << "original: " << original.pretty() << "\n";
 
   out << "\n";
 }

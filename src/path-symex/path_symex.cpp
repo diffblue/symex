@@ -121,6 +121,21 @@ void path_symext::assign(
       throw "unexpected side-effect on rhs: "+id2string(statement);
   }
 
+  // The Java frontend generates nondet on the lhs
+  if(lhs.id()==ID_side_effect)
+  {
+    const side_effect_exprt &side_effect_expr=to_side_effect_expr(lhs);
+    const irep_idt &statement=side_effect_expr.get_statement();
+
+    if(statement==ID_nondet)
+    {
+      // ignore
+      return;
+    }
+    else
+      throw "unexpected side-effect on lhs: "+id2string(statement);
+  }
+
   // read the address of the lhs, with propagation
   const exprt lhs_address=state.read(address_of_exprt(lhs));
 
@@ -130,16 +145,17 @@ void path_symext::assign(
       to_address_of_expr(lhs_address).object():
       dereference_exprt(lhs_address);
 
+  //const exprt dereferenced_lhs=dereference_exprt(lhs_address);
+
   // now SSA the lhs, no propagation
-  const exprt ssa_lhs=
-    state.read_no_propagate(dereferenced_lhs);
+  const exprt ssa_lhs=state.read_no_propagate(dereferenced_lhs);
 
   // read the rhs
   const exprt ssa_rhs=state.read(rhs);
 
   // start recursion on ssa_lhs
   exprt::operandst _guard; // start with empty guard
-  assign_rec(state, _guard, dereferenced_lhs, ssa_lhs, ssa_rhs);
+  assign_rec(state, _guard, ssa_lhs, ssa_rhs);
 }
 
 static irep_idt get_old_va_symbol(
@@ -221,7 +237,6 @@ void path_symext::symex_va_arg_next(
 void path_symext::assign_rec(
   path_symex_statet &state,
   exprt::operandst &guard,
-  const exprt &dereferenced_lhs,
   const exprt &ssa_lhs,
   const exprt &ssa_rhs)
 {
@@ -297,7 +312,7 @@ void path_symext::assign_rec(
     stept &step=*state.history;
 
     step.ssa_guard=conjunction(guard);
-    step.lhs=dereferenced_lhs;
+    step.lhs=var_info.original;
     step.ssa_lhs=new_ssa_lhs;
 
     if(ssa_rhs.is_nil())
@@ -312,7 +327,7 @@ void path_symext::assign_rec(
     const exprt &new_ssa_lhs=to_typecast_expr(ssa_lhs).op();
     typecast_exprt new_rhs(ssa_rhs, new_ssa_lhs.type());
 
-    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_rhs);
+    assign_rec(state, guard, new_ssa_lhs, new_rhs);
   }
   else if(ssa_lhs.id()==ID_member)
   {
@@ -338,7 +353,7 @@ void path_symext::assign_rec(
 
       with_exprt new_rhs(struct_op, member_name, ssa_rhs);
 
-      assign_rec(state, guard, dereferenced_lhs, struct_op, new_rhs);
+      assign_rec(state, guard, struct_op, new_rhs);
     }
     else if(compound_type.id()==ID_union)
     {
@@ -348,7 +363,7 @@ void path_symext::assign_rec(
       byte_extract_exprt
         new_ssa_lhs(byte_update_id(), struct_op, offset, ssa_rhs.type());
 
-      assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, ssa_rhs);
+      assign_rec(state, guard, new_ssa_lhs, ssa_rhs);
     }
     else
       throw "assign_rec: member expects struct or union type";
@@ -391,12 +406,12 @@ void path_symext::assign_rec(
 
     // true
     guard.push_back(cond);
-    assign_rec(state, guard, dereferenced_lhs, lhs_if_expr.true_case(), ssa_rhs);
+    assign_rec(state, guard, lhs_if_expr.true_case(), ssa_rhs);
     guard.pop_back();
 
     // false
     guard.push_back(not_exprt(cond));
-    assign_rec(state, guard, dereferenced_lhs, lhs_if_expr.false_case(), ssa_rhs);
+    assign_rec(state, guard, lhs_if_expr.false_case(), ssa_rhs);
     guard.pop_back();
   }
   else if(ssa_lhs.id()==ID_byte_extract_little_endian ||
@@ -430,7 +445,7 @@ void path_symext::assign_rec(
 
     const exprt new_ssa_lhs=byte_extract_expr.op();
 
-    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_rhs);
+    assign_rec(state, guard, new_ssa_lhs, new_rhs);
   }
   else if(ssa_lhs.id()==ID_struct)
   {
@@ -463,10 +478,7 @@ void path_symext::assign_rec(
             state.config.ns);
       }
 
-      member_exprt new_dereferenced_lhs(
-        dereferenced_lhs, components[i].get_name(), components[i].type());
-
-      assign_rec(state, guard, new_dereferenced_lhs, operands[i], new_rhs);
+      assign_rec(state, guard, operands[i], new_rhs);
     }
   }
   else if(ssa_lhs.id()==ID_array)
@@ -488,7 +500,7 @@ void path_symext::assign_rec(
       exprt::operandst::const_iterator lhs_it=operands.begin();
       forall_operands(it, ssa_rhs)
       {
-        assign_rec(state, guard, dereferenced_lhs, *lhs_it, *it);
+        assign_rec(state, guard, *lhs_it, *it);
         ++lhs_it;
       }
     }
@@ -504,7 +516,7 @@ void path_symext::assign_rec(
               from_integer(i, index_type()),
               array_type.subtype()),
             state.config.ns);
-        assign_rec(state, guard, dereferenced_lhs, operands[i], new_rhs);
+        assign_rec(state, guard, operands[i], new_rhs);
       }
     }
   }
@@ -575,10 +587,16 @@ void path_symext::function_call_rec(
       state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
 
       // assign an lhs for every argument
-      irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
-      auto &var_info=state.config.var_map(id, irep_idt(), ssa_arguments[i].type());
-      state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
-      var_info.increment_ssa_counter();
+      if(ssa_arguments[i].id()==ID_symbol)
+        state.history->function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
+      else
+      {
+        irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
+        symbol_exprt arg_symbol(id, ssa_arguments[i].type());
+        auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
+        state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
+        var_info.increment_ssa_counter();
+      }
     }
 
     // do we have a body?
@@ -655,7 +673,7 @@ void path_symext::function_call_rec(
         assert(ssa_rhs.type()==ssa_lhs.type());
 
         exprt::operandst _guard; // start with empty guard
-        assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
+        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
       }
       else if(va_args_start_index==0)
         va_args_start_index=i;
@@ -673,18 +691,14 @@ void path_symext::function_call_rec(
             +std::to_string(va_count);
 
         // clear the var_state, since the type may have changed
-        auto &var_info=state.config.var_map(id, irep_idt(), ssa_rhs.type());
-        var_info.type=ssa_rhs.type();
+        const symbol_exprt symbol_expr(id, ssa_rhs.type());
+        auto &var_info=state.config.var_map(id, irep_idt(), symbol_expr);
+        var_info.original=symbol_expr;
         state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
-
-        symbolt symbol;
-        symbol.name=id;
-        symbol.base_name="va_arg"+std::to_string(va_count);
-        symbol.type=ssa_rhs.type();
 
         va_count++;
 
-        const symbol_exprt lhs=symbol.symbol_expr();
+        const symbol_exprt lhs=symbol_expr;
 
         // ssa the lhs
         const exprt ssa_lhs=
@@ -692,7 +706,7 @@ void path_symext::function_call_rec(
 
         assert(lhs.type()==ssa_rhs.type());
         exprt::operandst _guard; // start with empty guard
-        assign_rec(state, _guard, lhs, ssa_lhs, ssa_rhs);
+        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
       }
     }
 
@@ -1073,7 +1087,7 @@ void path_symext::operator()(
           nil_exprt();
 
         exprt::operandst _guard;
-        assign_rec(state, _guard, dereferenced_lhs, ssa_lhs, ssa_rhs);
+        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
       }
       else if(statement==ID_input)
       {

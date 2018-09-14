@@ -1,0 +1,13 @@
+CORE
+locals.c
+--trace
+^EXIT=10$
+^SIGNAL=0$
+^VERIFICATION FAILED$
+^  i=2 .*$
+^  j=3 .*$
+^  k=6 .*$
+--
+^warning: ignoring
+--
+diffblue/cbmc#1361

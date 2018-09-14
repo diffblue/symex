@@ -167,7 +167,7 @@ int symex_parse_optionst::doit()
 
   if(cmdline.isset("show-symbol-table"))
   {
-    show_symbol_table(goto_model, ui_message_handler.get_ui());
+    show_symbol_table(goto_model, ui_message_handler);
     return 0;
   }
 
