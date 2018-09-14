@@ -40,8 +40,10 @@ public:
     symbol_exprt ssa_symbol;
 
     // for uninterpreted functions or arrays we maintain an index set
+    #if 0
     typedef std::set<exprt> index_sett;
     index_sett index_set;
+    #endif
 
     var_statet():
       value(nil_exprt()),

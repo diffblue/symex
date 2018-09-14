@@ -145,3 +145,16 @@ void var_mapt::output(std::ostream &out) const
     it->second.output(out);
   }
 }
+
+bool var_mapt::is_unbounded_array(const array_typet &type)
+{
+  return !type.size().is_constant();
+}
+
+bool var_mapt::is_unbounded_array(const typet &type)
+{
+  if(type.id()==ID_array)
+    return is_unbounded_array(to_array_type(type));
+  else
+    return false;
+}

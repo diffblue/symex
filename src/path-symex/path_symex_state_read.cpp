@@ -163,21 +163,23 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
 
 exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
 {
-  // top-level constant-sized arrays only right now
-
   if(src.id()==ID_index)
   {
     const index_exprt &index_expr=to_index_expr(src);
-    exprt index_tmp1=read(index_expr.index(), propagate);
-    exprt index_tmp2=simplify_expr(index_tmp1, config.ns);
+    const array_typet &array_type=to_array_type(index_expr.array().type());
 
-    if(!index_tmp2.is_constant())
+    if(var_mapt::is_unbounded_array(array_type))
     {
-      const array_typet &array_type=to_array_type(index_expr.array().type());
-      const typet &subtype=array_type.subtype();
+    }
+    else
+    {
+      exprt index_tmp1=read(index_expr.index(), propagate);
+      exprt index_tmp2=simplify_expr(index_tmp1, config.ns);
 
-      if(array_type.size().is_constant())
+      if(!index_tmp2.is_constant())
       {
+        const typet &subtype=array_type.subtype();
+
         mp_integer size;
         if(to_integer(array_type.size(), size))
           throw "failed to convert array size";
@@ -202,10 +204,6 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
         }
 
         return result; // done
-      }
-      else
-      {
-        // TODO: variable-sized array
       }
     }
   }
@@ -348,6 +346,16 @@ exprt path_symex_statet::read_symbol_member_index(
   if(src_type.id()==ID_code)
     return nil_exprt();
 
+  // unbounded array?
+  if(src.id()==ID_index &&
+     var_mapt::is_unbounded_array(to_index_expr(src).array().type()))
+  {
+    index_exprt new_src=to_index_expr(src);
+    new_src.array()=read_symbol_member_index(new_src.array(), propagate); // rec. call
+    new_src.index()=instantiate_rec(new_src.index(), propagate); // rec. call
+    return new_src;
+  }
+
   // is this a struct/array/vector that needs to be expanded?
   exprt final=expand_structs_and_arrays(src);
 
@@ -357,6 +365,7 @@ exprt path_symex_statet::read_symbol_member_index(
   {
     Forall_operands(it, final)
       *it=read_symbol_member_index(*it, propagate); // rec. call
+
     return final;
   }
 
@@ -510,7 +519,7 @@ std::string path_symex_statet::array_index_as_string(const exprt &src) const
   exprt tmp=simplify_expr(src, config.ns);
   mp_integer i;
 
-  if(!to_integer(tmp, i))
+  if(src.id()==ID_constant && !to_integer(tmp, i))
     return "["+integer2string(i)+"]";
   else
     return "[*]";

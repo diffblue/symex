@@ -359,7 +359,17 @@ void path_symext::assign_rec(
     std::cout << "assign_rec ID_index\n";
     #endif
 
-    throw "unexpected array index on lhs";
+    const auto &index_expr=to_index_expr(ssa_lhs);
+
+    // This must be an unbounded array.
+    if(!var_mapt::is_unbounded_array(index_expr.array().type()))
+      throw "unexpected array index on lhs";
+
+    const exprt new_ssa_lhs=index_expr.array();
+
+    const exprt new_ssa_rhs=with_exprt(index_expr.array(), index_expr.index(), ssa_rhs);
+
+    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_ssa_rhs);
   }
   else if(ssa_lhs.id()==ID_dereference)
   {

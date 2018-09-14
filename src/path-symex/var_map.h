@@ -104,6 +104,9 @@ protected:
 public:
   unsigned nondet_count;  // free inputs
   unsigned dynamic_count; // memory allocation
+
+  static bool is_unbounded_array(const array_typet &);
+  static bool is_unbounded_array(const typet &);
 };
 
 #endif // CPROVER_PATH_SYMEX_VAR_MAP_H
