@@ -384,7 +384,7 @@ void path_symext::assign_rec(
 
     const exprt new_ssa_rhs=with_exprt(index_expr.array(), index_expr.index(), ssa_rhs);
 
-    assign_rec(state, guard, dereferenced_lhs, new_ssa_lhs, new_ssa_rhs);
+    assign_rec(state, guard, new_ssa_lhs, new_ssa_rhs);
   }
   else if(ssa_lhs.id()==ID_dereference)
   {
