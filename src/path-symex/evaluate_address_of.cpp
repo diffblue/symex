@@ -68,7 +68,9 @@ exprt evaluate_address_of(
   const address_of_exprt &src,
   const namespacet &ns)
 {
-  if(src.object().id()==ID_symbol)
+  if(src.object().id()==ID_symbol ||
+     src.object().id()==ID_string_constant ||
+     src.object().id()==ID_array)
     return src;
   else
     return typecast_exprt::conditional_cast(
