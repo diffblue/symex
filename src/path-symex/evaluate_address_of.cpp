@@ -70,7 +70,9 @@ exprt evaluate_address_of(
 {
   if(src.object().id()==ID_symbol ||
      src.object().id()==ID_string_constant ||
-     src.object().id()==ID_array)
+     src.object().id()==ID_array ||
+     src.object().id()==ID_byte_extract_little_endian ||
+     src.object().id()==ID_byte_extract_big_endian)
     return src;
   else
     return typecast_exprt::conditional_cast(
