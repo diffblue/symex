@@ -312,6 +312,73 @@ void path_symext::assign_rec_symbol(
     step.ssa_rhs=ssa_rhs;
 }
 
+void path_symext::assign_rec_member(
+  path_symex_statet &state,
+  exprt::operandst &guard,
+  const member_exprt &ssa_lhs,
+  const exprt &ssa_rhs)
+{
+  #ifdef DEBUG
+  std::cout << "assign_rec ID_member\n";
+  #endif
+
+  const member_exprt &ssa_lhs_member_expr=to_member_expr(ssa_lhs);
+  const exprt &struct_op=ssa_lhs_member_expr.struct_op();
+
+  const typet &compound_type=
+    state.config.ns.follow(struct_op.type());
+
+  if(compound_type.id()==ID_struct)
+  {
+    // We flatten the top-level structs, so this one is inside an
+    // array or a union.
+
+    exprt member_name(ID_member_name);
+    member_name.set(
+      ID_component_name,
+      ssa_lhs_member_expr.get_component_name());
+
+    with_exprt new_rhs(struct_op, member_name, ssa_rhs);
+
+    assign_rec(state, guard, struct_op, new_rhs);
+  }
+  else if(compound_type.id()==ID_union)
+  {
+    // rewrite into byte_extract, and do again
+    exprt offset=from_integer(0, index_type());
+
+    byte_extract_exprt
+      new_ssa_lhs(byte_update_id(), struct_op, offset, ssa_rhs.type());
+
+    assign_rec(state, guard, new_ssa_lhs, ssa_rhs);
+  }
+  else
+    throw "assign_rec: member expects struct or union type";
+}
+
+void path_symext::assign_rec_index(
+  path_symex_statet &state,
+  exprt::operandst &guard,
+  const index_exprt &ssa_lhs,
+  const exprt &ssa_rhs)
+{
+  #ifdef DEBUG
+  std::cout << "assign_rec ID_index\n";
+  #endif
+
+  const auto &index_expr=to_index_expr(ssa_lhs);
+
+  // This must be an unbounded array.
+  if(!var_mapt::is_unbounded_array(index_expr.array().type()))
+    throw "unexpected array index on lhs";
+
+  const exprt new_ssa_lhs=index_expr.array();
+
+  const exprt new_ssa_rhs=with_exprt(index_expr.array(), index_expr.index(), ssa_rhs);
+
+  assign_rec(state, guard, new_ssa_lhs, new_ssa_rhs);
+}
+
 void path_symext::assign_rec(
   path_symex_statet &state,
   exprt::operandst &guard,
@@ -339,60 +406,11 @@ void path_symext::assign_rec(
   }
   else if(ssa_lhs.id()==ID_member)
   {
-    #ifdef DEBUG
-    std::cout << "assign_rec ID_member\n";
-    #endif
-
-    const member_exprt &ssa_lhs_member_expr=to_member_expr(ssa_lhs);
-    const exprt &struct_op=ssa_lhs_member_expr.struct_op();
-
-    const typet &compound_type=
-      state.config.ns.follow(struct_op.type());
-
-    if(compound_type.id()==ID_struct)
-    {
-      // We flatten the top-level structs, so this one is inside an
-      // array or a union.
-
-      exprt member_name(ID_member_name);
-      member_name.set(
-        ID_component_name,
-        ssa_lhs_member_expr.get_component_name());
-
-      with_exprt new_rhs(struct_op, member_name, ssa_rhs);
-
-      assign_rec(state, guard, struct_op, new_rhs);
-    }
-    else if(compound_type.id()==ID_union)
-    {
-      // rewrite into byte_extract, and do again
-      exprt offset=from_integer(0, index_type());
-
-      byte_extract_exprt
-        new_ssa_lhs(byte_update_id(), struct_op, offset, ssa_rhs.type());
-
-      assign_rec(state, guard, new_ssa_lhs, ssa_rhs);
-    }
-    else
-      throw "assign_rec: member expects struct or union type";
+    assign_rec_member(state, guard, to_member_expr(ssa_lhs), ssa_rhs);
   }
   else if(ssa_lhs.id()==ID_index)
   {
-    #ifdef DEBUG
-    std::cout << "assign_rec ID_index\n";
-    #endif
-
-    const auto &index_expr=to_index_expr(ssa_lhs);
-
-    // This must be an unbounded array.
-    if(!var_mapt::is_unbounded_array(index_expr.array().type()))
-      throw "unexpected array index on lhs";
-
-    const exprt new_ssa_lhs=index_expr.array();
-
-    const exprt new_ssa_rhs=with_exprt(index_expr.array(), index_expr.index(), ssa_rhs);
-
-    assign_rec(state, guard, new_ssa_lhs, new_ssa_rhs);
+    assign_rec_index(state, guard, to_index_expr(ssa_lhs), ssa_rhs);
   }
   else if(ssa_lhs.id()==ID_dereference)
   {

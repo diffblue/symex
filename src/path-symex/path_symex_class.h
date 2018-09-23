@@ -107,6 +107,18 @@ protected:
     const symbol_exprt &ssa_lhs, // SSAed, recursion here
     const exprt &ssa_rhs); // SSAed
 
+  void assign_rec_member(
+    path_symex_statet &state,
+    exprt::operandst &guard, // SSAed
+    const member_exprt &ssa_lhs, // SSAed, recursion here
+    const exprt &ssa_rhs); // SSAed
+
+  void assign_rec_index(
+    path_symex_statet &state,
+    exprt::operandst &guard, // SSAed
+    const index_exprt &ssa_lhs, // SSAed, recursion here
+    const exprt &ssa_rhs); // SSAed
+
   static bool propagate(const exprt &src);
 };
 
