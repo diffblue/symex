@@ -240,18 +240,17 @@ void path_symext::assign_rec_symbol(
   const symbol_exprt &ssa_lhs,
   const exprt &ssa_rhs)
 {
-  if(has_prefix(id2string(to_symbol_expr(ssa_lhs).get_identifier()),
+  if(has_prefix(id2string(ssa_lhs.get_identifier()),
                 "symex::deref"))
     return; // ignore
 
   // These are expected to be SSA symbols
   assert(ssa_lhs.get_bool(ID_C_SSA_symbol));
 
-  const symbol_exprt &symbol_expr=to_symbol_expr(ssa_lhs);
-  const irep_idt &full_identifier=symbol_expr.get(ID_C_full_identifier);
+  const irep_idt &full_identifier=ssa_lhs.get(ID_C_full_identifier);
 
   #ifdef DEBUG
-  const irep_idt &ssa_identifier=symbol_expr.get_identifier();
+  const irep_idt &ssa_identifier=expr.get_identifier();
   std::cout << "SSA symbol identifier: " << ssa_identifier << '\n';
   std::cout << "full identifier: " << full_identifier << '\n';
   #endif
