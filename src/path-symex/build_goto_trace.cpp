@@ -41,12 +41,27 @@ goto_tracet build_goto_trace(
     switch(instruction.type)
     {
     case ASSIGN:
+      if(step.lhs.type().id()==ID_array &&
+         step.ssa_rhs.id()==ID_with)
+      {
+        // this is an unbounded array, assigned as
+        //  new_array = old_array WITH [index:=value]
+        //
+        // instead process as
+        //  new_array[index] = value
+        const exprt index_ssa=to_with_expr(step.ssa_rhs).where();
+        const exprt index_value=decision_procedure.get(index_ssa);
+        trace_step.full_lhs=index_exprt(step.lhs, index_value);
+        trace_step.full_lhs_value=decision_procedure.get(index_exprt(step.ssa_lhs, index_ssa));
+      }
+      else
+      {
+        trace_step.full_lhs=step.lhs;
+        trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      }
+
       trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
-      trace_step.full_lhs=step.lhs;
-      trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
       trace_step.assignment_type=goto_trace_stept::assignment_typet::STATE;
-      // trace_step.lhs_object and trace_step.lhs_object_value
-      // are not filled
       break;
 
     case DECL:
@@ -54,8 +69,6 @@ goto_tracet build_goto_trace(
       trace_step.full_lhs=step.lhs;
       trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
       trace_step.assignment_type=goto_trace_stept::assignment_typet::STATE;
-      // trace_step.lhs_object and trace_step.lhs_object_value
-      // are not filled
       break;
 
     case DEAD:
