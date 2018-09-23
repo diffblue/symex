@@ -19,6 +19,14 @@ Author: Daniel Kroening, kroening@kroening.com
 
 irep_idt ID_C_full_identifier;
 
+symbol_exprt var_mapt::var_infot::ssa_symbol() const
+{
+  symbol_exprt s=symbol_exprt(ssa_identifier(), original.type());
+  s.set(ID_C_SSA_symbol, true);
+  s.set(ID_C_full_identifier, full_identifier);
+  return s;
+}
+
 var_mapt::var_mapt(const namespacet &_ns):
   ns(_ns.get_symbol_table(), new_symbols),
   shared_count(0),

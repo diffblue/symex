@@ -52,14 +52,7 @@ public:
     }
 
     irep_idt ssa_identifier() const;
-
-    symbol_exprt ssa_symbol() const
-    {
-      symbol_exprt s=symbol_exprt(ssa_identifier(), original.type());
-      s.set(ID_C_SSA_symbol, true);
-      s.set(ID_C_full_identifier, full_identifier);
-      return s;
-    }
+    symbol_exprt ssa_symbol() const;
 
     void increment_ssa_counter()
     {
