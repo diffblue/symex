@@ -455,6 +455,13 @@ exprt path_symex_statet::read_symbol_member_index(
     {
       // produce one
       var_state.ssa_symbol=var_info.ssa_symbol();
+
+      // ssa-ify the size
+      if(var_mapt::is_unbounded_array(var_state.ssa_symbol.type()))
+      {
+        exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
+        size=read(size);
+      }
     }
 
     return var_state.ssa_symbol;

@@ -9,6 +9,8 @@ Author: Daniel Kroening, kroening@kroening.com
 /// \file
 /// Build Goto Trace from State History
 
+#include <util/simplify_expr.h>
+
 #include "build_goto_trace.h"
 
 /// follow state history to build a goto trace
@@ -52,7 +54,9 @@ goto_tracet build_goto_trace(
         const exprt index_ssa=to_with_expr(step.ssa_rhs).where();
         const exprt index_value=decision_procedure.get(index_ssa);
         trace_step.full_lhs=index_exprt(step.lhs, index_value);
-        trace_step.full_lhs_value=decision_procedure.get(index_exprt(step.ssa_lhs, index_ssa));
+        trace_step.full_lhs_value=
+          simplify_expr(decision_procedure.get(index_exprt(step.ssa_lhs, index_ssa)),
+                        state.config.ns);
       }
       else
       {
