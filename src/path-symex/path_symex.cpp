@@ -234,6 +234,85 @@ void path_symext::symex_va_arg_next(
   assign(state, lhs, rhs);
 }
 
+void path_symext::assign_rec_symbol(
+  path_symex_statet &state,
+  exprt::operandst &guard,
+  const symbol_exprt &ssa_lhs,
+  const exprt &ssa_rhs)
+{
+  if(has_prefix(id2string(to_symbol_expr(ssa_lhs).get_identifier()),
+                "symex::deref"))
+    return; // ignore
+
+  // These are expected to be SSA symbols
+  assert(ssa_lhs.get_bool(ID_C_SSA_symbol));
+
+  const symbol_exprt &symbol_expr=to_symbol_expr(ssa_lhs);
+  const irep_idt &full_identifier=symbol_expr.get(ID_C_full_identifier);
+
+  #ifdef DEBUG
+  const irep_idt &ssa_identifier=symbol_expr.get_identifier();
+  std::cout << "SSA symbol identifier: " << ssa_identifier << '\n';
+  std::cout << "full identifier: " << full_identifier << '\n';
+  #endif
+
+  var_mapt::var_infot &var_info=state.config.var_map[full_identifier];
+  assert(var_info.full_identifier==full_identifier);
+
+  // increase the SSA counter and produce new SSA symbol expression
+  var_info.increment_ssa_counter();
+  symbol_exprt new_ssa_lhs=var_info.ssa_symbol();
+
+  #ifdef DEBUG
+  std::cout << "new_ssa_lhs: " << new_ssa_lhs.get_identifier() << '\n';
+  #endif
+
+  // record new state of lhs
+  {
+    // warning: reference var_state is not stable
+    path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
+    var_state.ssa_symbol=new_ssa_lhs;
+  }
+
+  // rhs nil means non-det assignment
+  if(ssa_rhs.is_nil())
+  {
+    path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
+    var_state.value=nil_exprt();
+  }
+  else
+  {
+    // consistency check
+    if(!base_type_eq(ssa_rhs.type(), new_ssa_lhs.type(), state.config.ns))
+    {
+      #ifdef DEBUG
+      std::cout << "ssa_rhs: " << ssa_rhs.pretty() << '\n';
+      std::cout << "new_ssa_lhs: " << new_ssa_lhs.pretty() << '\n';
+      #endif
+      throw "assign_rec got different types";
+    }
+
+    // propagate the rhs?
+    // warning: reference var_state is not stable
+    path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
+    var_state.value=propagate(ssa_rhs)?ssa_rhs:nil_exprt();
+  }
+
+  // record the step
+  state.record_step();
+  stept &step=*state.history;
+
+  step.ssa_guard=conjunction(guard);
+  step.lhs=var_info.original;
+  step.ssa_lhs=new_ssa_lhs;
+
+  if(ssa_rhs.is_nil())
+    // this is a tautology, added so the solver knows about the symbol
+    step.ssa_rhs=new_ssa_lhs;
+  else
+    step.ssa_rhs=ssa_rhs;
+}
+
 void path_symext::assign_rec(
   path_symex_statet &state,
   exprt::operandst &guard,
@@ -249,77 +328,7 @@ void path_symext::assign_rec(
 
   if(ssa_lhs.id()==ID_symbol)
   {
-    if(has_prefix(id2string(to_symbol_expr(ssa_lhs).get_identifier()),
-                  "symex::deref"))
-      return; // ignore
-
-    // These are expected to be SSA symbols
-    assert(ssa_lhs.get_bool(ID_C_SSA_symbol));
-
-    const symbol_exprt &symbol_expr=to_symbol_expr(ssa_lhs);
-    const irep_idt &full_identifier=symbol_expr.get(ID_C_full_identifier);
-
-    #ifdef DEBUG
-    const irep_idt &ssa_identifier=symbol_expr.get_identifier();
-    std::cout << "SSA symbol identifier: " << ssa_identifier << '\n';
-    std::cout << "full identifier: " << full_identifier << '\n';
-    #endif
-
-    var_mapt::var_infot &var_info=state.config.var_map[full_identifier];
-    assert(var_info.full_identifier==full_identifier);
-
-    // increase the SSA counter and produce new SSA symbol expression
-    var_info.increment_ssa_counter();
-    symbol_exprt new_ssa_lhs=var_info.ssa_symbol();
-
-    #ifdef DEBUG
-    std::cout << "new_ssa_lhs: " << new_ssa_lhs.get_identifier() << '\n';
-    #endif
-
-    // record new state of lhs
-    {
-      // warning: reference var_state is not stable
-      path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
-      var_state.ssa_symbol=new_ssa_lhs;
-    }
-
-    // rhs nil means non-det assignment
-    if(ssa_rhs.is_nil())
-    {
-      path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
-      var_state.value=nil_exprt();
-    }
-    else
-    {
-      // consistency check
-      if(!base_type_eq(ssa_rhs.type(), new_ssa_lhs.type(), state.config.ns))
-      {
-        #ifdef DEBUG
-        std::cout << "ssa_rhs: " << ssa_rhs.pretty() << '\n';
-        std::cout << "new_ssa_lhs: " << new_ssa_lhs.pretty() << '\n';
-        #endif
-        throw "assign_rec got different types";
-      }
-
-      // propagate the rhs?
-      // warning: reference var_state is not stable
-      path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
-      var_state.value=propagate(ssa_rhs)?ssa_rhs:nil_exprt();
-    }
-
-    // record the step
-    state.record_step();
-    stept &step=*state.history;
-
-    step.ssa_guard=conjunction(guard);
-    step.lhs=var_info.original;
-    step.ssa_lhs=new_ssa_lhs;
-
-    if(ssa_rhs.is_nil())
-      // this is a tautology, added so the solver knows about the symbol
-      step.ssa_rhs=new_ssa_lhs;
-    else
-      step.ssa_rhs=ssa_rhs;
+    assign_rec_symbol(state, guard, to_symbol_expr(ssa_lhs), ssa_rhs);
   }
   else if(ssa_lhs.id()==ID_typecast)
   {

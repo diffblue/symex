@@ -101,6 +101,12 @@ protected:
     const exprt &ssa_lhs, // SSAed, recursion here
     const exprt &ssa_rhs); // SSAed
 
+  void assign_rec_symbol(
+    path_symex_statet &state,
+    exprt::operandst &guard, // SSAed
+    const symbol_exprt &ssa_lhs, // SSAed, recursion here
+    const exprt &ssa_rhs); // SSAed
+
   static bool propagate(const exprt &src);
 };
 
