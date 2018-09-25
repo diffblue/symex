@@ -1,11 +1,11 @@
-KNOWNBUG
+CORE
 dynamic_array.c
 --trace
 ^EXIT=10$
 ^SIGNAL=0$
 ^VERIFICATION FAILED$
-^  some_array\[0[ul]+\]=0 .*
-^  some_array\[1[ul]+\]=1 .*
-^  some_array\[2[ul]+\]=2 .*
+^  dynamic_object1\[0[ul]+\]=0 .*
+^  dynamic_object1\[1[ul]+\]=1 .*
+^  dynamic_object1\[2[ul]+\]=2 .*
 --
 ^warning: ignoring

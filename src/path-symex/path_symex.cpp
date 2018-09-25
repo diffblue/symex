@@ -80,6 +80,12 @@ bool path_symext::propagate(const exprt &src)
   {
     return propagate(to_union_expr(src).op());
   }
+  else if(src.id()==ID_mult &&
+          src.operands().size()==2 &&
+          src.op0().find(ID_C_c_sizeof_type).is_not_nil())
+  {
+    return true;
+  }
   else
   {
     return false;
