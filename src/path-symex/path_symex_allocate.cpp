@@ -89,20 +89,20 @@ void path_symext::symex_allocate(
       if(tmp_type.is_not_nil())
       {
         // Did the size get multiplied?
-        mp_integer elem_size=pointer_offset_size(tmp_type, state.config.ns);
+        const auto elem_size=pointer_offset_size(tmp_type, state.config.ns);
         mp_integer alloc_size;
-        if(elem_size<0 || to_integer(tmp_size, alloc_size))
+        if(!elem_size.has_value() || to_integer(tmp_size, alloc_size))
         {
         }
         else
         {
-          if(alloc_size==elem_size)
+          if(alloc_size==elem_size.value())
             object_type=tmp_type;
           else
           {
-            mp_integer elements=alloc_size/elem_size;
+            mp_integer elements=alloc_size/elem_size.value();
 
-            if(elements*elem_size==alloc_size)
+            if(elements*elem_size.value()==alloc_size)
               object_type=
                 array_typet(tmp_type, from_integer(elements, tmp_size.type()));
           }
