@@ -7,7 +7,7 @@ Running tests
   Running Address_of2/test.desc  [OK]
   Running Anonymous_Struct1/test.desc  [OK]
   Running Anonymous_Struct2/test.desc  [OK]
-  Running Anonymous_Struct3/test.desc  [FAILED]
+  Running Anonymous_Struct3/test.desc  [OK]
   Running Array_Initialization1/test.desc  [OK]
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
@@ -20,10 +20,9 @@ Running tests
   Running BV_Arithmetic4/test.desc  [OK]
   Running BV_Arithmetic5/test.desc  [OK]
   Running BV_Arithmetic6/test.desc  [OK]
-  Running Bitfields1/test.desc  [FAILED]
+  Running Bitfields1/test.desc  [OK]
   Running Bitfields2/test.desc  [OK]
-  Running Bitfields3/test.descbash: line 1: 52984 Abort trap: 6           symex --pointer-check --bounds-check 'main.c' > 'test.out' 2>&1
-  [FAILED]
+  Running Bitfields3/test.desc  [OK]
   Running Bool1/test.desc  [OK]
   Running Bool2/test.desc  [OK]
   Running Bool3/test.desc  [OK]
@@ -102,7 +101,7 @@ Running tests
   Running Float2/test.desc  [OK]
   Running Float20/test.desc  [OK]
   Running Float21/test.desc  [OK]
-  Running Float22/test.desc  [FAILED]
+  Running Float22/test.desc  [OK]
   Running Float23/test.desc  [OK]
   Running Float24/test.desc  [FAILED]
   Running Float3/test.desc  [OK]
@@ -182,7 +181,7 @@ Running tests
   Running Malloc19/test.desc  [OK]
   Running Malloc20/test.desc  [OK]
   Running Malloc21/test.desc  [OK]
-  Running Malloc22/test.descbash: line 1: 53660 Abort trap: 6           symex --unwind 2 --smt2 --outfile main.smt2 'main.c' > 'test.out' 2>&1
+  Running Malloc22/test.descbash: line 1: 57368 Abort trap: 6           symex --unwind 2 --smt2 --outfile main.smt2 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running Malloc23/test.desc  [OK]
   Running Malloc24/test.desc  [OK]
@@ -192,12 +191,12 @@ Running tests
   Running Mod1/test.desc  [OK]
   Running Mod2/test.desc  [OK]
   Running Multi_Dimensional_Array1/test.desc  [OK]
-  Running Multi_Dimensional_Array2/test.descbash: line 1: 53708 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running Multi_Dimensional_Array2/test.descbash: line 1: 57416 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running Multi_Dimensional_Array3/test.desc  [OK]
   Running Multi_Dimensional_Array4/test.desc  [OK]
   Running Multi_Dimensional_Array5/test.desc  [OK]
-  Running Multi_Dimensional_Array6/test.descbash: line 1: 53724 Abort trap: 6           symex --unwind 3 --no-unwinding-assertions 'main.c' > 'test.out' 2>&1
+  Running Multi_Dimensional_Array6/test.descbash: line 1: 57432 Abort trap: 6           symex --unwind 3 --no-unwinding-assertions 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running Multiple_Properties1/test.desc  [OK]
   Running Negation1/test.desc  [OK]
@@ -226,11 +225,11 @@ Running tests
   Running Pointer_array4/test.desc  [OK]
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [OK]
-  Running Pointer_byte_extract1/test.descbash: line 1: 53828 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running Pointer_byte_extract1/test.descbash: line 1: 57536 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running Pointer_byte_extract2/test.desc  [FAILED]
   Running Pointer_byte_extract3/test.desc  [OK]
-  Running Pointer_byte_extract4/test.descbash: line 1: 53840 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running Pointer_byte_extract4/test.descbash: line 1: 57548 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running Pointer_byte_extract5/no-simplify.desc  [OK]
   Running Pointer_byte_extract5/test.desc  [FAILED]
@@ -291,7 +290,7 @@ Running tests
   Running Struct_Initialization7/test.desc  [OK]
   Running Struct_Initialization8/test.desc  [SKIPPED]
   Running Struct_Initialization9/test.desc  [OK]
-  Running Struct_Padding1/test.descbash: line 1: 54077 Abort trap: 6           symex --32 'main.i' > 'test.out' 2>&1
+  Running Struct_Padding1/test.descbash: line 1: 57784 Abort trap: 6           symex --32 'main.i' > 'test.out' 2>&1
   [FAILED]
   Running Typecast1/test.desc  [OK]
   Running Typecast2/test.desc  [OK]
@@ -314,7 +313,7 @@ Running tests
   Running always_inline1/test.desc  [OK]
   Running always_inline2/test.desc  [OK]
   Running always_inline3/test.desc  [OK]
-  Running argv1/test.descbash: line 1: 54143 Abort trap: 6           symex --bounds-check --pointer-check 'main.c' > 'test.out' 2>&1
+  Running argv1/test.descbash: line 1: 57850 Abort trap: 6           symex --bounds-check --pointer-check 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running array-tests/test.desc  [SKIPPED]
   Running assert_func_four/test.desc  [SKIPPED]
@@ -325,7 +324,7 @@ Running tests
   Running bad_option/test.desc  [OK]
   Running bad_option/test_multiple.desc  [OK]
   Running big-endian-array1/test.desc  [FAILED]
-  Running bounds_check1/test.descbash: line 1: 54161 Abort trap: 6           symex --bounds-check --pointer-check 'main.c' > 'test.out' 2>&1
+  Running bounds_check1/test.descbash: line 1: 57868 Abort trap: 6           symex --bounds-check --pointer-check 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running builtin_is/test.desc  [SKIPPED]
   Running builtin_va_copy_lvalue/test.desc  [SKIPPED]
@@ -410,7 +409,7 @@ Running tests
   Running gcc_attribute_alias1/test.desc  [OK]
   Running gcc_bswap1/test.desc  [OK]
   Running gcc_builtin_va_arg_one/test.desc  [SKIPPED]
-  Running gcc_c99-bool-1/test.desc  [FAILED]
+  Running gcc_c99-bool-1/test.desc  [OK]
   Running gcc_conditional_expr1/test.desc  [OK]
   Running gcc_local_label1/test.desc  [OK]
   Running gcc_popcount1/test.desc  [OK]
@@ -432,7 +431,7 @@ Running tests
   Running goto5/test.desc  [OK]
   Running graphml_witness1/test.desc  [FAILED]
   Running guard1/test.desc  [OK]
-  Running havoc_object1/test.descbash: line 1: 54549 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running havoc_object1/test.descbash: line 1: 58256 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running hex_string1/test.desc  [OK]
   Running hex_trace/test.desc  [OK]
@@ -446,11 +445,11 @@ Running tests
   Running int-to-float1/test.desc  [OK]
   Running int-to-float2/test.desc  [OK]
   Running integer-assignments1/test.desc  [SKIPPED]
-  Running json1/test.descbash: line 1: 54603 Abort trap: 6           symex --json-ui --stop-on-fail 'main.c' > 'test.out' 2>&1
+  Running json1/test.descbash: line 1: 58310 Abort trap: 6           symex --json-ui --stop-on-fail 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running little-endian-array1/test.desc  [FAILED]
   Running locations1/test.desc  [OK]
-  Running member1/test.descbash: line 1: 54617 Abort trap: 6           symex --pointer-check 'main.c' > 'test.out' 2>&1
+  Running member1/test.descbash: line 1: 58324 Abort trap: 6           symex --pointer-check 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running memcpy-struct-ptr/test.desc  [SKIPPED]
   Running memcpy1/test.desc  [OK]
@@ -465,7 +464,7 @@ Running tests
   Running noop1/test.desc  [OK]
   Running null1/test.desc  [OK]
   Running null2/test.desc  [OK]
-  Running null3/test.descbash: line 1: 54681 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running null3/test.descbash: line 1: 58389 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running offsetof1/test.desc  [OK]
   Running path-branch-pointer-call/test.desc  [FAILED]
@@ -473,7 +472,7 @@ Running tests
   Running phi-merge_uninitialized_values/global.desc  [OK]
   Running phi-merge_uninitialized_values/local.desc  [OK]
   Running phi-merge_uninitialized_values/static_local.desc  [OK]
-  Running pipe1/test.descbash: line 1: 54709 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
+  Running pipe1/test.descbash: line 1: 58417 Abort trap: 6           symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running pointer-extra-checks/test.desc  [OK]
   Running pointer-function-parameters/test.desc  [FAILED]
@@ -538,9 +537,9 @@ Running tests
   Running sync_val_compare_pointer/test.desc  [OK]
   Running sync_val_compare_three/test.desc  [SKIPPED]
   Running trace-values/trace-values.desc  [FAILED]
-  Running trace_options_json_extended/extended.descbash: line 1: 54963 Abort trap: 6           symex --trace --json-ui --trace-json-extended 'test.c' > 'extended.out' 2>&1
+  Running trace_options_json_extended/extended.descbash: line 1: 58671 Abort trap: 6           symex --trace --json-ui --trace-json-extended 'test.c' > 'extended.out' 2>&1
   [FAILED]
-  Running trace_options_json_extended/non-extended.descbash: line 1: 54967 Abort trap: 6           symex --trace --json-ui 'test.c' > 'non-extended.out' 2>&1
+  Running trace_options_json_extended/non-extended.descbash: line 1: 58675 Abort trap: 6           symex --trace --json-ui 'test.c' > 'non-extended.out' 2>&1
   [FAILED]
   Running trace_show_code/test.desc  [OK]
   Running trace_show_function_calls/test.desc  [FAILED]
@@ -595,7 +594,7 @@ Running tests
   Running va_list1/test.desc  [OK]
   Running va_list2/test.desc  [SKIPPED]
   Running va_list3/test.desc  [SKIPPED]
-  Running variable-access-to-constant-array/test.descbash: line 1: 55169 Segmentation fault: 11  symex 'main.c' > 'test.out' 2>&1
+  Running variable-access-to-constant-array/test.descbash: line 1: 58877 Segmentation fault: 11  symex 'main.c' > 'test.out' 2>&1
   [FAILED]
   Running verifier_assume_lhs/test.desc  [SKIPPED]
   Running verifier_assume_one/test.desc  [OK]
@@ -608,5 +607,5 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  67 of 587 tests failed, 54 tests skipped
+  62 of 587 tests failed, 54 tests skipped
 

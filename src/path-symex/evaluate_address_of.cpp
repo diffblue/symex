@@ -26,11 +26,19 @@ exprt evaluate_address_of_rec(
 {
   if(src.id()==ID_member)
   {
-    const auto &member_expr=to_member_expr(src);
-    const exprt offset=member_offset_expr(member_expr, ns);
-    const exprt base=evaluate_address_of_rec(member_expr.compound(), ns);
-    return typecast_exprt::conditional_cast(
-      add_offset(base, offset), pointer_type(src.type()));
+    // do not expand bit-fields
+    if(src.type().id()==ID_c_bit_field)
+    {
+      return src;
+    }
+    else
+    {
+      const auto &member_expr=to_member_expr(src);
+      const exprt offset=member_offset_expr(member_expr, ns);
+      const exprt base=evaluate_address_of_rec(member_expr.compound(), ns);
+      return typecast_exprt::conditional_cast(
+        add_offset(base, offset), pointer_type(src.type()));
+    }
   }
   else if(src.id()==ID_index)
   {
