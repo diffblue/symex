@@ -44,12 +44,11 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/remove_unused_functions.h>
 #include <goto-programs/remove_vector.h>
 #include <goto-programs/remove_virtual_functions.h>
+#include <goto-programs/rewrite_union.h>
 #include <goto-programs/set_properties.h>
 #include <goto-programs/show_symbol_table.h>
 #include <goto-programs/show_properties.h>
 #include <goto-programs/xml_goto_trace.h>
-
-#include <goto-symex/rewrite_union.h>
 
 #include <goto-instrument/cover.h>
 
@@ -148,7 +147,7 @@ int symex_parse_optionst::doit()
 
   try
   {
-    goto_model=initialize_goto_model(cmdline, get_message_handler());
+    goto_model=initialize_goto_model(cmdline, get_message_handler(), options);
   }
   catch(const std::string error_msg)
   {
