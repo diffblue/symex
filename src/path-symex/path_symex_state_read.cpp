@@ -307,7 +307,7 @@ exprt path_symex_statet::instantiate_rec(
     assert(src.type().id()==ID_code ||
            src.get_bool(ID_C_SSA_symbol));
   }
-  else if(src.id()=="dereference_error")
+  else if(src.id()==ID_dereference_failure)
   {
     irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
     config.var_map.nondet_count++;
