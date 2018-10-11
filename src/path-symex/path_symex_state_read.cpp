@@ -252,7 +252,7 @@ exprt path_symex_statet::instantiate_rec(
       nondet_symbol.type=src.type();
       config.var_map.new_symbols.add(nondet_symbol);
 
-      return nondet_symbol.symbol_expr();
+      return read_symbol_member_index(nondet_symbol.symbol_expr(), false);
     }
     else
       throw "instantiate_rec: unexpected side effect "+id2string(statement);
