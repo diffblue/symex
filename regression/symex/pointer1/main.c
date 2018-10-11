@@ -34,4 +34,9 @@ int main()
     assert(x==1);
   else
     assert(y==1);
+
+  // pointer with conditional and null
+  p=input?&x:0;
+  if(p) *p=10;
+  assert(p==0 || x==10);
 }
