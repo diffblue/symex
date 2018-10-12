@@ -14,13 +14,12 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/simplify_expr.h>
 #include <util/arith_tools.h>
 
-#include <pointer-analysis/dereference.h>
-
 #ifdef DEBUG
 #include <iostream>
 #include <langapi/language_util.h>
 #endif
 
+#include "symex_dereference.h"
 #include "evaluate_address_of.h"
 
 exprt path_symex_statet::read(const exprt &src, bool propagate)
@@ -307,7 +306,7 @@ exprt path_symex_statet::instantiate_rec(
     assert(src.type().id()==ID_code ||
            src.get_bool(ID_C_SSA_symbol));
   }
-  else if(src.id()==ID_dereference_failure)
+  else if(src.id()=="dereference_failure")
   {
     irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
     config.var_map.nondet_count++;
@@ -544,7 +543,7 @@ exprt path_symex_statet::dereference_rec(
     exprt address=read(dereference_expr.pointer(), propagate);
 
     // now hand over to dereference
-    exprt address_dereferenced=::dereference(address, config.ns);
+    exprt address_dereferenced=::symex_dereference(address, config.ns);
 
     // the dereferenced address is a mixture of non-SSA and SSA symbols
     // (e.g., if-guards and array indices)

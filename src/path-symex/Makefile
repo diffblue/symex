@@ -7,6 +7,7 @@ SRC = build_goto_trace.cpp \
       path_symex_history.cpp \
       path_symex_state.cpp \
       path_symex_state_read.cpp \
+      symex_dereference.cpp \
       var_map.cpp \
       # Empty last line
 
