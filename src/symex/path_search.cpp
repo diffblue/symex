@@ -11,7 +11,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_search.h"
 
-#include <langapi/language_util.h>
+#include <util/format_expr.h>
 
 #include <solvers/flattening/bv_pointers.h>
 #include <solvers/sat/satcheck.h>
@@ -260,16 +260,14 @@ void path_searcht::do_show_vcc(statet &state)
     if(step_ref->ssa_guard.is_not_nil() &&
        !step_ref->ssa_guard.is_true())
     {
-      std::string string_value=from_expr(ns, "", step_ref->ssa_guard);
-      out << "{-" << count << "} " << string_value << '\n';
+      out << "{-" << count << "} " << format(step_ref->ssa_guard) << '\n';
       count++;
     }
 
     if(step_ref->ssa_rhs.is_not_nil())
     {
       equal_exprt equality(step_ref->ssa_lhs, step_ref->ssa_rhs);
-      std::string string_value=from_expr(ns, "", equality);
-      out << "{-" << count << "} " << string_value << '\n';
+      out << "{-" << count << "} " << format(equality) << '\n';
       count++;
     }
   }
@@ -283,7 +281,7 @@ void path_searcht::do_show_vcc(statet &state)
   exprt assertion=state.read(instruction.guard);
 
   out << "{" << 1 << "} "
-      << from_expr(ns, "", assertion) << '\n';
+      << format(assertion) << '\n';
 
   if(!assertion.is_true())
     number_of_VCCs_after_simplification++;
