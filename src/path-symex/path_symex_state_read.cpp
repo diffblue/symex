@@ -553,11 +553,7 @@ exprt path_symex_statet::dereference_rec(
   {
     const auto &address_of_expr=to_address_of_expr(src);
     const exprt tmp=evaluate_address_of(address_of_expr, config.ns);
-
-    if(tmp.id()==ID_address_of)
-      return src; // no change
-    else
-      return dereference_rec(tmp, propagate);
+    return tmp;
   }
 
   if(!src.has_operands())
@@ -567,10 +563,10 @@ exprt path_symex_statet::dereference_rec(
 
   {
     // recursive calls on structure of 'src'
-    Forall_operands(it, src2)
+    for(auto &op : src2.operands())
     {
-      exprt tmp_op=dereference_rec(*it, propagate);
-      *it=tmp_op;
+      exprt tmp_op=dereference_rec(op, propagate);
+      op=tmp_op;
     }
   }
 
