@@ -274,7 +274,11 @@ void path_searcht::do_show_vcc(statet &state)
     }
   }
 
-  out << "|--------------------------" << '\n';
+  // Unicode equivalent of "|--------------------------"
+  out << u8"\u251c";
+  for(unsigned i = 0; i < 26; i++)
+    out << u8"\u2500";
+  out << '\n';
 
   exprt assertion=state.read(instruction.guard);
 
