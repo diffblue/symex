@@ -326,10 +326,10 @@ exprt path_symex_statet::instantiate_rec(
   exprt src2=src;
 
   // recursive calls on structure of 'src'
-  Forall_operands(it, src2)
+  for(auto &op : src2.operands())
   {
-    exprt tmp_op=instantiate_rec(*it, propagate);
-    *it=tmp_op;
+    exprt tmp_op=instantiate_rec(op, propagate);
+    op=tmp_op;
   }
 
   return src2;
@@ -362,8 +362,8 @@ exprt path_symex_statet::read_symbol_member_index(
      final.id()==ID_array ||
      final.id()==ID_vector)
   {
-    Forall_operands(it, final)
-      *it=read_symbol_member_index(*it, propagate); // rec. call
+    for(auto & op : final.operands())
+      op=read_symbol_member_index(op, propagate); // rec. call
 
     return final;
   }
