@@ -1,4 +1,5 @@
 SRC = path_search.cpp \
+      show_vcc.cpp \
       symex_cover.cpp \
       symex_main.cpp \
       symex_parse_options.cpp \
