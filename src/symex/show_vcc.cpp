@@ -39,7 +39,7 @@ void path_searcht::do_show_vcc(statet &state)
     if(step_ref->ssa_guard.is_not_nil() &&
        !step_ref->ssa_guard.is_true())
     {
-      out << command(2) << "{-" << count << "} " << reset()
+      out << faint << "{-" << count << "} " << reset
           << format(step_ref->ssa_guard) << '\n';
       count++;
     }
@@ -47,21 +47,21 @@ void path_searcht::do_show_vcc(statet &state)
     if(step_ref->ssa_rhs.is_not_nil())
     {
       equal_exprt equality(step_ref->ssa_lhs, step_ref->ssa_rhs);
-      out << command(2) << "{-" << count << "} " << reset()
+      out << faint << "{-" << count << "} " << reset
           << format(equality) << '\n';
       count++;
     }
   }
 
   // Unicode equivalent of "|--------------------------"
-  out << command(2) << u8"\u251c";
+  out << faint << u8"\u251c";
   for(unsigned i = 0; i < 26; i++)
     out << u8"\u2500";
-  out << reset() << '\n';
+  out << reset << '\n';
 
   exprt assertion=state.read(instruction.guard);
 
-  out << command(2) << "{" << 1 << "} " << reset()
+  out << faint << "{" << 1 << "} " << reset
       << format(assertion) << '\n';
 
   if(!assertion.is_true())
