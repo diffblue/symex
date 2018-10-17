@@ -81,6 +81,7 @@ goto_tracet build_goto_trace(
 
     case ASSUME:
       trace_step.type=goto_trace_stept::typet::ASSUME;
+      trace_step.cond_value = true;
       break;
 
     case FUNCTION_CALL:
