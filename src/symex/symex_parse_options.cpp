@@ -531,9 +531,10 @@ void symex_parse_optionst::show_trace(
   switch(get_ui())
   {
   case ui_message_handlert::uit::PLAIN:
-    std::cout << '\n' << "Trace for " << property
-              << ":" << '\n';
-    show_goto_trace(std::cout, ns, error_trace, trace_options);
+    result() << '\n' << "Trace for " << property
+             << ":" << '\n';
+    show_goto_trace(result(), ns, error_trace, trace_options);
+    result() << eom;
     break;
 
   case ui_message_handlert::uit::XML_UI:
