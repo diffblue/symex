@@ -421,7 +421,7 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     return true;
   }
 
-  catch(std::bad_alloc)
+  catch(const std::bad_alloc &)
   {
     error() << "Out of memory" << eom;
     return true;

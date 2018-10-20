@@ -18,7 +18,7 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/solvers/solvers$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/util/util$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-programs/adjust_float_expressions$(OBJEXT) \
-       ../../$(CPROVER_DIR)/src/goto-symex/rewrite_union$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-programs/rewrite_union$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/pointer-analysis/dereference$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_filter$(OBJEXT) \
