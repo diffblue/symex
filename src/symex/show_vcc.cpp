@@ -59,10 +59,19 @@ void path_searcht::do_show_vcc(statet &state)
     out << u8"\u2500";
   out << reset << '\n';
 
-  exprt assertion=state.read(instruction.guard);
+  const exprt assertion=state.read(instruction.guard);
 
-  out << faint << "{" << 1 << "} " << reset
-      << format(assertion) << '\n';
+  const exprt::operandst disjuncts =
+    assertion.id() == ID_or ? assertion.operands() :
+    exprt::operandst({ assertion });
+
+  count = 1;
+  for(const auto &d : disjuncts)
+  {
+    out << faint << "{" << count << "} " << reset
+        << format(d) << '\n';
+    count++;
+  }
 
   if(!assertion.is_true())
     number_of_VCCs_after_simplification++;
