@@ -53,6 +53,7 @@ class optionst;
   "(property):(trace)(stop-on-fail)(eager-infeasibility)" \
   OPT_GOTO_TRACE \
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
+  "(no-self-loops-to-assumptions)" \
   "(json-ui)" \
   JAVA_BYTECODE_LANGUAGE_OPTIONS
   // the last line is for CBMC-regression testing only
