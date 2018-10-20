@@ -86,6 +86,12 @@ bool path_symext::propagate(const exprt &src)
   {
     return true;
   }
+  else if(src.id()==ID_byte_extract_little_endian ||
+          src.id()==ID_byte_extract_big_endian)
+  {
+    const auto &byte_extract = to_byte_extract_expr(src);
+    return propagate(byte_extract.op()) && propagate(byte_extract.offset());
+  }
   else
   {
     return false;
