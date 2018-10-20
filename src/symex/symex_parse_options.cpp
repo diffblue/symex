@@ -465,9 +465,9 @@ void symex_parse_optionst::report_properties(
                << it->second.description << ": ";
       switch(it->second.status)
       {
-      case path_searcht::SUCCESS: status() << "SUCCESS"; break;
-      case path_searcht::FAILURE: status() << "FAILURE"; break;
-      case path_searcht::NOT_REACHED: status() << "SUCCESS"; break;
+      case path_searcht::SUCCESS: status() << green << "SUCCESS" << reset; break;
+      case path_searcht::FAILURE: status() << red << "FAILURE" << reset; break;
+      case path_searcht::NOT_REACHED: status() << yellow << "SUCCESS" << reset << " (not reached)"; break;
       }
       status() << eom;
     }
@@ -505,7 +505,7 @@ void symex_parse_optionst::report_properties(
 
 void symex_parse_optionst::report_success()
 {
-  result() << "VERIFICATION SUCCESSFUL" << eom;
+  result() << bold << "VERIFICATION SUCCESSFUL" << reset << eom;
 
   switch(get_ui())
   {
@@ -558,7 +558,7 @@ void symex_parse_optionst::show_trace(
 
 void symex_parse_optionst::report_failure()
 {
-  result() << "VERIFICATION FAILED" << eom;
+  result() << bold << "VERIFICATION FAILED" << reset << eom;
 
   switch(get_ui())
   {
