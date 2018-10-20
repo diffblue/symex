@@ -15,10 +15,11 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <fstream>
 #include <cstdlib>
 
-#include <util/string2int.h>
 #include <util/config.h>
-#include <util/options.h>
+#include <util/exception_utils.h>
 #include <util/memory_info.h>
+#include <util/options.h>
+#include <util/string2int.h>
 #include <util/unicode.h>
 #include <util/version.h>
 
@@ -148,6 +149,11 @@ int symex_parse_optionst::doit()
   try
   {
     goto_model=initialize_goto_model(cmdline, get_message_handler(), options);
+  }
+  catch(const cprover_exception_baset &e)
+  {
+    error() << e.what() << messaget::eom;
+    return 6;
   }
   catch(const std::string error_msg)
   {
