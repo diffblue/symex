@@ -185,24 +185,23 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
 
         std::size_t size_int=integer2size_t(size);
 
-        exprt result=nil_exprt();
+        // Split it up using a cond_exprt.
+        // A cond_exprt is depth 1 compared to depth n when
+        // using a nesting of if_exprt
+        exprt cond_expr(ID_cond, index_expr.index().type());
+        cond_expr.operands().reserve(size_int*2);
 
-        // split it up
         for(std::size_t i=0; i<size_int; ++i)
         {
           exprt index=from_integer(i, index_expr.index().type());
+          equal_exprt index_equal(index_expr.index(), index);
           exprt new_src=index_exprt(index_expr.array(), index, subtype);
 
-          if(result.is_nil())
-            result=new_src;
-          else
-          {
-            equal_exprt index_equal(index_expr.index(), index);
-            result=if_exprt(index_equal, new_src, result);
-          }
+          cond_expr.copy_to_operands(index_equal);
+          cond_expr.copy_to_operands(new_src);
         }
 
-        return result; // done
+        return cond_expr; // done
       }
     }
   }
