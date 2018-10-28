@@ -188,7 +188,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
         // Split it up using a cond_exprt.
         // A cond_exprt is depth 1 compared to depth n when
         // using a nesting of if_exprt
-        exprt cond_expr(ID_cond, index_expr.index().type());
+        exprt cond_expr(ID_cond, index_expr.type());
         cond_expr.operands().reserve(size_int*2);
 
         for(std::size_t i=0; i<size_int; ++i)
@@ -387,6 +387,8 @@ exprt path_symex_statet::read_symbol_member_index(
   final=array_theory(final, propagate);
 
   if(final.id()==ID_if)
+    return instantiate_rec(final, propagate); // ultimately a rec. call
+  else if(final.id()==ID_cond)
     return instantiate_rec(final, propagate); // ultimately a rec. call
 
   std::string suffix="";
