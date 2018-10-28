@@ -372,13 +372,7 @@ exprt path_symex_statet::read_symbol_member_index(
   final=array_theory(final, propagate);
 
   if(final.id()==ID_if)
-  {
-    assert(final.operands().size()==3);
-    final.op0()=instantiate_rec(final.op0(), propagate); // rec. call
-    final.op1()=read_symbol_member_index(final.op1(), propagate); // rec. call
-    final.op2()=read_symbol_member_index(final.op2(), propagate); // rec. call
-    return final;
-  }
+    return instantiate_rec(final, propagate); // ultimately a rec. call
 
   std::string suffix="";
   exprt current=src;
