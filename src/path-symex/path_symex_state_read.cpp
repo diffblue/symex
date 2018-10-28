@@ -327,24 +327,28 @@ exprt path_symex_statet::instantiate_rec(
   const exprt &src,
   bool propagate)
 {
-  auto node_result = instantiate_node(src, propagate);
+  exprt tmp_src = src;
 
-  if(node_result.has_value())
-    return node_result.value(); // done
+  // the stack avoids recursion
+  std::vector<exprt *> stack;
+  stack.push_back(&tmp_src);
 
-  if(!src.has_operands())
-    return src;
-
-  exprt src2=src;
-
-  // recursive calls on structure of 'src'
-  for(auto &op : src2.operands())
+  while(!stack.empty())
   {
-    exprt tmp_op=instantiate_rec(op, propagate);
-    op=tmp_op;
+    exprt &node = *stack.back();
+    stack.pop_back();
+
+    auto node_result = instantiate_node(node, propagate);
+    if(node_result.has_value())
+      node = node_result.value();
+    else if(node.has_operands())
+    {
+      for(auto &op : node.operands())
+        stack.push_back(&op);
+    }
   }
 
-  return src2;
+  return tmp_src;
 }
 
 exprt path_symex_statet::read_symbol_member_index(
