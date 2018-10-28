@@ -281,6 +281,10 @@ protected:
     const exprt &src,
     bool propagate);
 
+  optionalt<exprt> instantiate_node(
+    const exprt &src,
+    bool propagate);
+
   exprt expand_structs_and_arrays(const exprt &src);
   exprt array_theory(const exprt &src, bool propagate);
 

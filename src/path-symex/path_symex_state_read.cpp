@@ -210,7 +210,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
   return src;
 }
 
-exprt path_symex_statet::instantiate_rec(
+optionalt<exprt> path_symex_statet::instantiate_node(
   const exprt &src,
   bool propagate)
 {
@@ -319,6 +319,18 @@ exprt path_symex_statet::instantiate_rec(
 
     return nondet_symbol.symbol_expr();
   }
+
+  return { }; // no change
+}
+
+exprt path_symex_statet::instantiate_rec(
+  const exprt &src,
+  bool propagate)
+{
+  auto node_result = instantiate_node(src, propagate);
+
+  if(node_result.has_value())
+    return node_result.value(); // done
 
   if(!src.has_operands())
     return src;
