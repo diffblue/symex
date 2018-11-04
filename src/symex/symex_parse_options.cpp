@@ -438,19 +438,16 @@ void symex_parse_optionst::report_properties(
   if(get_ui()==ui_message_handlert::uit::PLAIN)
     status() << "\n** Results:" << eom;
 
-  for(path_searcht::property_mapt::const_iterator
-      it=property_map.begin();
-      it!=property_map.end();
-      it++)
+  for(const auto &p : property_map)
   {
     if(get_ui()==ui_message_handlert::uit::XML_UI)
     {
       xmlt xml_result("result");
-      xml_result.set_attribute("claim", id2string(it->first));
+      xml_result.set_attribute("claim", id2string(p.first));
 
       std::string status_string;
 
-      switch(it->second.status)
+      switch(p.second.status)
       {
       case path_searcht::SUCCESS: status_string="SUCCESS"; break;
       case path_searcht::FAILURE: status_string="FAILURE"; break;
@@ -463,9 +460,9 @@ void symex_parse_optionst::report_properties(
     }
     else
     {
-      status() << "[" << it->first << "] "
-               << it->second.description << ": ";
-      switch(it->second.status)
+      status() << "[" << p.first << "] "
+               << p.second.description << ": ";
+      switch(p.second.status)
       {
       case path_searcht::SUCCESS: status() << green << "SUCCESS" << reset; break;
       case path_searcht::FAILURE: status() << red << "FAILURE" << reset; break;
@@ -479,11 +476,11 @@ void symex_parse_optionst::report_properties(
         cmdline.isset("stack-trace") ||
         cmdline.isset("xml-ui") ||
         cmdline.isset("stop-on-fail")) &&
-       it->second.is_failure())
+       p.second.is_failure())
     {
       optionst options;
       PARSE_OPTIONS_GOTO_TRACE(cmdline, options);
-      show_trace(it->first, it->second.error_trace, options);
+      show_trace(p.first, p.second.error_trace, options);
     }
   }
 
@@ -493,11 +490,8 @@ void symex_parse_optionst::report_properties(
 
     unsigned failed=0;
 
-    for(path_searcht::property_mapt::const_iterator
-        it=property_map.begin();
-        it!=property_map.end();
-        it++)
-      if(it->second.is_failure())
+    for(const auto &p : property_map)
+      if(p.second.is_failure())
         failed++;
 
     status() << "** " << failed
