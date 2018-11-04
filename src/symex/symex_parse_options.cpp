@@ -33,8 +33,10 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/adjust_float_expressions.h>
 #include <goto-programs/goto_convert_functions.h>
 #include <goto-programs/goto_inline.h>
+#include <goto-programs/goto_trace.h>
 #include <goto-programs/initialize_goto_model.h>
 #include <goto-programs/instrument_preconditions.h>
+#include <goto-programs/json_goto_trace.h>
 #include <goto-programs/link_to_library.h>
 #include <goto-programs/loop_ids.h>
 #include <goto-programs/read_goto_binary.h>
@@ -548,6 +550,22 @@ void symex_parse_optionst::show_trace(
       xmlt xml;
       convert(ns, error_trace, xml);
       std::cout << xml << std::flush;
+    }
+    break;
+
+  case ui_message_handlert::uit::JSON_UI:
+    {
+      json_stream_objectt &json_result =
+        ui_message_handler.get_json_stream().push_back_stream_object();
+      const goto_trace_stept &step=error_trace.steps.back();
+      json_result["property"] =
+        json_stringt(step.pc->source_location.get_property_id());
+      json_result["description"] =
+        json_stringt(step.pc->source_location.get_comment());
+      json_result["status"]=json_stringt("failed");
+      json_stream_arrayt &json_trace =
+        json_result.push_back_stream_array("trace");
+      convert<json_stream_arrayt>(ns, error_trace, json_trace, trace_options);
     }
     break;
 
