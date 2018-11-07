@@ -188,7 +188,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
         // Split it up using a cond_exprt.
         // A cond_exprt is depth 1 compared to depth n when
         // using a nesting of if_exprt
-        exprt cond_expr(ID_cond, index_expr.type());
+        cond_exprt cond_expr(index_expr.type());
         cond_expr.operands().reserve(size_int*2);
 
         for(std::size_t i=0; i<size_int; ++i)
@@ -197,8 +197,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
           equal_exprt index_equal(index_expr.index(), index);
           exprt new_src=index_exprt(index_expr.array(), index, subtype);
 
-          cond_expr.copy_to_operands(index_equal);
-          cond_expr.copy_to_operands(new_src);
+          cond_expr.add_case(index_equal, new_src);
         }
 
         return cond_expr; // done
