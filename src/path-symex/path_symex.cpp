@@ -202,11 +202,15 @@ void path_symext::symex_va_arg_next(
 
   // Get old symbol of va_arg and modify it to generate a new one.
   irep_idt id=get_old_va_symbol(state, tmp);
-  exprt rhs=
+
+  const auto zero_opt=
     zero_initializer(
       lhs.type(),
       code.source_location(),
       state.config.ns);
+  CHECK_RETURN(zero_opt.has_value());
+
+  exprt rhs = zero_opt.value();
 
   if(!id.empty())
   {
@@ -481,12 +485,8 @@ void path_symext::assign_rec(
     else
       UNREACHABLE;
 
-    byte_update_exprt new_rhs(new_id);
-
-    new_rhs.type()=byte_extract_expr.op().type();
-    new_rhs.op()=byte_extract_expr.op();
-    new_rhs.offset()=byte_extract_expr.offset();
-    new_rhs.value()=ssa_rhs;
+    byte_update_exprt new_rhs(
+      new_id, byte_extract_expr.op(), byte_extract_expr.offset(), ssa_rhs);
 
     const exprt new_ssa_lhs=byte_extract_expr.op();
 

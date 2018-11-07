@@ -373,11 +373,6 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     remove_complex(goto_model);
     remove_vector(goto_model);
 
-    // Java throw and catch -> explicit exceptional return variables:
-    // This introduces instanceof, so order is important:
-    remove_exceptions(goto_model, get_message_handler());
-    // Java instanceof -> clsid comparison:
-    remove_instanceof(goto_model, get_message_handler());
     rewrite_union(goto_model);
     adjust_float_expressions(goto_model);
 

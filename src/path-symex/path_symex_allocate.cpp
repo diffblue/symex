@@ -170,14 +170,14 @@ void path_symext::symex_allocate(
   if(!to_integer(initialize, initialize_i) &&
      initialize_i==1)
   {
-    exprt zero=zero_initializer(
+    const auto zero_opt=zero_initializer(
       value_symbol.type,
       code.source_location(),
       state.config.ns);
 
-    if(zero.is_not_nil())
+    if(zero_opt.has_value())
     {
-      assign(state, value_symbol.symbol_expr(), zero);
+      assign(state, value_symbol.symbol_expr(), zero_opt.value());
     }
   }
 
