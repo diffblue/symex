@@ -103,6 +103,7 @@ public:
 
   // the instruction that was executed
   loc_reft pc;
+  irep_idt f_identifier;
 
   // pre SSA, but dereferenced
   exprt lhs;
@@ -114,11 +115,8 @@ public:
 
   bool hidden;
 
-  // for function call and return
-  irep_idt function_identifier;
-
   // for function call
-
+  irep_idt called_function;
   struct function_argumentt { symbol_exprt ssa_lhs; exprt ssa_rhs; };
   std::vector<function_argumentt> function_arguments;
 

@@ -26,9 +26,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <ansi-c/ansi_c_language.h>
 #include <ansi-c/cprover_library.h>
 #include <cpp/cpp_language.h>
-#include <java_bytecode/java_bytecode_language.h>
-#include <java_bytecode/remove_exceptions.h>
-#include <java_bytecode/remove_instanceof.h>
 
 #include <goto-programs/adjust_float_expressions.h>
 #include <goto-programs/goto_convert_functions.h>
@@ -137,7 +134,6 @@ int symex_parse_optionst::doit()
 
   register_language(new_ansi_c_language);
   register_language(new_cpp_language);
-  register_language(new_java_bytecode_language);
 
   //
   // command line options
@@ -651,9 +647,6 @@ void symex_parse_optionst::help()
     " --round-to-minus-inf         IEEE floating point rounding mode\n"
     " --round-to-zero              IEEE floating point rounding mode\n"
     HELP_FUNCTIONS
-    "\n"
-    "Java Bytecode frontend options:\n"
-    JAVA_BYTECODE_LANGUAGE_OPTIONS_HELP
     "\n"
     "Program instrumentation options:\n"
     HELP_GOTO_CHECK

@@ -77,7 +77,10 @@ void path_symex_statet::record_step()
 
   // copy PC
   assert(current_thread<threads.size());
-  step.pc=threads[current_thread].pc;
+  const auto &thread=threads[current_thread];
+  step.pc=thread.pc;
+  if(!thread.call_stack.empty())
+    step.f_identifier=thread.call_stack.back().current_function;
   step.thread_nr=current_thread;
 
   // set hide flag

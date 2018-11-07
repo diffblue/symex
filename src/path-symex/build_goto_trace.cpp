@@ -34,6 +34,7 @@ goto_tracet build_goto_trace(
 
     assert(!step.pc.is_nil());
     trace_step.pc=state.config.locs[step.pc].target;
+    trace_step.function=step.f_identifier;
     trace_step.thread_nr=step.thread_nr;
     trace_step.step_nr=step_nr;
     trace_step.hidden=step.hidden;
@@ -99,7 +100,7 @@ goto_tracet build_goto_trace(
       else
       {
         trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
-        trace_step.function_identifier=step.function_identifier;
+        trace_step.called_function=step.called_function;
         trace_step.function_arguments.resize(step.function_arguments.size());
         for(std::size_t i=0; i<trace_step.function_arguments.size(); i++)
           trace_step.function_arguments[i]=decision_procedure.get(step.function_arguments[i].ssa_lhs);
@@ -108,7 +109,6 @@ goto_tracet build_goto_trace(
 
     case END_FUNCTION:
       trace_step.type=goto_trace_stept::typet::FUNCTION_RETURN;
-      trace_step.function_identifier=step.function_identifier;
       break;
 
     case START_THREAD:

@@ -55,7 +55,6 @@ class optionst;
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
   "(no-self-loops-to-assumptions)" \
   "(json-ui)(xml-ui)" \
-  JAVA_BYTECODE_LANGUAGE_OPTIONS
   // the last line is for CBMC-regression testing only
 
 class symex_parse_optionst:

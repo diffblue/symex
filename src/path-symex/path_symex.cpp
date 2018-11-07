@@ -623,7 +623,7 @@ void path_symext::function_call_rec(
     }
 
     // record the function we call and the arguments
-    state.history->function_identifier=function_identifier;
+    state.history->called_function=function_identifier;
     state.history->function_arguments.resize(ssa_arguments.size());
 
     for(std::size_t i=0; i<ssa_arguments.size(); i++)
@@ -815,10 +815,6 @@ void path_symext::return_from_function(path_symex_statet &state)
   }
   else
   {
-    // return function from which we return
-    state.history->function_identifier=
-      thread.call_stack.back().current_function;
-
     // update statistics
     state.recursion_map[thread.call_stack.back().current_function]--;
 
