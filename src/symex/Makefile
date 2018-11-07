@@ -7,7 +7,6 @@ SRC = path_search.cpp \
 
 OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/cpp/cpp$(LIBEXT) \
-       ../../$(CPROVER_DIR)/jbmc/src/java_bytecode/java_bytecode$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/linking/linking$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/big-int/big-int$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-programs/goto-programs$(LIBEXT) \
@@ -31,11 +30,10 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_other$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_util$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/json/json$(LIBEXT) \
-       ../../$(CPROVER_DIR)/jbmc/src/miniz/miniz$(OBJEXT) \
        ../goto-locs/goto-locs$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
 
-INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src -I ../../$(CPROVER_DIR)/jbmc/src
+INCLUDES= -I .. -I ../../$(CPROVER_DIR)/src
 
 LIBS =
 
