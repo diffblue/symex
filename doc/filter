@@ -1,0 +1,2 @@
+sed -e 's/ in [0-9]* seconds//g' | 
+  perl -MTerm::ANSIColor=colorstrip -ne 'print colorstrip($_)'
