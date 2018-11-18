@@ -451,8 +451,10 @@ void symex_parse_optionst::report_properties(
     }
     else
     {
-      status() << "[" << p.first << "] "
-               << p.second.description << ": ";
+      status() << "[" << p.first << "] ";
+      if(!p.second.source_location.get_line().empty())
+        status() << "line " << p.second.source_location.get_line() << ' ';
+      status() << p.second.description << ": ";
       switch(p.second.status)
       {
       case path_searcht::SUCCESS: status() << green << "SUCCESS" << reset; break;
