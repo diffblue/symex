@@ -4,6 +4,6 @@ null_pointer.c
 ^EXIT=10$
 ^SIGNAL=0$
 ^VERIFICATION FAILED$
-^\[main.assertion.1\] assertion data==3: FAILURE$
+^\[main.assertion.1\] .* assertion data==3: FAILURE$
 --
 ^warning: ignoring

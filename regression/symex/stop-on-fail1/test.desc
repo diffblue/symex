@@ -4,6 +4,6 @@ main.c
 ^EXIT=10$
 ^SIGNAL=0$
 ^VERIFICATION FAILED$
-^\[main.assertion.1\] assertion 0: FAILURE$
+^\[main.assertion.1\] line 5 assertion 0: FAILURE$
 --
 ^warning: ignoring
