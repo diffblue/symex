@@ -54,18 +54,10 @@ class optionst;
 
 class jsymex_parse_optionst : public parse_options_baset, public messaget {
 public:
-  virtual int doit() override;
-  virtual void help() override;
+  int doit() override;
+  void help() override;
 
   jsymex_parse_optionst(int argc, const char **argv);
-  jsymex_parse_optionst(int argc, const char **argv,
-                        const std::string &extra_options);
-
-  /// \brief Set the options that have default values
-  ///
-  /// This function can be called from clients that wish to emulate JBMC's
-  /// default behaviour, for example unit tests.
-  static void set_default_options(optionst &);
 
   void process_goto_function(goto_model_functiont &function,
                              const abstract_goto_modelt &, const optionst &);
@@ -85,11 +77,8 @@ protected:
 
   std::unique_ptr<class_hierarchyt> class_hierarchy;
 
-  void get_command_line_options(optionst &);
   int get_goto_program(std::unique_ptr<goto_modelt> &goto_model,
                        const optionst &);
-  bool show_loaded_functions(const abstract_goto_modelt &goto_model);
-
   bool set_properties(goto_modelt &goto_model);
 
   void report_success();
@@ -98,8 +87,6 @@ protected:
 
   void report_cover(const path_searcht::property_mapt &,
                     const symbol_tablet &symbol_table);
-  void show_trace(const irep_idt &, const class goto_tracet &,
-                  const optionst &);
   std::string get_test(const goto_tracet &goto_trace,
                        const symbol_tablet &symbol_table);
 
@@ -109,8 +96,9 @@ protected:
     return ui_message_handler.get_ui();
   }
 
-  int path_symex_main_procedure(goto_modelt &goto_model, messaget *log,
-                                cmdlinet &cmdline, optionst &options);
+  int path_symex(
+    goto_modelt &goto_model, messaget *log,
+    cmdlinet &cmdline, optionst &options);
 };
 
 #endif // CPROVER_JBMC_JBMCPS_PARSE_OPTIONS_H

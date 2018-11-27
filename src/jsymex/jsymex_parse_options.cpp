@@ -46,6 +46,7 @@
 #include <util/version.h>
 #include <util/xml.h>
 #include <util/xml_expr.h>
+#include <sysexits.h>
 
 #include "../goto-locs/locs.h"
 #include "../symex/path_search.h"
@@ -56,42 +57,12 @@ jsymex_parse_optionst::jsymex_parse_optionst(int argc, const char **argv)
       ui_message_handler(cmdline, std::string("JBMC ") + CBMC_VERSION),
       path_strategy_chooser() {}
 
-void jsymex_parse_optionst::get_command_line_options(optionst &options) {
-  if (config.set(cmdline)) {
-    usage_error();
-    exit(1); // should contemplate EX_USAGE from sysexits.h
-  }
-
-  parse_java_language_options(cmdline, options);
-  parse_object_factory_options(cmdline, options);
-
-  if (cmdline.isset("debug-level"))
-    options.set_option("debug-level", cmdline.get_value("debug-level"));
-
-  if (cmdline.isset("unwindset"))
-    options.set_option("unwindset", cmdline.get_value("unwindset"));
-
-  // all checks supported by goto_check
-  PARSE_OPTIONS_GOTO_CHECK(cmdline, options);
-
-  options.set_option("simplify", !cmdline.isset("no-simplify"));
-  options.set_option("assertions", !cmdline.isset("no-assertions"));
-  options.set_option("assumptions", !cmdline.isset("no-assumptions"));
-
-  // magic error label
-  if (cmdline.isset("error-label"))
-    options.set_option("error-label", cmdline.get_values("error-label"));
-
-  if (cmdline.isset("cover"))
-    parse_cover_options(cmdline, options);
-}
-
 struct jsymex_configt {
   optionalt<std::string> show;
   bool cover;
 };
 
-static jsymex_configt jsymex_config(const cmdlinet &cmdline) {
+static jsymex_configt parse_jsymex_options(const cmdlinet &cmdline) {
   jsymex_configt config;
   if (cmdline.isset("show-symbol-table"))
     config.show.emplace("symbol-table");
@@ -107,7 +78,9 @@ static jsymex_configt jsymex_config(const cmdlinet &cmdline) {
   return config;
 }
 
-static void configure(path_searcht &path_search, const cmdlinet &cmdline) {
+static void parse_path_search_options(
+  path_searcht &path_search,
+  const cmdlinet &cmdline) {
   if (cmdline.isset("depth"))
     path_search.set_depth_limit(
         unsafe_string2unsigned(cmdline.get_value("depth")));
@@ -144,12 +117,12 @@ static void configure(path_searcht &path_search, const cmdlinet &cmdline) {
   path_search.stop_on_fail = cmdline.isset("stop-on-fail");
 }
 
-// Should correspond to symex::doit
-int jsymex_parse_optionst::path_symex_main_procedure(goto_modelt &goto_model,
-                                                     messaget *log,
-                                                     cmdlinet &cmdline,
-                                                     optionst &options) {
-  auto config = jsymex_config(cmdline);
+int jsymex_parse_optionst::path_symex(
+  goto_modelt &goto_model,
+  messaget *log,
+  cmdlinet &cmdline,
+  optionst &options) {
+  auto config = parse_jsymex_options(cmdline);
   if (config.show && *config.show == "properties") {
     show_properties(goto_model, get_message_handler(),
                     ui_message_handler.get_ui());
@@ -199,21 +172,22 @@ int jsymex_parse_optionst::path_symex_main_procedure(goto_modelt &goto_model,
   const namespacet ns(goto_model.symbol_table);
   path_searcht path_search(ns);
   path_search.set_message_handler(log->get_message_handler());
-  configure(path_search, cmdline);
+  parse_path_search_options(path_search, cmdline);
   if (config.show && *config.show == "vcc") {
     path_search.show_vcc = true;
     path_search(goto_model.goto_functions);
     return 0;
   }
 
-  if (config.cover) {
+  if (config.cover)
+  {
     // test-suite generation
-    std::cout << "test-suite generation" << std::endl;
     path_search(goto_model.goto_functions);
     report_cover(path_search.property_map, goto_model.symbol_table);
     return 0;
-  } else {
-    std::cout << "Do actual symex for assertion checking" << std::endl;
+  }
+  else
+  {
     // do actual symex, for assertion checking
     switch (path_search(goto_model.goto_functions)) {
     case safety_checkert::resultt::SAFE:
@@ -236,14 +210,23 @@ int jsymex_parse_optionst::path_symex_main_procedure(goto_modelt &goto_model,
 int jsymex_parse_optionst::doit() {
   if (cmdline.isset("version")) {
     std::cout << CBMC_VERSION << '\n';
-    return 0; // should contemplate EX_OK from sysexits.h
+    return EX_OK;
   }
 
   eval_verbosity(cmdline.get_value("verbosity"), messaget::M_STATISTICS,
                  ui_message_handler);
 
+  if (config.set(cmdline)) {
+    usage_error();
+    exit(EX_USAGE);
+  }
+
   optionst options;
-  get_command_line_options(options);
+  parse_java_language_options(cmdline, options);
+  parse_object_factory_options(cmdline, options);
+  PARSE_OPTIONS_GOTO_CHECK(cmdline, options);
+  if (cmdline.isset("cover"))
+    parse_cover_options(cmdline, options);
 
   // output the options
   switch (ui_message_handler.get_ui()) {
@@ -292,8 +275,9 @@ int jsymex_parse_optionst::doit() {
 
   goto_modelt &goto_model = *goto_model_ptr;
 
-  return path_symex_main_procedure(goto_model, static_cast<messaget *>(this),
-                                   cmdline, options);
+  return path_symex(
+    goto_model, static_cast<messaget *>(this),
+    cmdline, options);
 }
 
 bool jsymex_parse_optionst::set_properties(goto_modelt &goto_model) {
@@ -301,21 +285,17 @@ bool jsymex_parse_optionst::set_properties(goto_modelt &goto_model) {
     if (cmdline.isset("property"))
       ::set_properties(goto_model, cmdline.get_values("property"));
   }
-
   catch (const char *e) {
     error() << e << eom;
     return true;
   }
-
   catch (const std::string &e) {
     error() << e << eom;
     return true;
   }
-
   catch (int) {
     return true;
   }
-
   return false;
 }
 
@@ -504,40 +484,6 @@ void jsymex_parse_optionst::process_goto_function(
     error() << "Out of memory" << eom;
     throw;
   }
-}
-
-bool jsymex_parse_optionst::show_loaded_functions(
-    const abstract_goto_modelt &goto_model) {
-  if (cmdline.isset("show-symbol-table")) {
-    show_symbol_table(goto_model.get_symbol_table(), ui_message_handler);
-    return true;
-  } else if (cmdline.isset("list-symbols")) {
-    show_symbol_table_brief(goto_model.get_symbol_table(), ui_message_handler);
-    return true;
-  }
-
-  if (cmdline.isset("show-loops")) {
-    show_loop_ids(ui_message_handler.get_ui(), goto_model.get_goto_functions());
-    return true;
-  }
-
-  if (cmdline.isset("show-goto-functions") ||
-      cmdline.isset("list-goto-functions")) {
-    namespacet ns(goto_model.get_symbol_table());
-    show_goto_functions(ns, get_message_handler(), ui_message_handler.get_ui(),
-                        goto_model.get_goto_functions(),
-                        cmdline.isset("list-goto-functions"));
-    return true;
-  }
-
-  if (cmdline.isset("show-properties")) {
-    namespacet ns(goto_model.get_symbol_table());
-    show_properties(ns, get_message_handler(), ui_message_handler.get_ui(),
-                    goto_model.get_goto_functions());
-    return true;
-  }
-
-  return false;
 }
 
 bool jsymex_parse_optionst::process_goto_functions(goto_modelt &goto_model,
