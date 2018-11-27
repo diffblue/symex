@@ -18,7 +18,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <goto-programs/safety_checker.h>
 
-#include <path-symex/path_symex_state.h>
+#include "../path-symex/path_symex_state.h"
 
 #include <limits>
 

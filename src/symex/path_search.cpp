@@ -14,8 +14,8 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <solvers/flattening/bv_pointers.h>
 #include <solvers/sat/satcheck.h>
 
-#include <path-symex/path_symex.h>
-#include <path-symex/build_goto_trace.h>
+#include "../path-symex/build_goto_trace.h"
+#include "../path-symex/path_symex.h"
 
 path_searcht::resultt path_searcht::operator()(
   const goto_functionst &goto_functions)
