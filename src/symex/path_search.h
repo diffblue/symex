@@ -13,8 +13,22 @@ Author: Daniel Kroening, kroening@kroening.com
 #define CPROVER_SYMEX_PATH_SEARCH_H
 
 #define OPT_PATH_SEARCH                                                        \
-  "(depth):(context-bound):(branch-bound):(unwind):(max-search-time):"         \
-  "(bfs)(dfs)(locs)(stop-on-fail)(eager-infeasibility)"
+  "(depth):(context-bound):(branch-bound):(unwind):(unwinding-assertions)" \
+  "(max-search-time):(bfs)(dfs)(locs)(cover):(eager-infeasibility)(stop-on-fail)"
+
+#define HELP_PATH_SEARCH \
+  " --depth N                    limit the depth to N\n" \
+  " --context-bound N            limit the number of thread context switches\n" \
+  " --branch-bound N             limit the number of branches\n" \
+  " --unwind N                   limit the number of unwinding\n" \
+  " --unwinding-assertions       unwinding assertions\n" \
+  " --max-search-time N          set a time limit\n" \
+  " --bfs                        use breadth first search heuristic\n" \
+  " --dfs                        use depth first search heuristic\n" \
+  " --locs                       use locs heuristic\n" \
+  " --eager-infeasability        eager infeasiblity\n" \
+  " --stop-on-fail               stop on fail\n" \
+  " --cover CC                   create test-suite with coverage criterion CC\n"
 
 #include <chrono>
 
@@ -163,5 +177,9 @@ protected:
 
   source_locationt last_source_location;
 };
+
+void parse_path_search_options(
+  path_searcht &path_search,
+  const class cmdlinet &cmdline);
 
 #endif // CPROVER_SYMEX_PATH_SEARCH_H

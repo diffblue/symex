@@ -40,16 +40,19 @@ class optionst;
 
 // clang-format off
 #define JSYMEX_OPTIONS \
-  "(version)(verbosity):" \
   OPT_FUNCTIONS \
-  "D:I:" \
   OPT_PATH_SEARCH \
   OPT_GOTO_CHECK \
-  "(show-locs)(show-vcc)(show-loops)(show-properties)(show-symbol-table)" \
-  "(cover):" \
-  "(json-ui)(xml-ui)" \
+  OPT_STRING_REFINEMENT \
   JAVA_BYTECODE_LANGUAGE_OPTIONS \
-  "(debug-level)(unwindset)(simplify)(assertions)(assumptions)(error-label)"
+  "D:I:" \
+  "(version)(verbosity):" \
+  "(show-locs)(show-vcc)(show-loops)(show-properties)(show-symbol-table)" \
+  "(cover):(trace)" \
+  "(json-ui)(xml-ui)" \
+  "(classpath):" \
+  "(debug-level)(unwindset)(simplify)(assertions)(assumptions)(error-label)"\
+  "(max-nondet-string-length):"
 // clang-format on
 
 class jsymex_parse_optionst : public parse_options_baset, public messaget {

@@ -13,6 +13,8 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <solvers/flattening/bv_pointers.h>
 #include <solvers/sat/satcheck.h>
+#include <util/string2int.h>
+#include <util/cmdline.h>
 
 #include "../path-symex/build_goto_trace.h"
 #include "../path-symex/path_symex.h"
@@ -450,4 +452,43 @@ void path_searcht::initialize_property_map(
         property_entry.source_location=source_location;
       }
     }
+}
+
+void parse_path_search_options(
+  path_searcht &path_search,
+  const cmdlinet &cmdline)
+{
+  if (cmdline.isset("depth"))
+    path_search.set_depth_limit(
+      unsafe_string2unsigned(cmdline.get_value("depth")));
+
+  if (cmdline.isset("context-bound"))
+    path_search.set_context_bound(
+      unsafe_string2unsigned(cmdline.get_value("context-bound")));
+
+  if (cmdline.isset("branch-bound"))
+    path_search.set_branch_bound(
+      unsafe_string2unsigned(cmdline.get_value("branch-bound")));
+
+  if (cmdline.isset("unwind"))
+    path_search.set_unwind_limit(
+      unsafe_string2unsigned(cmdline.get_value("unwind")));
+
+  path_search.set_unwinding_assertions(cmdline.isset("unwinding-assertions"));
+
+  if (cmdline.isset("max-search-time"))
+    path_search.set_time_limit(
+      safe_string2unsigned(cmdline.get_value("max-search-time")));
+
+  if (cmdline.isset("dfs"))
+    path_search.set_dfs();
+
+  if (cmdline.isset("bfs"))
+    path_search.set_bfs();
+
+  if (cmdline.isset("locs"))
+    path_search.set_locs();
+
+  path_search.eager_infeasibility = cmdline.isset("eager-infeasibility");
+  path_search.stop_on_fail = cmdline.isset("stop-on-fail");
 }

@@ -78,45 +78,6 @@ static jsymex_configt parse_jsymex_options(const cmdlinet &cmdline) {
   return config;
 }
 
-static void parse_path_search_options(
-  path_searcht &path_search,
-  const cmdlinet &cmdline) {
-  if (cmdline.isset("depth"))
-    path_search.set_depth_limit(
-        unsafe_string2unsigned(cmdline.get_value("depth")));
-
-  if (cmdline.isset("context-bound"))
-    path_search.set_context_bound(
-        unsafe_string2unsigned(cmdline.get_value("context-bound")));
-
-  if (cmdline.isset("branch-bound"))
-    path_search.set_branch_bound(
-        unsafe_string2unsigned(cmdline.get_value("branch-bound")));
-
-  if (cmdline.isset("unwind"))
-    path_search.set_unwind_limit(
-        unsafe_string2unsigned(cmdline.get_value("unwind")));
-
-  path_search.set_unwinding_assertions(cmdline.isset("unwinding-assertions"));
-
-  if (cmdline.isset("max-search-time"))
-    path_search.set_time_limit(
-        safe_string2unsigned(cmdline.get_value("max-search-time")));
-
-  if (cmdline.isset("dfs"))
-    path_search.set_dfs();
-
-  if (cmdline.isset("bfs"))
-    path_search.set_bfs();
-
-  if (cmdline.isset("locs"))
-    path_search.set_locs();
-
-  path_search.eager_infeasibility = cmdline.isset("eager-infeasibility");
-
-  path_search.stop_on_fail = cmdline.isset("stop-on-fail");
-}
-
 int jsymex_parse_optionst::path_symex(
   goto_modelt &goto_model,
   messaget *log,
@@ -910,9 +871,24 @@ void jsymex_parse_optionst::help() {
     "\n"
     "Usage:                       Purpose:\n"
     "\n"
-    " jsymex [-?] [-h] [--help]      show help\n"
+    " jsymex [-?] [-h] [--help]    show help\n"
+    " jsymex class                 name of class or JAR file to be checked\n"
+    "                              In the case of a JAR file, if a main class can be\n" // NOLINT(*)
+    "                              inferred from --main-class, --function, or the JAR\n" // NOLINT(*)
+    "                              manifest (checked in this order), the behavior is\n" // NOLINT(*)
+    "                              the same as running jsymex on the corresponding\n" // NOLINT(*)
+    "                              class file."
     "\n"
-    HELP_SHOW_GOTO_FUNCTIONS
+    HELP_FUNCTIONS
+    "\n"
+    "Path search options:\n"
+    HELP_PATH_SEARCH
+    "\n"
+    "Goto-check options:\n"
+    HELP_GOTO_CHECK
+    "\n"
+    "String refinement options:\n"
+    HELP_STRING_REFINEMENT
     "\n"
     "Java Bytecode frontend options:\n"
     " --classpath dir/jar          set the classpath\n"
