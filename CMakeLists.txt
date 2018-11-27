@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(symex)
 
-set(CMAKE_CXX_STANDARD 11)
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    message(STATUS "Rule launch compile: ${CCACHE_PROGRAM}")
+endif()
 
+set(CMAKE_CXX_STANDARD 11)
 
 #   Set the public include locations for a target.
 macro(generic_includes name)
