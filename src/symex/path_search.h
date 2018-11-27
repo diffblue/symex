@@ -12,6 +12,10 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_SYMEX_PATH_SEARCH_H
 #define CPROVER_SYMEX_PATH_SEARCH_H
 
+#define OPT_PATH_SEARCH                                                        \
+  "(depth):(context-bound):(branch-bound):(unwind):(max-search-time):"         \
+  "(bfs)(dfs)(locs)(stop-on-fail)(eager-infeasibility)"
+
 #include <chrono>
 
 #include <util/expanding_vector.h>
