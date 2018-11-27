@@ -48,7 +48,7 @@ class optionst;
   "D:I:" \
   "(version)(verbosity):" \
   "(show-locs)(show-vcc)(show-loops)(show-properties)(show-symbol-table)" \
-  "(cover):(trace)" \
+  "(cover):(cover-function-only)(trace)" \
   "(json-ui)(xml-ui)" \
   "(classpath):" \
   "(debug-level)(unwindset)(simplify)(assertions)(assumptions)(error-label)"\
@@ -86,7 +86,9 @@ protected:
 
   void report_success();
   void report_failure();
-  void report_properties(const path_searcht::property_mapt &);
+  void report_properties(
+    const path_searcht::property_mapt &,
+    const symbol_tablet &symbol_table);
 
   void report_cover(const path_searcht::property_mapt &,
                     const symbol_tablet &symbol_table);
@@ -102,6 +104,12 @@ protected:
   int path_symex(
     goto_modelt &goto_model, messaget *log,
     cmdlinet &cmdline, optionst &options);
+
+  void show_trace(
+    const irep_idt &property,
+    const goto_tracet &error_trace,
+    const optionst &options,
+    const symbol_tablet &symbol_table);
 };
 
 #endif // CPROVER_JBMC_JBMCPS_PARSE_OPTIONS_H

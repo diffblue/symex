@@ -28,6 +28,7 @@ Author: Daniel Kroening, kroening@kroening.com
   " --locs                       use locs heuristic\n" \
   " --eager-infeasability        eager infeasiblity\n" \
   " --stop-on-fail               stop on fail\n" \
+  " --show-trace                 show the trace\n" \
   " --cover CC                   create test-suite with coverage criterion CC\n"
 
 #include <chrono>

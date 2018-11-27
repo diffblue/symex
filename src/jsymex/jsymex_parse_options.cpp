@@ -152,12 +152,12 @@ int jsymex_parse_optionst::path_symex(
     // do actual symex, for assertion checking
     switch (path_search(goto_model.goto_functions)) {
     case safety_checkert::resultt::SAFE:
-      report_properties(path_search.property_map);
+      report_properties(path_search.property_map, goto_model.symbol_table);
       report_success();
       return 0;
 
     case safety_checkert::resultt::UNSAFE:
-      report_properties(path_search.property_map);
+      report_properties(path_search.property_map, goto_model.symbol_table);
       report_failure();
       return 10;
 
@@ -540,7 +540,9 @@ bool jsymex_parse_optionst::generate_function_body(
 }
 
 void jsymex_parse_optionst::report_properties(
-    const path_searcht::property_mapt &property_map) {
+  const path_searcht::property_mapt &property_map,
+  const symbol_tablet &symbol_table)
+{
   if (get_ui() == ui_message_handlert::uit::PLAIN)
     status() << "\n** Results:" << eom;
 
@@ -585,14 +587,15 @@ void jsymex_parse_optionst::report_properties(
       status() << eom;
     }
 
-    if ((cmdline.isset("show-trace") || cmdline.isset("trace") ||
-         cmdline.isset("stack-trace") || cmdline.isset("xml-ui") ||
-         cmdline.isset("stop-on-fail")) &&
+    if ((cmdline.isset("trace") || cmdline.isset("stop-on-fail")) &&
         p.second.is_failure()) {
       optionst options;
       PARSE_OPTIONS_GOTO_TRACE(cmdline, options);
-      UNREACHABLE;
-      // show_trace(p.first, p.second.error_trace, options);
+      show_trace(
+        p.first,
+        p.second.error_trace,
+        options,
+        symbol_table);
     }
   }
 
@@ -629,13 +632,13 @@ void jsymex_parse_optionst::report_success() {
   }
 }
 
-#if 0
 void jsymex_parse_optionst::show_trace(
   const irep_idt &property,
   const goto_tracet &error_trace,
-  const optionst &options)
+  const optionst &options,
+  const symbol_tablet &symbol_table)
 {
-  const namespacet ns(goto_model.symbol_table);
+  const namespacet ns(symbol_table);
   trace_optionst trace_options(options);
 
   switch(get_ui())
@@ -675,7 +678,6 @@ void jsymex_parse_optionst::show_trace(
       UNREACHABLE;
   }
 }
-#endif
 
 void jsymex_parse_optionst::report_failure() {
   result() << bold << "VERIFICATION FAILED" << reset << eom;
@@ -883,6 +885,8 @@ void jsymex_parse_optionst::help() {
     "\n"
     "Path search options:\n"
     HELP_PATH_SEARCH
+    " --cover-function-only         only try to cover the given function\n"
+    " --trace                       show trace \n"
     "\n"
     "Goto-check options:\n"
     HELP_GOTO_CHECK
