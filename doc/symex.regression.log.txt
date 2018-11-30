@@ -1,5 +1,5 @@
 Loading
-  557 tests found
+  565 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -12,6 +12,7 @@ Running tests
   Running Array_Initialization1/test.desc  [OK]
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
+  Running Array_UF/test.desc  [SKIPPED]
   Running Array_operations1/test.desc  [FAILED]
   Running Associativity1/test.desc  [OK]
   Running Assumption1/test.desc  [OK]
@@ -285,6 +286,7 @@ Running tests
   Running always_inline2/test.desc  [OK]
   Running always_inline3/test.desc  [OK]
   Running argv1/test.desc  [FAILED]
+  Running array-tests/test.desc  [SKIPPED]
   Running assert_func_four/test.desc  [SKIPPED]
   Running assert_lhs/test.desc  [SKIPPED]
   Running assert_one/test.desc  [SKIPPED]
@@ -314,6 +316,7 @@ Running tests
   Running char1/test.desc  [OK]
   Running character_handling1/test.desc  [OK]
   Running comma1/test.desc  [OK]
+  Running compact-trace/test.desc  [FAILED]
   Running complex1/test.desc  [OK]
   Running compound_literal1/test.desc  [OK]
   Running const_ptr1/test.desc  [OK]
@@ -435,6 +438,11 @@ Running tests
   Running pointer-extra-checks/test.desc  [OK]
   Running pointer-function-parameters/test.desc  [FAILED]
   Running pointer-function-parameters-2/test.desc  [FAILED]
+  Running pointer-function-parameters-struct-mutual-recursion/test.desc  [FAILED]
+  Running pointer-function-parameters-struct-non-recursive/test.desc  [FAILED]
+  Running pointer-function-parameters-struct-simple-recursion/test.desc  [FAILED]
+  Running pointer-function-parameters-struct-simple-recursion-2/test.desc  [FAILED]
+  Running pointer-function-parameters-struct-simple-recursion-3/test.desc  [FAILED]
   Running printf1/test.desc  [FAILED]
   Running reachability-slice/test.desc  [FAILED]
   Running reachability-slice/test2.desc  [FAILED]
@@ -495,7 +503,7 @@ Running tests
   Running trace_options_json_extended/extended.desc  [OK]
   Running trace_options_json_extended/non-extended.desc  [OK]
   Running trace_show_code/test.desc  [OK]
-  Running trace_show_function_calls/test.desc  [OK]
+  Running trace_show_function_calls/test.desc  [FAILED]
   Running ts18661_typedefs/test.desc  [OK]
   Running typedef-anon-struct1/test.desc  [OK]
   Running typedef-anon-struct2/test.desc  [OK]
@@ -561,4 +569,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  58 of 557 tests failed, 50 tests skipped
+  65 of 565 tests failed, 52 tests skipped
