@@ -466,6 +466,7 @@ void symex_parse_optionst::report_properties(
 
     if((cmdline.isset("show-trace") ||
         cmdline.isset("trace") ||
+        cmdline.isset("compact-trace") ||
         cmdline.isset("stack-trace") ||
         cmdline.isset("xml-ui") ||
         cmdline.isset("stop-on-fail")) &&
