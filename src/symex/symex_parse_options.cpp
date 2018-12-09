@@ -146,7 +146,7 @@ int symex_parse_optionst::doit()
 
   try
   {
-    goto_model=initialize_goto_model(cmdline, get_message_handler(), options);
+    goto_model=initialize_goto_model(cmdline.args, get_message_handler(), options);
   }
   catch(const cprover_exception_baset &e)
   {
