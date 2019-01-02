@@ -310,7 +310,7 @@ exprt symex_dereferencet::dereference_typecast(
       integer=
         plus_exprt(offset, typecast_exprt(op, offset.type()));
 
-    return unary_exprt(ID_integer_dereference, integer, type);
+    return unary_exprt("integer_dereference", integer, type);
   }
   else
     throw "symex_dereferencet: unexpected cast";

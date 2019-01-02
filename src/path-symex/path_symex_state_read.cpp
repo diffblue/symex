@@ -260,7 +260,7 @@ optionalt<exprt> path_symex_statet::instantiate_node(
     // integer addresses. Will transform into __CPROVER_memory[]
     // eventually.
   }
-  else if(src.id()==ID_integer_dereference)
+  else if(src.id()=="integer_dereference")
   {
     // dereferencet produces these for stuff like *(T *)123.
     // Will transform into __CPROVER_memory[] eventually.
