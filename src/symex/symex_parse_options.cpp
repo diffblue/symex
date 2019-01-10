@@ -66,7 +66,7 @@ symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
 void symex_parse_optionst::eval_verbosity()
 {
   // this is our default verbosity
-  int v=messaget::M_STATISTICS;
+  int v=messaget::M_STATUS;
 
   if(cmdline.isset("verbosity"))
   {
