@@ -426,8 +426,10 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
 void symex_parse_optionst::report_properties(
   const path_searcht::property_mapt &property_map)
 {
+  status() << eom;
+
   if(get_ui()==ui_message_handlert::uit::PLAIN)
-    status() << "\n** Results:" << eom;
+    result() << "** Results:" << eom;
 
   for(const auto &p : property_map)
   {
@@ -451,17 +453,17 @@ void symex_parse_optionst::report_properties(
     }
     else
     {
-      status() << "[" << p.first << "] ";
+      result() << "[" << p.first << "] ";
       if(!p.second.source_location.get_line().empty())
-        status() << "line " << p.second.source_location.get_line() << ' ';
-      status() << p.second.description << ": ";
+        result() << "line " << p.second.source_location.get_line() << ' ';
+      result() << p.second.description << ": ";
       switch(p.second.status)
       {
-      case path_searcht::SUCCESS: status() << green << "SUCCESS" << reset; break;
-      case path_searcht::FAILURE: status() << red << "FAILURE" << reset; break;
-      case path_searcht::NOT_REACHED: status() << yellow << "SUCCESS" << reset << " (not reached)"; break;
+      case path_searcht::SUCCESS: result() << green << "SUCCESS" << reset; break;
+      case path_searcht::FAILURE: result() << red << "FAILURE" << reset; break;
+      case path_searcht::NOT_REACHED: result() << yellow << "SUCCESS" << reset << " (not reached)"; break;
       }
-      status() << eom;
+      result() << eom;
     }
 
     if((cmdline.isset("show-trace") ||
