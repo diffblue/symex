@@ -122,7 +122,7 @@ void locst::output(std::ostream &out) const
     }
     else
     {
-      out << as_string(ns, *loc.target);
+      out << as_string(ns, function, *loc.target);
     }
 
     out << '\n';
