@@ -42,6 +42,7 @@ class optionst;
   "(bfs)(dfs)(locs)" \
   "(cover):" \
   "(i386-linux)(i386-macos)(i386-win32)(win32)(winx64)(gcc)" \
+  "(c89)(c99)(c11)" \
   "(ppc-macos)(unsigned-char)" \
   "(string-abstraction)(smt2)(z3)(refine)(outfile):" \
   "(no-arch)(arch):(floatbv)(fixedbv)" \
