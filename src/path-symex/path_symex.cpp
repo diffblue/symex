@@ -1026,7 +1026,7 @@ void path_symext::operator()(
 
   case DECL:
     // assigning an RHS of NIL means 'nondet'
-    assign(state, to_code_decl(instruction.code).symbol(), nil_exprt());
+    assign(state, instruction.get_decl().symbol(), nil_exprt());
     state.next_pc();
     break;
 
@@ -1049,14 +1049,14 @@ void path_symext::operator()(
     break;
 
   case ASSIGN:
-    assign(state, to_code_assign(instruction.code));
+    assign(state, instruction.get_assign());
     state.next_pc();
     break;
 
   case FUNCTION_CALL:
     state.record_step();
     function_call(
-      state, to_code_function_call(instruction.code), further_states);
+      state, instruction.get_function_call(), further_states);
     break;
 
   case OTHER:
