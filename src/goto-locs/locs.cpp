@@ -19,6 +19,16 @@ locst::locst(
 {
 }
 
+loc_reft locst::first_loc(const irep_idt &function_id)
+{
+  const auto f_it = function_map.find(function_id);
+
+  if(f_it == function_map.end())
+    return loc_reft::nil();
+  else
+    return f_it->second.first_loc;
+}
+
 void locst::build(const goto_functionst &goto_functions)
 {
   // build locations
@@ -50,12 +60,6 @@ void locst::build(const goto_functionst &goto_functions)
     else
       function_entry.first_loc=loc_reft::nil();
   }
-
-  if(function_map.find(goto_functionst::entry_point())==
-     function_map.end())
-    throw "no entry point";
-
-  entry_loc=function_map[goto_functionst::entry_point()].first_loc;
 
   // build branch targets
   for(unsigned l=0; l<loc_vector.size(); l++)
@@ -127,7 +131,4 @@ void locst::output(std::ostream &out) const
 
     out << '\n';
   }
-
-  out << "\n";
-  out << "The entry location is L" << entry_loc << ".\n";
 }

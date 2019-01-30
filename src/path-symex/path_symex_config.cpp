@@ -23,11 +23,18 @@ void path_symex_configt::no_body(const irep_idt &identifier)
 
 path_symex_statet path_symex_configt::initial_state()
 {
+  const irep_idt entry_function = goto_functionst::entry_point();
+
   path_symex_statet s(*this);
 
   // create one new thread
   path_symex_statet::threadt &thread=s.add_thread();
-  thread.pc=locs.entry_loc; // set its PC
+  thread.pc=locs.first_loc(entry_function); // set its PC
+  thread.function_id=entry_function;
+
+  if(thread.pc.is_nil())
+    throw "no entry point";
+
   s.set_current_thread(0);
   s.history=path_symex_step_reft(path_symex_history);
 
