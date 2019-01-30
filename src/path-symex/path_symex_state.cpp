@@ -79,8 +79,7 @@ void path_symex_statet::record_step()
   assert(current_thread<threads.size());
   const auto &thread=threads[current_thread];
   step.pc=thread.pc;
-  if(!thread.call_stack.empty())
-    step.f_identifier=thread.call_stack.back().current_function;
+  step.f_identifier=thread.function_id;
   step.thread_nr=current_thread;
 
   // set hide flag

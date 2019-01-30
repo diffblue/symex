@@ -664,6 +664,7 @@ void path_symext::function_call_rec(
     path_symex_statet::threadt &thread=
       state.threads[state.get_current_thread()];
     thread.call_stack.push_back(path_symex_statet::framet());
+    thread.call_stack.back().previous_function=thread.function_id;
     thread.call_stack.back().current_function=function_identifier;
     thread.call_stack.back().return_location=thread.pc.next_loc();
     thread.call_stack.back().return_lhs=call.lhs();
@@ -760,6 +761,7 @@ void path_symext::function_call_rec(
 
     // set the new PC
     thread.pc=function_entry_point;
+    thread.function_id=function_identifier;
   }
   else if(function.id()==ID_dereference)
   {
@@ -820,6 +822,7 @@ void path_symext::return_from_function(path_symex_statet &state)
 
     // set PC to return location
     thread.pc=thread.call_stack.back().return_location;
+    thread.function_id=thread.call_stack.back().previous_function;
 
     // assign the return value
     if(thread.call_stack.back().return_rhs.is_not_nil() &&
