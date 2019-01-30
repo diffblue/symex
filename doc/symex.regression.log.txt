@@ -1,5 +1,5 @@
 Loading
-  563 tests found
+  572 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -12,7 +12,6 @@ Running tests
   Running Array_Initialization1/test.desc  [OK]
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
-  Running Array_UF/test.desc  [SKIPPED]
   Running Array_operations1/test.desc  [FAILED]
   Running Associativity1/test.desc  [OK]
   Running Assumption1/test.desc  [OK]
@@ -73,7 +72,7 @@ Running tests
   Running Float-overflow1/test.desc  [OK]
   Running Float-overflow2/test.desc  [OK]
   Running Float-rounding/compile_time_rounding.desc  [OK]
-  Running Float-smt2-1/test.desc  [SKIPPED]
+  Running Float-smt2-1/test.desc  [OK]
   Running Float-to-double2/test.desc  [OK]
   Running Float-to-int1/test.desc  [OK]
   Running Float-to-int2/test.desc  [OK]
@@ -220,17 +219,22 @@ Running tests
   Running Promotion2/test.desc  [OK]
   Running Promotion3/test.desc  [OK]
   Running Promotion4/test.desc  [OK]
-  Running Quantifiers-assertion/test.desc  [FAILED]
+  Running Quantifiers-assertion/test.desc  [SKIPPED]
   Running Quantifiers-assignment/test.desc  [OK]
   Running Quantifiers-copy/test.desc  [OK]
   Running Quantifiers-if/test.desc  [OK]
   Running Quantifiers-initialisation/test.desc  [OK]
   Running Quantifiers-initialisation2/test.desc  [FAILED]
-  Running Quantifiers-invalid-var-range/test.desc  [FAILED]
+  Running Quantifiers-invalid-var-range/test.desc  [SKIPPED]
   Running Quantifiers-not/test.desc  [OK]
-  Running Quantifiers-not-exists/test.desc  [FAILED]
-  Running Quantifiers-two-dimension-array/test.desc  [OK]
-  Running Quantifiers-type/test.desc  [OK]
+  Running Quantifiers-not-exists/fixed.desc  [FAILED]
+  Running Quantifiers-not-exists/test.desc  [SKIPPED]
+  Running Quantifiers-simplify/rewrite_forall.desc  [FAILED]
+  Running Quantifiers-simplify/simplify_not_forall.desc  [FAILED]
+  Running Quantifiers-simplify/test.desc  [SKIPPED]
+  Running Quantifiers-two-dimension-array/fixed.desc  [OK]
+  Running Quantifiers-two-dimension-array/test.desc  [SKIPPED]
+  Running Quantifiers-type/test.desc  [SKIPPED]
   Running Quantifiers1/quantifier-with-side-effect.desc  [OK]
   Running Quantifiers1/test.desc  [OK]
   Running Recursion1/test.desc  [OK]
@@ -321,6 +325,7 @@ Running tests
   Running constant_folding1/test.desc  [OK]
   Running constant_folding2/test.desc  [SKIPPED]
   Running constructor1/test.desc  [OK]
+  Running coverage_report1/paths.desc  [FAILED]
   Running coverage_report1/test.desc  [FAILED]
   Running cprover_assert_lhs/test.desc  [SKIPPED]
   Running cprover_assert_two/test.desc  [OK]
@@ -408,7 +413,9 @@ Running tests
   Running if4/test.desc  [OK]
   Running inequality-with-constant-normalisation/test.desc  [OK]
   Running inline1/test.desc  [OK]
-  Running integer-assignments1/test.desc  [SKIPPED]
+  Running integer-assignments1/test.desc  [FAILED]
+  Running json-ui/no_entry.desc  [FAILED]
+  Running json-ui/syntax_error.desc  [OK]
   Running json1/test.desc  [FAILED]
   Running little-endian-array1/test.desc  [FAILED]
   Running locations1/test.desc  [OK]
@@ -559,6 +566,8 @@ Running tests
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
   Running verifier_error_zero/test.desc  [SKIPPED]
+  Running vla2/test.desc  [SKIPPED]
+  Running vla3/test.desc  [SKIPPED]
   Running void_ifthenelse/test.desc  [OK]
   Running void_pointer1/test.desc  [OK]
   Running void_pointer2/test.desc  [OK]
@@ -567,4 +576,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  64 of 563 tests failed, 47 tests skipped
+  67 of 572 tests failed, 52 tests skipped
