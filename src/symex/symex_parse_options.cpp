@@ -57,7 +57,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "path_search.h"
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
-  parse_options_baset(SYMEX_OPTIONS, argc, argv),
+  parse_options_baset(SYMEX_OPTIONS, argc, argv, ui_message_handler),
   messaget(ui_message_handler),
   ui_message_handler(cmdline, std::string("Symex ") + CBMC_VERSION)
 {
