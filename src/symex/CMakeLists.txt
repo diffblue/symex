@@ -17,6 +17,7 @@ target_link_libraries(symex-lib
     assembler
     solvers
     util
+    goto-locs
     goto-symex
     pointer-analysis
     goto-instrument-lib
