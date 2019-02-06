@@ -49,11 +49,8 @@ void path_symext::symex_allocate(
     throw "allocate expected to return a pointer";
 
   // get a mode, from the call site
-  const goto_programt::instructiont &instruction=
-    *state.get_instruction();
-
   const symbolt &calling_function=
-    state.config.ns.lookup(instruction.function);
+    state.config.ns.lookup(state.function_id());
 
   const irep_idt &mode=calling_function.mode;
 

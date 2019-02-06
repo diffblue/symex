@@ -289,7 +289,7 @@ bool path_searcht::drop_state(const statet &state)
     {
       // record that failure
       status() << "Unwinding assertion failed: " << id << eom;
-      irep_idt property=id2string(pc->function)+".unwind."+
+      irep_idt property=id2string(state.function_id())+".unwind."+
                         std::to_string(pc->loop_number);
       auto &p=property_map[property];
       if(p.description.empty())
