@@ -870,7 +870,7 @@ void path_symext::do_goto(
   const loct &loc=state.get_loc();
   assert(!loc.branch_target.is_nil());
 
-  exprt ssa_guard=state.read(instruction.guard);
+  exprt ssa_guard=state.read(instruction.get_condition());
 
   if(ssa_guard.is_true()) // branch taken always
   {
@@ -914,7 +914,7 @@ void path_symext::do_goto(
     state.unwinding_map[state.pc()]++;
   }
 
-  exprt ssa_guard=state.read(instruction.guard);
+  exprt ssa_guard=state.read(instruction.get_condition());
 
   if(taken)
   {
@@ -1010,11 +1010,11 @@ void path_symext::operator()(
   case ASSUME:
     state.record_step();
     state.next_pc();
-    if(instruction.guard.is_false())
+    if(instruction.get_condition().is_false())
       state.make_infeasible();
     else
     {
-      exprt ssa_guard=state.read(instruction.guard);
+      exprt ssa_guard=state.read(instruction.get_condition());
       state.history->ssa_guard=ssa_guard;
     }
     break;

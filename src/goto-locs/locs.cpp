@@ -118,10 +118,10 @@ void locst::output(std::ostream &out) const
 
     if(loc.target->is_goto())
     {
-      if(loc.target->guard.is_true())
+      if(loc.target->get_condition().is_true())
         out << "GOTO " << loc.branch_target;
       else
-        out << "IF " << from_expr(ns, function, loc.target->guard)
+        out << "IF " << from_expr(ns, function, loc.target->get_condition())
             << " THEN GOTO " << loc.branch_target;
     }
     else

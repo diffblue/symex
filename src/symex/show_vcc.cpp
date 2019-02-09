@@ -59,7 +59,7 @@ void path_searcht::do_show_vcc(statet &state)
     out << u8"\u2500";
   out << reset << '\n';
 
-  const exprt assertion=state.read(instruction.guard);
+  const exprt assertion=state.read(instruction.get_condition());
 
   const exprt::operandst disjuncts =
     assertion.id() == ID_or ? assertion.operands() :

@@ -38,7 +38,7 @@ public:
 
     state.record_step();
     state.next_pc();
-    exprt ssa_guard=state.read(not_exprt(instruction.guard));
+    exprt ssa_guard=state.read(not_exprt(instruction.get_condition()));
     state.history->ssa_guard=ssa_guard;
   }
 

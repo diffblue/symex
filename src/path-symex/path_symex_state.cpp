@@ -115,7 +115,7 @@ bool path_symex_statet::check_assertion(
   assert(instruction.is_assert());
 
   // the assertion in SSA
-  exprt assertion=read(instruction.guard);
+  exprt assertion=read(instruction.get_condition());
 
   // trivial?
   if(assertion.is_true())

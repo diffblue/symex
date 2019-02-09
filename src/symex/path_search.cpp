@@ -359,7 +359,7 @@ void path_searcht::check_assertion(statet &state)
 
   // the assertion in SSA
   exprt assertion=
-    state.read(instruction.guard);
+    state.read(instruction.get_condition());
 
   if(assertion.is_true())
     return; // no error, trivially
