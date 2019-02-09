@@ -965,7 +965,7 @@ void path_symext::operator()(
     state.record_step();
     state.next_pc();
 
-    if(instruction.code.operands().size()==1)
+    if(instruction.get_return().operands().size()==1)
       set_return_value(state, instruction.code.op0());
 
     break;
