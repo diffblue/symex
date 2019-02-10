@@ -28,6 +28,7 @@ OBJ += ../../$(CPROVER_DIR)/src/ansi-c/ansi-c$(LIBEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_mcdc$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_instrument_other$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/goto-instrument/cover_util$(OBJEXT) \
+       ../../$(CPROVER_DIR)/src/goto-instrument/source_lines$(OBJEXT) \
        ../../$(CPROVER_DIR)/src/json/json$(LIBEXT) \
        ../goto-locs/goto-locs$(LIBEXT) \
        ../path-symex/path-symex$(LIBEXT)
