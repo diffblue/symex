@@ -1,5 +1,5 @@
 Loading
-  572 tests found
+  578 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -23,6 +23,7 @@ Running tests
   Running BV_Arithmetic6/test.desc  [OK]
   Running Bitfields1/test.desc  [OK]
   Running Bitfields2/test.desc  [OK]
+  Running Bitfields3/paths.desc  [FAILED]
   Running Bitfields3/test.desc  [OK]
   Running Bool1/test.desc  [OK]
   Running Bool2/test.desc  [OK]
@@ -205,7 +206,7 @@ Running tests
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [FAILED]
   Running Pointer_byte_extract1/test.desc  [OK]
-  Running Pointer_byte_extract2/test.desc  [OK]
+  Running Pointer_byte_extract2/test.desc  [FAILED]
   Running Pointer_byte_extract3/test.desc  [OK]
   Running Pointer_byte_extract4/test.desc  [OK]
   Running Pointer_byte_extract5/no-simplify.desc  [OK]
@@ -219,7 +220,7 @@ Running tests
   Running Promotion2/test.desc  [OK]
   Running Promotion3/test.desc  [OK]
   Running Promotion4/test.desc  [OK]
-  Running Quantifiers-assertion/test.desc  [SKIPPED]
+  Running Quantifiers-assertion/test.desc  [FAILED]
   Running Quantifiers-assignment/test.desc  [OK]
   Running Quantifiers-copy/test.desc  [OK]
   Running Quantifiers-if/test.desc  [OK]
@@ -228,12 +229,11 @@ Running tests
   Running Quantifiers-invalid-var-range/test.desc  [SKIPPED]
   Running Quantifiers-not/test.desc  [OK]
   Running Quantifiers-not-exists/fixed.desc  [FAILED]
-  Running Quantifiers-not-exists/test.desc  [SKIPPED]
   Running Quantifiers-simplify/rewrite_forall.desc  [FAILED]
   Running Quantifiers-simplify/simplify_not_forall.desc  [FAILED]
   Running Quantifiers-simplify/test.desc  [SKIPPED]
   Running Quantifiers-two-dimension-array/fixed.desc  [OK]
-  Running Quantifiers-two-dimension-array/test.desc  [SKIPPED]
+  Running Quantifiers-two-dimension-array/test.desc  [FAILED]
   Running Quantifiers-type/test.desc  [SKIPPED]
   Running Quantifiers1/quantifier-with-side-effect.desc  [OK]
   Running Quantifiers1/test.desc  [OK]
@@ -294,11 +294,12 @@ Running tests
   Running always_inline3/test.desc  [OK]
   Running argv1/test.desc  [FAILED]
   Running array-function-parameters/test.desc  [FAILED]
-  Running array-tests/test.desc  [FAILED]
+  Running array-tests/test.desc  [SKIPPED]
   Running assert_func_four/test.desc  [SKIPPED]
   Running assert_lhs/test.desc  [SKIPPED]
   Running assert_one/test.desc  [SKIPPED]
   Running assert_rtn_four/test.desc  [SKIPPED]
+  Running assigning_nullpointers_should_not_crash_symex/test.desc  [SKIPPED]
   Running atomic_section_seq1/test.desc  [OK]
   Running bad_option/test.desc  [OK]
   Running bad_option/test_multiple.desc  [OK]
@@ -335,6 +336,8 @@ Running tests
   Running cprover_havoc_object_one/test.desc  [OK]
   Running cprover_input_lhs/test.desc  [SKIPPED]
   Running cprover_output_lhs/test.desc  [SKIPPED]
+  Running destructors/compound_literal.desc  [OK]
+  Running destructors/enter_lexical_block.desc  [OK]
   Running divide-by-one-simplify/test.desc  [OK]
   Running dynamic_size1/stack_object.desc  [FAILED]
   Running dynamic_size1/test.desc  [OK]
@@ -425,6 +428,7 @@ Running tests
   Running memset2/test.desc  [OK]
   Running memset3/test.desc  [FAILED]
   Running mm_io1/test.desc  [FAILED]
+  Running multiple-goto-traces/test.desc  [FAILED]
   Running nested_label1/test.desc  [OK]
   Running no_nondet_static/test.desc  [FAILED]
   Running noop1/test.desc  [OK]
@@ -566,6 +570,8 @@ Running tests
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
   Running verifier_error_zero/test.desc  [SKIPPED]
+  Running vla1/program-only.desc  [FAILED]
+  Running vla1/test.desc  [OK]
   Running vla2/test.desc  [SKIPPED]
   Running vla3/test.desc  [SKIPPED]
   Running void_ifthenelse/test.desc  [OK]
@@ -576,4 +582,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  67 of 572 tests failed, 52 tests skipped
+  72 of 578 tests failed, 51 tests skipped
