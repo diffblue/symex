@@ -603,7 +603,6 @@ void path_symext::function_call_rec(
       throw
         "failed to find `"+id2string(function_identifier)+"' in function_map";
 
-
     // turn the arguments into SSA
     exprt::operandst ssa_arguments=call.arguments();
     for(auto &arg : ssa_arguments)
