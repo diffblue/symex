@@ -133,9 +133,12 @@ exprt symex_dereferencet::read_object(
 
     if(element_size.is_not_nil())
     {
+      const exprt element_size_simplified = simplify_expr(element_size, ns);
+    
       // the offset must be a multiple of the element size
       mp_integer element_size_constant, offset_constant;
-      if(!to_integer(simplify_expr(element_size, ns), element_size_constant))
+      if(element_size_simplified.is_constant() &&
+         !to_integer(to_constant_expr(element_size_simplified), element_size_constant))
       {
         if(element_size_constant==1)
         {
@@ -146,7 +149,8 @@ exprt symex_dereferencet::read_object(
         {
           mp_integer offset_constant, factor;
 
-          if(!to_integer(simplified_offset, offset_constant) &&
+          if(simplified_offset.is_constant() &&
+             !to_integer(to_constant_expr(simplified_offset), offset_constant) &&
                 (offset_constant%element_size_constant)==0)
           {
             // Yes! Can use index expression!
@@ -156,7 +160,8 @@ exprt symex_dereferencet::read_object(
           }
           else if(simplified_offset.id()==ID_mult &&
                   simplified_offset.operands().size()==2 &&
-                  !to_integer(simplified_offset.op0(), factor) &&
+                  simplified_offset.op0().is_constant() &&
+                  !to_integer(to_constant_expr(simplified_offset.op0()), factor) &&
                   (factor%element_size_constant)==0)
           {
             // Yes! Can use index expression!
@@ -166,7 +171,8 @@ exprt symex_dereferencet::read_object(
           }
           else if(simplified_offset.id()==ID_mult &&
                   simplified_offset.operands().size()==2 &&
-                  !to_integer(simplified_offset.op1(), factor) &&
+                  simplified_offset.op1().is_constant() &&
+                  !to_integer(to_constant_expr(simplified_offset.op1()), factor) &&
                   (factor%element_size_constant)==0)
           {
             // Yes! Can use index expression!
