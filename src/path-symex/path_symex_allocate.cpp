@@ -15,6 +15,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/c_types.h>
 #include <util/expr_initializer.h>
 #include <util/pointer_offset_size.h>
+#include <util/simplify_expr.h>
 
 inline static typet c_sizeof_type_rec(const exprt &expr)
 {
@@ -213,6 +214,8 @@ void path_symext::symex_new(
   if(do_array)
   {
     exprt size_arg = static_cast<const exprt &>(code.find(ID_size));
+    // we simplify the size since we simplify array type sizes later
+    size_arg = simplify_expr(size_arg, state.config.ns);
     type = array_typet(pointer_type.subtype(), size_arg);
   }
   else
