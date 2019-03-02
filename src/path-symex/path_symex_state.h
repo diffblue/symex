@@ -188,13 +188,22 @@ public:
 
   bool get_hide() const
   {
+    const auto &instruction = *get_instruction();
+
     // we hide if the function is hidden or the instruction is hidden
-    if(get_instruction()->source_location.get_hide())
+    if(instruction.source_location.get_hide())
       return true;
 
     if(!threads.empty() &&
        !threads[current_thread].call_stack.empty() &&
        threads[current_thread].call_stack.back().hidden_function)
+      return true;
+
+    // hide calls to __CPROVER_initialize
+    if(instruction.is_function_call() &&
+       instruction.get_function_call().function().id()==ID_symbol &&
+       to_symbol_expr(instruction.get_function_call().function()).get_identifier()==
+       CPROVER_PREFIX "initialize")
       return true;
 
     return false;

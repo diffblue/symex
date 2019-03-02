@@ -59,9 +59,15 @@ protected:
   }
 
   void function_call_rec(
-    path_symex_statet &state,
-    const code_function_callt &function_call,
+    path_symex_statet &,
+    const code_function_callt &,
     const exprt &function,
+    std::list<path_symex_statet> &further_states);
+
+  void function_call_symbol(
+    path_symex_statet &,
+    const code_function_callt &,
+    const symbol_exprt &function,
     std::list<path_symex_statet> &further_states);
 
   void return_from_function(path_symex_statet &state);

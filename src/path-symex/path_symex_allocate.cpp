@@ -15,6 +15,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/c_types.h>
 #include <util/expr_initializer.h>
 #include <util/pointer_offset_size.h>
+#include <util/simplify_expr.h>
 
 inline static typet c_sizeof_type_rec(const exprt &expr)
 {
@@ -87,8 +88,8 @@ void path_symext::symex_allocate(
       {
         // Did the size get multiplied?
         const auto elem_size=pointer_offset_size(tmp_type, state.config.ns);
-        mp_integer alloc_size;
-        if(!elem_size.has_value() || to_integer(tmp_size, alloc_size))
+        const auto alloc_size=numeric_cast<mp_integer>(tmp_size);
+        if(!elem_size.has_value() || !alloc_size.has_value())
         {
         }
         else
@@ -97,7 +98,7 @@ void path_symext::symex_allocate(
             object_type=tmp_type;
           else
           {
-            mp_integer elements=alloc_size/elem_size.value();
+            mp_integer elements=alloc_size.value()/elem_size.value();
 
             if(elements*elem_size.value()==alloc_size)
               object_type=
@@ -163,9 +164,11 @@ void path_symext::symex_allocate(
 
   // zero initialized?
   exprt initialize=state.read(code.op1());
-  mp_integer initialize_i;
-  if(!to_integer(initialize, initialize_i) &&
-     initialize_i==1)
+
+  auto initialize_i_opt = numeric_cast<mp_integer>(initialize);
+
+  if(initialize_i_opt.has_value() && 
+     initialize_i_opt.value()==1)
   {
     const auto zero_opt=zero_initializer(
       value_symbol.type,
@@ -211,6 +214,8 @@ void path_symext::symex_new(
   if(do_array)
   {
     exprt size_arg = static_cast<const exprt &>(code.find(ID_size));
+    // we simplify the size since we simplify array type sizes later
+    size_arg = simplify_expr(size_arg, state.config.ns);
     type = array_typet(pointer_type.subtype(), size_arg);
   }
   else

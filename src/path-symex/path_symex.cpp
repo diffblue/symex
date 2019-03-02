@@ -580,6 +580,183 @@ void path_symext::assign_rec(
   }
 }
 
+void path_symext::function_call_symbol(
+  path_symex_statet &state,
+  const code_function_callt &call,
+  const symbol_exprt &function,
+  std::list<path_symex_statet> &further_states)
+{
+  const irep_idt &function_identifier=
+    function.get_identifier();
+
+  // find the function
+  locst::function_mapt::const_iterator f_it=
+    state.config.locs.function_map.find(function_identifier);
+
+  if(f_it==state.config.locs.function_map.end())
+    throw
+      "failed to find `"+id2string(function_identifier)+"' in function_map";
+
+  // turn the arguments into SSA
+  exprt::operandst ssa_arguments=call.arguments();
+  for(auto &arg : ssa_arguments)
+    arg=state.read(arg);
+
+  // Fix types of the arguments, if needed
+  {
+    const code_typet::parameterst &parameters=
+      to_code_type(function.type()).parameters();
+
+    for(std::size_t i=0; i<ssa_arguments.size(); i++)
+      if(i<parameters.size())
+      {
+        ssa_arguments[i]=typecast_exprt::conditional_cast(
+          ssa_arguments[i], parameters[i].type());
+      }
+  }
+
+  // record the function we call and the arguments
+  state.history->called_function=function_identifier;
+  state.history->function_arguments.resize(ssa_arguments.size());
+
+  for(std::size_t i=0; i<ssa_arguments.size(); i++)
+  {
+    // store rhs
+    state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
+
+    // assign an lhs for every argument
+    if(ssa_arguments[i].id()==ID_symbol)
+      state.history->function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
+    else
+    {
+      irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
+      symbol_exprt arg_symbol(id, ssa_arguments[i].type());
+      auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
+      state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
+      var_info.increment_ssa_counter();
+    }
+  }
+
+  // do we have a body?
+  const locst::function_entryt &function_entry=f_it->second;
+  loc_reft function_entry_point=function_entry.first_loc;
+  if(function_entry_point==loc_reft())
+  {
+    // no body
+    state.config.no_body(function_identifier);
+
+    // this is a skip
+    if(call.lhs().is_not_nil())
+      assign(state, call.lhs(), nil_exprt());
+
+    state.next_pc();
+    return;
+  }
+
+  // push a frame on the call stack
+  path_symex_statet::threadt &thread=
+    state.threads[state.get_current_thread()];
+  thread.call_stack.push_back(path_symex_statet::framet());
+  thread.call_stack.back().previous_function=thread.function_id;
+  thread.call_stack.back().current_function=function_identifier;
+  thread.call_stack.back().return_location=thread.pc.next_loc();
+  thread.call_stack.back().return_lhs=call.lhs();
+  thread.call_stack.back().return_rhs=nil_exprt();
+  thread.call_stack.back().hidden_function=function_entry.hidden;
+
+  #if 0
+  for(loc_reft l=function_entry_point; ; ++l)
+  {
+    if(locs[l].target->is_end_function())
+      break;
+    if(locs[l].target->is_decl())
+    {
+      // make sure we have the local in the var_map
+      state.
+    }
+  }
+
+  // save the locals into the frame
+  for(locst::local_variablest::const_iterator
+      it=function_entry.local_variables.begin();
+      it!=function_entry.local_variables.end();
+      it++)
+  {
+    unsigned nr=state.config.var_map[*it].number;
+    thread.call_stack.back().saved_local_vars[nr]=thread.local_vars[nr];
+  }
+  #endif
+
+  const code_typet &code_type=function_entry.type;
+  const code_typet::parameterst &function_parameters=code_type.parameters();
+
+  // keep track when va arguments begin.
+  std::size_t va_args_start_index=0;
+
+  // now assign the argument values to parameters
+  for(std::size_t i=0; i<ssa_arguments.size(); i++)
+  {
+    if(i<function_parameters.size())
+    {
+      const code_typet::parametert &function_parameter=function_parameters[i];
+      irep_idt identifier=function_parameter.get_identifier();
+
+      if(identifier.empty())
+        throw "function_call " + id2string(function_identifier)
+            + " no identifier for function parameter";
+
+      symbol_exprt lhs(identifier, function_parameter.type());
+
+      const exprt ssa_rhs=ssa_arguments[i];
+      const exprt ssa_lhs=state.read_no_propagate(lhs);
+      assert(ssa_rhs.type()==ssa_lhs.type());
+
+      exprt::operandst _guard; // start with empty guard
+      assign_rec(state, _guard, ssa_lhs, ssa_rhs);
+    }
+    else if(va_args_start_index==0)
+      va_args_start_index=i;
+  }
+
+  if(code_type.has_ellipsis())
+  {
+    std::size_t va_count=0;
+
+    for(std::size_t i=va_args_start_index; i<ssa_arguments.size(); i++)
+    {
+      const exprt ssa_rhs=ssa_arguments[i];
+
+      irep_idt id=id2string(function_identifier)+"::va_arg"
+          +std::to_string(va_count);
+
+      // clear the var_state, since the type may have changed
+      const symbol_exprt symbol_expr(id, ssa_rhs.type());
+      auto &var_info=state.config.var_map(id, irep_idt(), symbol_expr);
+      var_info.original=symbol_expr;
+      state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
+
+      va_count++;
+
+      const symbol_exprt lhs=symbol_expr;
+
+      // ssa the lhs
+      const exprt ssa_lhs=
+        state.read_no_propagate(lhs);
+
+      assert(lhs.type()==ssa_rhs.type());
+      exprt::operandst _guard; // start with empty guard
+      assign_rec(state, _guard, ssa_lhs, ssa_rhs);
+    }
+  }
+
+  // update statistics
+  state.recursion_map[function_identifier]++;
+
+  // set the new PC
+  thread.pc=function_entry_point;
+  thread.function_id=function_identifier;
+}
+
 void path_symext::function_call_rec(
   path_symex_statet &state,
   const code_function_callt &call,
@@ -592,176 +769,7 @@ void path_symext::function_call_rec(
 
   if(function.id()==ID_symbol)
   {
-    const irep_idt &function_identifier=
-      to_symbol_expr(function).get_identifier();
-
-    // find the function
-    locst::function_mapt::const_iterator f_it=
-      state.config.locs.function_map.find(function_identifier);
-
-    if(f_it==state.config.locs.function_map.end())
-      throw
-        "failed to find `"+id2string(function_identifier)+"' in function_map";
-
-
-    // turn the arguments into SSA
-    exprt::operandst ssa_arguments=call.arguments();
-    for(auto &arg : ssa_arguments)
-      arg=state.read(arg);
-
-    // Fix types of the arguments, if needed
-    {
-      const code_typet::parameterst &parameters=
-        to_code_type(function.type()).parameters();
-
-      for(std::size_t i=0; i<ssa_arguments.size(); i++)
-        if(i<parameters.size())
-        {
-          ssa_arguments[i]=typecast_exprt::conditional_cast(
-            ssa_arguments[i], parameters[i].type());
-        }
-    }
-
-    // record the function we call and the arguments
-    state.history->called_function=function_identifier;
-    state.history->function_arguments.resize(ssa_arguments.size());
-
-    for(std::size_t i=0; i<ssa_arguments.size(); i++)
-    {
-      // store rhs
-      state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
-
-      // assign an lhs for every argument
-      if(ssa_arguments[i].id()==ID_symbol)
-        state.history->function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
-      else
-      {
-        irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
-        symbol_exprt arg_symbol(id, ssa_arguments[i].type());
-        auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
-        state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
-        var_info.increment_ssa_counter();
-      }
-    }
-
-    // do we have a body?
-    const locst::function_entryt &function_entry=f_it->second;
-    loc_reft function_entry_point=function_entry.first_loc;
-    if(function_entry_point==loc_reft())
-    {
-      // no body
-      state.config.no_body(function_identifier);
-
-      // this is a skip
-      if(call.lhs().is_not_nil())
-        assign(state, call.lhs(), nil_exprt());
-
-      state.next_pc();
-      return;
-    }
-
-    // push a frame on the call stack
-    path_symex_statet::threadt &thread=
-      state.threads[state.get_current_thread()];
-    thread.call_stack.push_back(path_symex_statet::framet());
-    thread.call_stack.back().previous_function=thread.function_id;
-    thread.call_stack.back().current_function=function_identifier;
-    thread.call_stack.back().return_location=thread.pc.next_loc();
-    thread.call_stack.back().return_lhs=call.lhs();
-    thread.call_stack.back().return_rhs=nil_exprt();
-    thread.call_stack.back().hidden_function=function_entry.hidden;
-
-    #if 0
-    for(loc_reft l=function_entry_point; ; ++l)
-    {
-      if(locs[l].target->is_end_function())
-        break;
-      if(locs[l].target->is_decl())
-      {
-        // make sure we have the local in the var_map
-        state.
-      }
-    }
-
-    // save the locals into the frame
-    for(locst::local_variablest::const_iterator
-        it=function_entry.local_variables.begin();
-        it!=function_entry.local_variables.end();
-        it++)
-    {
-      unsigned nr=state.config.var_map[*it].number;
-      thread.call_stack.back().saved_local_vars[nr]=thread.local_vars[nr];
-    }
-    #endif
-
-    const code_typet &code_type=function_entry.type;
-    const code_typet::parameterst &function_parameters=code_type.parameters();
-
-    // keep track when va arguments begin.
-    std::size_t va_args_start_index=0;
-
-    // now assign the argument values to parameters
-    for(std::size_t i=0; i<ssa_arguments.size(); i++)
-    {
-      if(i<function_parameters.size())
-      {
-        const code_typet::parametert &function_parameter=function_parameters[i];
-        irep_idt identifier=function_parameter.get_identifier();
-
-        if(identifier.empty())
-          throw "function_call " + id2string(function_identifier)
-              + " no identifier for function parameter";
-
-        symbol_exprt lhs(identifier, function_parameter.type());
-
-        const exprt ssa_rhs=ssa_arguments[i];
-        const exprt ssa_lhs=state.read_no_propagate(lhs);
-        assert(ssa_rhs.type()==ssa_lhs.type());
-
-        exprt::operandst _guard; // start with empty guard
-        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
-      }
-      else if(va_args_start_index==0)
-        va_args_start_index=i;
-    }
-
-    if(code_type.has_ellipsis())
-    {
-      std::size_t va_count=0;
-
-      for(std::size_t i=va_args_start_index; i<ssa_arguments.size(); i++)
-      {
-        const exprt ssa_rhs=ssa_arguments[i];
-
-        irep_idt id=id2string(function_identifier)+"::va_arg"
-            +std::to_string(va_count);
-
-        // clear the var_state, since the type may have changed
-        const symbol_exprt symbol_expr(id, ssa_rhs.type());
-        auto &var_info=state.config.var_map(id, irep_idt(), symbol_expr);
-        var_info.original=symbol_expr;
-        state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
-
-        va_count++;
-
-        const symbol_exprt lhs=symbol_expr;
-
-        // ssa the lhs
-        const exprt ssa_lhs=
-          state.read_no_propagate(lhs);
-
-        assert(lhs.type()==ssa_rhs.type());
-        exprt::operandst _guard; // start with empty guard
-        assign_rec(state, _guard, ssa_lhs, ssa_rhs);
-      }
-    }
-
-    // update statistics
-    state.recursion_map[function_identifier]++;
-
-    // set the new PC
-    thread.pc=function_entry_point;
-    thread.function_id=function_identifier;
+    function_call_symbol(state, call, to_symbol_expr(function), further_states);
   }
   else if(function.id()==ID_dereference)
   {
