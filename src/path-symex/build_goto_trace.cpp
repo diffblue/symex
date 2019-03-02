@@ -85,6 +85,12 @@ goto_tracet build_goto_trace(
       trace_step.cond_value = true;
       break;
 
+    case GOTO:
+      trace_step.type=goto_trace_stept::typet::GOTO;
+      trace_step.cond_expr = trace_step.pc->guard;
+      trace_step.cond_value = step.is_branch_taken();
+      break;
+
     case FUNCTION_CALL:
       // these have parameter assignments!
       if(step.lhs.is_not_nil())
