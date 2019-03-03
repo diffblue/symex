@@ -34,10 +34,11 @@ exprt evaluate_address_of_rec(
     else
     {
       const auto &member_expr=to_member_expr(src);
-      const exprt offset=member_offset_expr(member_expr, ns);
+      const auto offset_opt=member_offset_expr(member_expr, ns);
+      CHECK_RETURN(offset_opt.has_value());
       const exprt base=evaluate_address_of_rec(member_expr.compound(), ns);
       return typecast_exprt::conditional_cast(
-        add_offset(base, offset), pointer_type(src.type()));
+        add_offset(base, *offset_opt), pointer_type(src.type()));
     }
   }
   else if(src.id()==ID_index)

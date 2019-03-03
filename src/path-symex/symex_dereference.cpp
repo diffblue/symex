@@ -80,15 +80,15 @@ exprt symex_dereferencet::read_object(
     exprt index=index_expr.index();
 
     // multiply index by object size
-    exprt size=size_of_expr(object_type, ns);
+    auto size_opt=size_of_expr(object_type, ns);
 
-    if(size.is_nil())
+    if(!size_opt.has_value())
       throw "dereference failed to get object size for index";
 
     index.make_typecast(simplified_offset.type());
-    size.make_typecast(index.type());
+    exprt casted_size = typecast_exprt(*size_opt, index.type());
 
-    const plus_exprt new_offset(simplified_offset, mult_exprt(index, size));
+    const plus_exprt new_offset(simplified_offset, mult_exprt(index, casted_size));
 
     return read_object(index_expr.array(), new_offset, type);
   }
@@ -104,13 +104,14 @@ exprt symex_dereferencet::read_object(
       const struct_typet &struct_type=
         to_struct_type(compound_type);
 
-      exprt member_offset=member_offset_expr(
+      auto member_offset_opt=member_offset_expr(
         struct_type, member_expr.get_component_name(), ns);
 
-      if(member_offset.is_nil())
+      if(!member_offset_opt.has_value())
         throw "dereference failed to get member offset";
 
-      member_offset.make_typecast(simplified_offset.type());
+      const exprt member_offset =
+        typecast_exprt::conditional_cast(*member_offset_opt, simplified_offset.type());
 
       const plus_exprt new_offset(simplified_offset, member_offset);
 
@@ -129,11 +130,11 @@ exprt symex_dereferencet::read_object(
      base_type_eq(object_type.subtype(), dest_type, ns))
   {
     // check proper alignment
-    exprt element_size=size_of_expr(dest_type, ns);
+    auto element_size_opt=size_of_expr(dest_type, ns);
 
-    if(element_size.is_not_nil())
+    if(element_size_opt.has_value())
     {
-      const exprt element_size_simplified = simplify_expr(element_size, ns);
+      const exprt element_size_simplified = simplify_expr(*element_size_opt, ns);
     
       // the offset must be a multiple of the element size
       mp_integer element_size_constant, offset_constant;
@@ -155,7 +156,7 @@ exprt symex_dereferencet::read_object(
           {
             // Yes! Can use index expression!
             mp_integer index_constant=offset_constant/element_size_constant;
-            exprt index_expr=from_integer(index_constant, element_size.type());
+            exprt index_expr=from_integer(index_constant, element_size_simplified.type());
             return index_exprt(object, index_expr, dest_type);
           }
           else if(simplified_offset.id()==ID_mult &&
@@ -279,13 +280,13 @@ exprt symex_dereferencet::dereference_plus(
     std::swap(pointer, integer);
 
   // multiply integer by object size
-  exprt size=size_of_expr(pointer.type().subtype(), ns);
-  if(size.is_nil())
+  const auto size_opt=size_of_expr(pointer.type().subtype(), ns);
+  if(!size_opt.has_value())
     throw "dereference failed to get object size for pointer arithmetic";
 
   // we use the type of 'offset' as common ground,
   // which is usually index_type()
-  size = typecast_exprt::conditional_cast(size, offset.type());
+  exprt size = typecast_exprt::conditional_cast(*size_opt, offset.type());
   integer = typecast_exprt::conditional_cast(integer, offset.type());
 
   const plus_exprt new_offset(offset, mult_exprt(size, integer));

@@ -1,5 +1,5 @@
 Loading
-  589 tests found
+  591 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -183,7 +183,7 @@ Running tests
   Running Negation2/test.desc  [OK]
   Running Overflow_Addition1/test.desc  [OK]
   Running Overflow_Addition2/test.desc  [OK]
-  Running Overflow_Addition3/test.desc  [SKIPPED]
+  Running Overflow_Addition3/test.desc  [OK]
   Running Overflow_Addition4/test.desc  [OK]
   Running Overflow_Leftshift1/test-c89.desc  [FAILED]
   Running Overflow_Leftshift1/test-c99.desc  [OK]
@@ -294,6 +294,7 @@ Running tests
   Running address_space_size_limit1/test.desc  [FAILED]
   Running address_space_size_limit2/test.desc  [SKIPPED]
   Running address_space_size_limit3/test.desc  [OK]
+  Running alloca1/test.desc  [OK]
   Running always_inline1/test.desc  [OK]
   Running always_inline2/test.desc  [OK]
   Running always_inline3/test.desc  [OK]
@@ -310,7 +311,7 @@ Running tests
   Running bad_option/test.desc  [OK]
   Running bad_option/test_multiple.desc  [OK]
   Running big-endian-array1/test.desc  [FAILED]
-  Running bounds_check1/test.desc  [OK]
+  Running bounds_check1/test.desc  [FAILED]
   Running byte_update1/test.desc  [OK]
   Running byte_update2/test.desc  [FAILED]
   Running byte_update3/test.desc  [FAILED]
@@ -357,6 +358,7 @@ Running tests
   Running enum5/test.desc  [OK]
   Running enum6/test.desc  [OK]
   Running enum7/test.desc  [OK]
+  Running enum8/test.desc  [OK]
   Running equality_through_array1/test.desc  [OK]
   Running equality_through_array2/test.desc  [OK]
   Running equality_through_array3/test.desc  [OK]
@@ -593,4 +595,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  82 of 589 tests failed, 53 tests skipped
+  83 of 591 tests failed, 52 tests skipped

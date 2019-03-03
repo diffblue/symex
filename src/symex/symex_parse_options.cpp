@@ -392,7 +392,9 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     if(cmdline.isset("cover"))
     {
       status() << "Instrumenting coverage goals" << eom;
-      if(instrument_cover_goals(options, goto_model, get_message_handler()))
+      auto cover_config = get_cover_config(
+        options, goto_model.symbol_table, get_message_handler());
+      if(instrument_cover_goals(cover_config, goto_model, get_message_handler()))
         return true;
     }
   }
