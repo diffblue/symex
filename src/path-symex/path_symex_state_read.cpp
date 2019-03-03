@@ -298,8 +298,9 @@ optionalt<exprt> path_symex_statet::instantiate_node(
   }
   else if(src.id()==ID_symbol)
   {
-    // must be SSA already, or code
+    // must be SSA already, or code, or a function
     assert(src.type().id()==ID_code ||
+           src.type().id()==ID_mathematical_function ||
            src.get_bool(ID_C_SSA_symbol));
   }
   else if(src.id()=="dereference_failure")
@@ -354,7 +355,8 @@ exprt path_symex_statet::read_symbol_member_index(
   const typet &src_type=config.ns.follow(src.type());
 
   // don't touch function symbols
-  if(src_type.id()==ID_code)
+  if(src_type.id()==ID_code ||
+     src_type.id()==ID_mathematical_function)
     return nil_exprt();
 
   // unbounded array?
@@ -480,7 +482,8 @@ bool path_symex_statet::is_symbol_member_index(const exprt &src) const
   const typet final_type=src.type();
 
   // don't touch function symbols
-  if(config.ns.follow(final_type).id()==ID_code)
+  if(final_type.id()==ID_code ||
+     final_type.id()==ID_mathematical_function)
     return false;
 
   const exprt *current=&src;
