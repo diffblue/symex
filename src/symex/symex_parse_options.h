@@ -55,7 +55,7 @@ class optionst;
   OPT_GOTO_TRACE \
   "(no-simplify)(no-unwinding-assertions)(no-propagation)" \
   "(no-self-loops-to-assumptions)" \
-  "(json-ui)(xml-ui)" \
+  "(json-ui)(xml-ui)(slice-formula)" \
   // the last line is for CBMC-regression testing only
 
 class symex_parse_optionst:
