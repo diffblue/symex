@@ -1,5 +1,5 @@
 Loading
-  591 tests found
+  593 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -12,7 +12,6 @@ Running tests
   Running Array_Initialization1/test.desc  [OK]
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
-  Running Array_UF/test.desc  [SKIPPED]
   Running Array_operations1/test.desc  [FAILED]
   Running Associativity1/test.desc  [OK]
   Running Assumption1/test.desc  [OK]
@@ -234,6 +233,7 @@ Running tests
   Running Quantifiers-invalid-var-range/test.desc  [SKIPPED]
   Running Quantifiers-not/test.desc  [OK]
   Running Quantifiers-not-exists/fixed.desc  [FAILED]
+  Running Quantifiers-simplify/rewrite_exists.desc  [FAILED]
   Running Quantifiers-simplify/rewrite_forall.desc  [FAILED]
   Running Quantifiers-simplify/simplify_not_forall.desc  [FAILED]
   Running Quantifiers-simplify/test.desc  [SKIPPED]
@@ -311,7 +311,7 @@ Running tests
   Running bad_option/test.desc  [OK]
   Running bad_option/test_multiple.desc  [OK]
   Running big-endian-array1/test.desc  [FAILED]
-  Running bounds_check1/test.desc  [FAILED]
+  Running bounds_check1/test.desc  [OK]
   Running byte_update1/test.desc  [OK]
   Running byte_update2/test.desc  [FAILED]
   Running byte_update3/test.desc  [FAILED]
@@ -479,6 +479,7 @@ Running tests
   Running scanf1/test.desc  [OK]
   Running self_loops_to_assumptions1/default.desc  [FAILED]
   Running self_loops_to_assumptions1/no-assume.desc  [OK]
+  Running set-property-inline1/test.desc  [FAILED]
   Running show-vcc/main_prec.desc  [FAILED]
   Running show-vcc/test.desc  [FAILED]
   Running show_properties1/test.desc  [OK]
@@ -493,6 +494,7 @@ Running tests
   Running struct1/test.desc  [OK]
   Running struct10/test.desc  [OK]
   Running struct11/test.desc  [SKIPPED]
+  Running struct12/test.desc  [OK]
   Running struct3/test.desc  [OK]
   Running struct4/test.desc  [OK]
   Running struct6/test.desc  [OK]
@@ -595,4 +597,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  83 of 591 tests failed, 52 tests skipped
+  84 of 593 tests failed, 51 tests skipped
