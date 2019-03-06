@@ -36,19 +36,24 @@ void path_searcht::do_show_vcc(statet &state)
 
   for(const auto &step_ref : steps)
   {
-    if(step_ref->ssa_guard.is_not_nil() &&
-       !step_ref->ssa_guard.is_true())
+    if(step_ref->is_branch() || step_ref->is_assume())
     {
-      out << faint << "{-" << count << "} " << reset
-          << format(step_ref->ssa_guard) << '\n';
-      count++;
+      const exprt c =
+        step_ref->is_branch() ? step_ref->branch().ssa_cond : step_ref->assume().ssa_cond;
+
+      if(!c.is_true())
+      {
+        out << faint << "{-" << count << "} " << reset
+            << format(c) << '\n';
+        count++;
+      }
     }
 
-    if(step_ref->ssa_rhs.is_not_nil())
+    if(step_ref->is_assign())
     {
-      equal_exprt equality(step_ref->ssa_lhs, step_ref->ssa_rhs);
+      const auto &a = step_ref->assign();
       out << faint << "{-" << count << "} " << reset
-          << format(equality) << '\n';
+          << format(equal_exprt(a.ssa_lhs, a.ssa_rhs)) << '\n';
       count++;
     }
   }

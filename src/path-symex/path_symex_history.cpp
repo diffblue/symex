@@ -29,23 +29,35 @@ void path_symex_stept::output(std::ostream &out) const
  */
   out << "\n";
 
-  out << "SSA Guard: " << from_expr(ssa_guard) << "\n";
-  out << "LHS: " << from_expr(lhs) << "\n";
-  out << "SSA LHS: " << from_expr(ssa_lhs) << "\n";
-  out << "SSA RHS: " << from_expr(ssa_rhs) << "\n";
+  if(is_branch())
+    out << "SSA cond: " << from_expr(branch().ssa_cond) << "\n";
+
+  if(is_assign())
+  {
+    const auto &a = assign();
+    out << "LHS: " << from_expr(a.lhs) << "\n";
+    out << "SSA LHS: " << from_expr(a.ssa_lhs) << "\n";
+    out << "SSA RHS: " << from_expr(a.ssa_rhs) << "\n";
+  }
+
   out << "\n";
 }
 
 void path_symex_stept::convert(decision_proceduret &dest) const
 {
-  for(const auto &arg : function_arguments)
-    dest << equal_exprt(arg.ssa_lhs, arg.ssa_rhs);
-
-  if(ssa_rhs.is_not_nil())
-    dest << equal_exprt(ssa_lhs, ssa_rhs);
-
-  if(ssa_guard.is_not_nil())
-    dest << ssa_guard;
+  if(is_call())
+  {
+    for(const auto &arg : call().function_arguments)
+      dest << equal_exprt(arg.ssa_lhs, arg.ssa_rhs);
+  }
+  else if(is_assign())
+  {
+    const auto &a = assign();
+    if(a.ssa_rhs.is_not_nil())
+      dest << equal_exprt(a.ssa_lhs, a.ssa_rhs);
+  }
+  else if(is_branch())
+    dest << branch().ssa_cond;
 }
 
 void path_symex_step_reft::build_history(

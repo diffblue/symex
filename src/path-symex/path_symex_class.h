@@ -36,10 +36,10 @@ public:
     const goto_programt::instructiont &instruction=
       *state.get_instruction();
 
-    state.record_step();
+    state.record_step(path_symex_stept::assumet());
     state.next_pc();
-    exprt ssa_guard=state.read(not_exprt(instruction.get_condition()));
-    state.history->ssa_guard=ssa_guard;
+    exprt ssa_cond=state.read(not_exprt(instruction.get_condition()));
+    state.history->branch().ssa_cond=ssa_cond;
   }
 
   typedef path_symex_stept stept;

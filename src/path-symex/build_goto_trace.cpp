@@ -44,25 +44,25 @@ goto_tracet build_goto_trace(
     switch(instruction.type)
     {
     case ASSIGN:
-      if(step.lhs.type().id()==ID_array &&
-         step.ssa_rhs.id()==ID_with)
+      if(step.assign().lhs.type().id()==ID_array &&
+         step.assign().ssa_rhs.id()==ID_with)
       {
         // this is an unbounded array, assigned as
         //  new_array = old_array WITH [index:=value]
         //
         // instead process as
         //  new_array[index] = value
-        const exprt index_ssa=to_with_expr(step.ssa_rhs).where();
+        const exprt index_ssa=to_with_expr(step.assign().ssa_rhs).where();
         const exprt index_value=decision_procedure.get(index_ssa);
-        trace_step.full_lhs=index_exprt(step.lhs, index_value);
+        trace_step.full_lhs=index_exprt(step.assign().lhs, index_value);
         trace_step.full_lhs_value=
-          simplify_expr(decision_procedure.get(index_exprt(step.ssa_lhs, index_ssa)),
+          simplify_expr(decision_procedure.get(index_exprt(step.assign().ssa_lhs, index_ssa)),
                         state.config.ns);
       }
       else
       {
-        trace_step.full_lhs=step.lhs;
-        trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+        trace_step.full_lhs=step.assign().lhs;
+        trace_step.full_lhs_value=decision_procedure.get(step.assign().ssa_lhs);
       }
 
       trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
@@ -71,8 +71,8 @@ goto_tracet build_goto_trace(
 
     case DECL:
       trace_step.type=goto_trace_stept::typet::DECL;
-      trace_step.full_lhs=step.lhs;
-      trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+      trace_step.full_lhs=step.assign().lhs;
+      trace_step.full_lhs_value=decision_procedure.get(step.assign().ssa_lhs);
       trace_step.assignment_type=goto_trace_stept::assignment_typet::STATE;
       break;
 
@@ -89,16 +89,16 @@ goto_tracet build_goto_trace(
       DATA_INVARIANT(step.is_branch(), "GOTO step must be branch");
       trace_step.type=goto_trace_stept::typet::GOTO;
       trace_step.cond_expr = trace_step.pc->guard;
-      trace_step.cond_value = step.is_branch_taken();
+      trace_step.cond_value = step.branch().taken;
       break;
 
     case FUNCTION_CALL:
       // these have parameter assignments!
-      if(step.lhs.is_not_nil())
+      if(step.assign().lhs.is_not_nil())
       {
         trace_step.type=goto_trace_stept::typet::ASSIGNMENT;
-        trace_step.full_lhs=step.lhs;
-        trace_step.full_lhs_value=decision_procedure.get(step.ssa_lhs);
+        trace_step.full_lhs=step.assign().lhs;
+        trace_step.full_lhs_value=decision_procedure.get(step.assign().ssa_lhs);
         trace_step.assignment_type=
           goto_trace_stept::assignment_typet::ACTUAL_PARAMETER;
         // trace_step.lhs_object and trace_step.lhs_object_value
@@ -107,10 +107,10 @@ goto_tracet build_goto_trace(
       else
       {
         trace_step.type=goto_trace_stept::typet::FUNCTION_CALL;
-        trace_step.called_function=step.called_function;
-        trace_step.function_arguments.resize(step.function_arguments.size());
+        trace_step.called_function=step.call().called_function;
+        trace_step.function_arguments.resize(step.call().function_arguments.size());
         for(std::size_t i=0; i<trace_step.function_arguments.size(); i++)
-          trace_step.function_arguments[i]=decision_procedure.get(step.function_arguments[i].ssa_lhs);
+          trace_step.function_arguments[i]=decision_procedure.get(step.call().function_arguments[i].ssa_lhs);
       }
       break;
 

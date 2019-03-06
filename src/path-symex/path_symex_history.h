@@ -16,6 +16,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/base_exceptions.h>
 #include <util/std_expr.h>
+#include <util/variant.h>
 
 #include "goto-locs/loc_ref.h"
 
@@ -57,7 +58,8 @@ public:
   path_symex_stept &operator*() const { return get(); }
   path_symex_stept *operator->() const { return &get(); }
 
-  void generate_successor();
+  template<typename T>
+  void generate_successor(T variant);
 
   // build a forward-traversable version of the history
   void build_history(std::vector<path_symex_step_reft> &dest) const;
@@ -76,57 +78,114 @@ class decision_proceduret;
 class path_symex_stept
 {
 public:
-  enum kindt
+  struct othert
   {
-    NON_BRANCH, BRANCH_TAKEN, BRANCH_NOT_TAKEN
-  } branch;
+  };
 
-  bool is_branch_taken() const
+  struct assumet
   {
-    return branch==BRANCH_TAKEN;
-  }
+    exprt ssa_cond;
+  };
 
-  bool is_branch_not_taken() const
+  struct brancht
   {
-    return branch==BRANCH_NOT_TAKEN;
-  }
+    bool taken;
+    exprt ssa_cond;
+  };
+
+  struct callt
+  {
+    irep_idt called_function;
+    struct function_argumentt { symbol_exprt ssa_lhs; exprt ssa_rhs; };
+    std::vector<function_argumentt> function_arguments;
+  };
+
+  struct assignt
+  {
+    // pre SSA, but dereferenced
+    exprt lhs;
+
+    // in SSA
+    exprt ssa_guard;
+    symbol_exprt ssa_lhs;
+    exprt ssa_rhs;
+  };
 
   bool is_branch() const
   {
-    return branch==BRANCH_TAKEN || branch==BRANCH_NOT_TAKEN;
+    return holds_alternative<brancht>(variant);
+  }
+
+  bool is_assume() const
+  {
+    return holds_alternative<assumet>(variant);
+  }
+
+  bool is_assign() const
+  {
+    return holds_alternative<assignt>(variant);
+  }
+
+  bool is_call() const
+  {
+    return holds_alternative<callt>(variant);
+  }
+
+  variant<assignt, assumet, brancht, callt, othert> variant;
+
+  const assignt &assign() const
+  {
+    return get<assignt>(variant);
+  }
+
+  assignt &assign()
+  {
+    return get<assignt>(variant);
+  }
+
+  const assumet &assume() const
+  {
+    return get<assumet>(variant);
+  }
+
+  assumet &assume()
+  {
+    return get<assumet>(variant);
+  }
+
+  const callt &call() const
+  {
+    return get<callt>(variant);
+  }
+
+  callt &call()
+  {
+    return get<callt>(variant);
+  }
+
+  const brancht &branch() const
+  {
+    return get<brancht>(variant);
+  }
+
+  brancht &branch()
+  {
+    return get<brancht>(variant);
   }
 
   path_symex_step_reft predecessor;
 
   // the thread that did the step
-  unsigned thread_nr;
+  unsigned thread_nr = 0;
 
   // the instruction that was executed
   loc_reft pc;
   irep_idt f_identifier;
 
-  // pre SSA, but dereferenced
-  exprt lhs;
+  bool hidden = false;
 
-  // in SSA
-  exprt ssa_guard;
-  symbol_exprt ssa_lhs;
-  exprt ssa_rhs;
-
-  bool hidden;
-
-  // for function call
-  irep_idt called_function;
-  struct function_argumentt { symbol_exprt ssa_lhs; exprt ssa_rhs; };
-  std::vector<function_argumentt> function_arguments;
-
-  path_symex_stept():
-    branch(NON_BRANCH),
-    thread_nr(0),
-    lhs(nil_exprt()),
-    ssa_guard(nil_exprt()),
-    ssa_rhs(nil_exprt()),
-    hidden(false)
+  template<typename T>
+  explicit path_symex_stept(T _variant):variant(std::move(_variant))
   {
   }
 
@@ -164,13 +223,14 @@ public:
   }
 };
 
-inline void path_symex_step_reft::generate_successor()
+template<typename T>
+inline void path_symex_step_reft::generate_successor(T variant)
 {
   INVARIANT_STRUCTURED(
     history!=nullptr, nullptr_exceptiont, "history is null");
   path_symex_step_reft old=*this;
   index=history->step_container.size();
-  history->step_container.push_back(path_symex_stept());
+  history->step_container.push_back(path_symex_stept(std::move(variant)));
   history->step_container.back().predecessor=old;
 }
 

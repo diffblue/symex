@@ -159,7 +159,8 @@ public:
   message_handlert *message_handler;
 
   // adds an entry to the history
-  void record_step();
+  template<typename T>
+  void record_step(T variant);
 
   // various state transformers
 

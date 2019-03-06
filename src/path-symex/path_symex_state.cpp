@@ -64,7 +64,8 @@ path_symex_statet::var_statet &path_symex_statet::get_var_state(
   return var_val[var_info.number];
 }
 
-void path_symex_statet::record_step()
+template<typename T>
+void path_symex_statet::record_step(T variant)
 {
   // is there a context switch happening?
   if(!history.is_nil() &&
@@ -72,7 +73,7 @@ void path_symex_statet::record_step()
     no_thread_interleavings++;
 
   // add the step
-  history.generate_successor();
+  history.generate_successor(std::move(variant));
   stept &step=*history;
 
   // copy PC

@@ -321,18 +321,18 @@ void path_symext::assign_rec_symbol(
   }
 
   // record the step
-  state.record_step();
+  state.record_step(path_symex_stept::assignt());
   stept &step=*state.history;
 
-  step.ssa_guard=conjunction(guard);
-  step.lhs=var_info.original;
-  step.ssa_lhs=new_ssa_lhs;
+  step.assign().ssa_guard=conjunction(guard);
+  step.assign().lhs=var_info.original;
+  step.assign().ssa_lhs=new_ssa_lhs;
 
   if(ssa_rhs.is_nil())
     // this is a tautology, added so the solver knows about the symbol
-    step.ssa_rhs=new_ssa_lhs;
+    step.assign().ssa_rhs=new_ssa_lhs;
   else
-    step.ssa_rhs=ssa_rhs;
+    step.assign().ssa_rhs=ssa_rhs;
 }
 
 void path_symext::assign_rec_member(
@@ -616,23 +616,23 @@ void path_symext::function_call_symbol(
   }
 
   // record the function we call and the arguments
-  state.history->called_function=function_identifier;
-  state.history->function_arguments.resize(ssa_arguments.size());
+  state.history->call().called_function=function_identifier;
+  state.history->call().function_arguments.resize(ssa_arguments.size());
 
   for(std::size_t i=0; i<ssa_arguments.size(); i++)
   {
     // store rhs
-    state.history->function_arguments[i].ssa_rhs=ssa_arguments[i];
+    state.history->call().function_arguments[i].ssa_rhs=ssa_arguments[i];
 
     // assign an lhs for every argument
     if(ssa_arguments[i].id()==ID_symbol)
-      state.history->function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
+      state.history->call().function_arguments[i].ssa_lhs=to_symbol_expr(ssa_arguments[i]);
     else
     {
       irep_idt id="symex_arg::"+id2string(function_identifier)+"::"+std::to_string(i);
       symbol_exprt arg_symbol(id, ssa_arguments[i].type());
       auto &var_info=state.config.var_map(id, irep_idt(), arg_symbol);
-      state.history->function_arguments[i].ssa_lhs=var_info.ssa_symbol();
+      state.history->call().function_arguments[i].ssa_lhs=var_info.ssa_symbol();
       var_info.increment_ssa_counter();
     }
   }
@@ -779,23 +779,23 @@ void path_symext::function_call_rec(
   else if(function.id()==ID_if)
   {
     const if_exprt &if_expr=to_if_expr(function);
-    exprt ssa_guard=if_expr.cond();
+    exprt ssa_cond=if_expr.cond();
 
     // add a 'further state' for the false-case
 
     {
       further_states.push_back(state);
       path_symex_statet &false_state=further_states.back();
-      false_state.record_step();
-      false_state.history->ssa_guard=not_exprt(ssa_guard);
+      false_state.record_step(path_symex_stept::brancht());
+      false_state.history->branch().ssa_cond=not_exprt(ssa_cond);
       function_call_rec(
         further_states.back(), call, if_expr.false_case(), further_states);
     }
 
     // do the true-case in 'state'
     {
-      state.record_step();
-      state.history->ssa_guard=ssa_guard;
+      state.record_step(path_symex_stept::brancht());
+      state.history->branch().ssa_cond=ssa_cond;
       function_call_rec(state, call, if_expr.true_case(), further_states);
     }
   }
@@ -880,40 +880,40 @@ void path_symext::do_goto(
   const loct &loc=state.get_loc();
   assert(!loc.branch_target.is_nil());
 
-  exprt ssa_guard=state.read(instruction.get_condition());
+  exprt ssa_cond=state.read(instruction.get_condition());
 
-  if(ssa_guard.is_true()) // branch taken always
+  if(ssa_cond.is_true()) // branch taken always
   {
-    state.record_step();
-    state.history->branch=stept::BRANCH_TAKEN;
+    state.record_step(path_symex_stept::brancht());
+    state.history->branch().taken = true;
     state.set_pc(loc.branch_target);
     return; // we are done
   }
 
-  if(!ssa_guard.is_false())
+  if(!ssa_cond.is_false())
   {
     // branch taken case
     // copy the state into 'further_states'
     further_states.push_back(state);
-    further_states.back().record_step();
-    further_states.back().history->branch=stept::BRANCH_TAKEN;
+    further_states.back().record_step(path_symex_stept::brancht());
+    further_states.back().history->branch().taken = true;
     further_states.back().set_pc(loc.branch_target);
-    further_states.back().history->ssa_guard=ssa_guard;
+    further_states.back().history->branch().ssa_cond=ssa_cond;
   }
 
   // branch not taken case
-  exprt negated_ssa_guard=not_exprt(ssa_guard);
-  state.record_step();
-  state.history->branch=stept::BRANCH_NOT_TAKEN;
+  exprt negated_ssa_cond=not_exprt(ssa_cond);
+  state.record_step(path_symex_stept::brancht());
   state.next_pc();
-  state.history->ssa_guard=negated_ssa_guard;
+  state.history->branch().taken = false;
+  state.history->branch().ssa_cond=negated_ssa_cond;
 }
 
 void path_symext::do_goto(
   path_symex_statet &state,
   bool taken)
 {
-  state.record_step();
+  state.record_step(path_symex_stept::brancht());
 
   const goto_programt::instructiont &instruction=
     *state.get_instruction();
@@ -924,7 +924,7 @@ void path_symext::do_goto(
     state.unwinding_map[state.pc()]++;
   }
 
-  exprt ssa_guard=state.read(instruction.get_condition());
+  exprt ssa_cond=state.read(instruction.get_condition());
 
   if(taken)
   {
@@ -932,16 +932,16 @@ void path_symext::do_goto(
     const loct &loc=state.get_loc();
     assert(!loc.branch_target.is_nil());
     state.set_pc(loc.branch_target);
-    state.history->ssa_guard=ssa_guard;
-    state.history->branch=stept::BRANCH_TAKEN;
+    state.history->branch().ssa_cond=ssa_cond;
+    state.history->branch().taken = true;
   }
   else
   {
     // branch not taken case
-    exprt negated_ssa_guard=not_exprt(ssa_guard);
+    exprt negated_ssa_cond=not_exprt(ssa_cond);
     state.next_pc();
-    state.history->ssa_guard=negated_ssa_guard;
-    state.history->branch=stept::BRANCH_NOT_TAKEN;
+    state.history->branch().ssa_cond=negated_ssa_cond;
+    state.history->branch().taken = false;
   }
 }
 
@@ -966,13 +966,13 @@ void path_symext::operator()(
   {
   case END_FUNCTION:
     // pop the call stack
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     return_from_function(state);
     break;
 
   case RETURN:
     // sets the return value, but doesn't actually return
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.next_pc();
 
     if(instruction.get_return().operands().size()==1)
@@ -985,7 +985,7 @@ void path_symext::operator()(
       const loct &loc=state.get_loc();
       assert(!loc.branch_target.is_nil());
 
-      state.record_step();
+      state.record_step(path_symex_stept::othert());
       state.next_pc();
 
       // ordering of the following matters due to vector instability
@@ -998,7 +998,7 @@ void path_symext::operator()(
     break;
 
   case END_THREAD:
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.disable_current_thread();
     break;
 
@@ -1009,23 +1009,23 @@ void path_symext::operator()(
 
   case CATCH:
     // ignore for now
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.next_pc();
     break;
 
   case THROW:
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     throw "THROW not yet implemented"; // NOLINT(readability/throw)
 
   case ASSUME:
-    state.record_step();
+    state.record_step(path_symex_stept::assumet());
     state.next_pc();
     if(instruction.get_condition().is_false())
       state.make_infeasible();
     else
     {
-      exprt ssa_guard=state.read(instruction.get_condition());
-      state.history->ssa_guard=ssa_guard;
+      exprt ssa_cond=state.read(instruction.get_condition());
+      state.history->assume().ssa_cond=ssa_cond;
     }
     break;
 
@@ -1033,7 +1033,7 @@ void path_symext::operator()(
   case SKIP:
   case LOCATION:
   case DEAD:
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.next_pc();
     break;
 
@@ -1047,7 +1047,7 @@ void path_symext::operator()(
     if(state.inside_atomic_section)
       throw "nested ATOMIC_BEGIN";
 
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.next_pc();
     state.inside_atomic_section=true;
     break;
@@ -1056,7 +1056,7 @@ void path_symext::operator()(
     if(!state.inside_atomic_section)
       throw "ATOMIC_END unmatched"; // NOLINT(readability/throw)
 
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
     state.next_pc();
     state.inside_atomic_section=false;
     break;
@@ -1067,13 +1067,12 @@ void path_symext::operator()(
     break;
 
   case FUNCTION_CALL:
-    state.record_step();
     function_call(
       state, instruction.get_function_call(), further_states);
     break;
 
   case OTHER:
-    state.record_step();
+    state.record_step(path_symex_stept::othert());
 
     {
       const codet &code=instruction.code;
