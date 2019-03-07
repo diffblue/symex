@@ -869,6 +869,8 @@ void path_symext::do_goto(
   const goto_programt::instructiont &instruction=
     *state.get_instruction();
 
+  PRECONDITION(instruction.is_goto());
+
   if(instruction.is_backwards_goto())
   {
     // we keep a statistic on how many times we execute backwards gotos
@@ -894,7 +896,7 @@ void path_symext::do_goto(
     // copy the state into 'further_states'
     further_states.push_back(state);
     further_states.back().record_step();
-    state.history->branch=stept::BRANCH_TAKEN;
+    further_states.back().history->branch=stept::BRANCH_TAKEN;
     further_states.back().set_pc(loc.branch_target);
     further_states.back().history->ssa_guard=ssa_guard;
   }

@@ -86,6 +86,7 @@ goto_tracet build_goto_trace(
       break;
 
     case GOTO:
+      DATA_INVARIANT(step.is_branch(), "GOTO step must be branch");
       trace_step.type=goto_trace_stept::typet::GOTO;
       trace_step.cond_expr = trace_step.pc->guard;
       trace_step.cond_value = step.is_branch_taken();
