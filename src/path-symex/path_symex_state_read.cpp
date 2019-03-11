@@ -468,8 +468,9 @@ exprt path_symex_statet::read_symbol_member_index(
       // ssa-ify the size
       if(var_mapt::is_unbounded_array(var_state.ssa_symbol.type()))
       {
-        exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
-        size=read(size);
+        // disabled to preserve type consistency
+        // exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
+        // size=read(size);
       }
     }
 

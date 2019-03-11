@@ -1,4 +1,4 @@
-CORE
+KNOWNBUG
 local_array.c
 --trace
 ^EXIT=10$

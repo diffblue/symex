@@ -131,7 +131,8 @@ void path_symext::symex_allocate(
              size_symbol.symbol_expr(),
              size);
 
-      size=size_symbol.symbol_expr();
+      // Store the SSA of the size, we won't SSA it later
+      size=state.read(size_symbol.symbol_expr());
     }
   }
 

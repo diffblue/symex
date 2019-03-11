@@ -281,8 +281,9 @@ void path_symext::assign_rec_symbol(
   // ssa-ify the size
   if(var_mapt::is_unbounded_array(new_ssa_lhs.type()))
   {
-    exprt &size=to_array_type(new_ssa_lhs.type()).size();
-    size=state.read(size);
+    // disabled to preserve type consistency
+    // exprt &size=to_array_type(new_ssa_lhs.type()).size();
+    // size=state.read(size);
   }
 
   #ifdef DEBUG
