@@ -148,7 +148,7 @@ Running tests
   Running Linking5/test.desc  [OK]
   Running Linking6/test.desc  [FAILED]
   Running Linking7/member-name-mismatch.desc  [OK]
-  Running Linking7/return_type.desc  [OK]
+  Running Linking7/return_type.desc  [SKIPPED]
   Running Linking7/test.desc  [OK]
   Running Linking8/test.desc  [OK]
   Running Local_out_of_scope1/test.desc  [OK]
@@ -210,7 +210,7 @@ Running tests
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [FAILED]
   Running Pointer_byte_extract1/test.desc  [OK]
-  Running Pointer_byte_extract2/test.desc  [FAILED]
+  Running Pointer_byte_extract2/test.desc  [OK]
   Running Pointer_byte_extract3/test.desc  [OK]
   Running Pointer_byte_extract4/test.desc  [OK]
   Running Pointer_byte_extract5/no-simplify.desc  [OK]
@@ -311,7 +311,7 @@ Running tests
   Running bad_option/test.desc  [OK]
   Running bad_option/test_multiple.desc  [OK]
   Running big-endian-array1/test.desc  [FAILED]
-  Running bounds_check1/test.desc  [FAILED]
+  Running bounds_check1/test.desc  [OK]
   Running byte_update1/test.desc  [OK]
   Running byte_update2/test.desc  [FAILED]
   Running byte_update3/test.desc  [FAILED]
@@ -597,4 +597,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  86 of 593 tests failed, 50 tests skipped
+  84 of 593 tests failed, 51 tests skipped
