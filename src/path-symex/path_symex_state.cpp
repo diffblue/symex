@@ -14,7 +14,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/arith_tools.h>
 #include <util/c_types.h>
 #include <util/decision_procedure.h>
-#include <util/simplify_expr.h>
 
 #include <langapi/language_util.h>
 
