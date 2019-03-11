@@ -216,6 +216,11 @@ void path_symext::symex_new(
     exprt size_arg = static_cast<const exprt &>(code.find(ID_size));
     // we simplify the size since we simplify array type sizes later
     size_arg = simplify_expr(size_arg, state.config.ns);
+
+    // we remove the size from arrays that aren't constant-sized
+    if(!size_arg.is_constant())
+      size_arg = nil_exprt();
+
     type = array_typet(pointer_type.subtype(), size_arg);
   }
   else

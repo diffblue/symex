@@ -283,6 +283,9 @@ void path_symext::assign_rec_symbol(
   {
     exprt &size=to_array_type(new_ssa_lhs.type()).size();
     size=state.read(size);
+    // if it's not constant, we'll make it nil
+    if(!size.is_constant())
+      size=nil_exprt();
   }
 
   #ifdef DEBUG
