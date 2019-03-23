@@ -1,5 +1,5 @@
 Loading
-  597 tests found
+  602 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -150,7 +150,7 @@ Running tests
   Running Linking5/test.desc  [OK]
   Running Linking6/test.desc  [FAILED]
   Running Linking7/member-name-mismatch.desc  [OK]
-  Running Linking7/return_type.desc  [OK]
+  Running Linking7/return_type.desc  [SKIPPED]
   Running Linking7/test.desc  [OK]
   Running Linking8/test.desc  [OK]
   Running Local_out_of_scope1/test.desc  [OK]
@@ -213,7 +213,7 @@ Running tests
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [FAILED]
   Running Pointer_byte_extract1/test.desc  [OK]
-  Running Pointer_byte_extract2/test.desc  [FAILED]
+  Running Pointer_byte_extract2/test.desc  [OK]
   Running Pointer_byte_extract3/test.desc  [OK]
   Running Pointer_byte_extract4/program-only.desc  [OK]
   Running Pointer_byte_extract4/test.desc  [OK]
@@ -317,6 +317,7 @@ Running tests
   Running big-endian-array1/test.desc  [FAILED]
   Running bounds_check1/test.desc  [OK]
   Running byte_update1/test.desc  [OK]
+  Running byte_update10/test.desc  [OK]
   Running byte_update2/test.desc  [FAILED]
   Running byte_update3/test.desc  [FAILED]
   Running byte_update4/test.desc  [OK]
@@ -333,6 +334,10 @@ Running tests
   Running complex1/test.desc  [OK]
   Running compound-assignment/compound_promotion.desc  [OK]
   Running compound_literal1/test.desc  [OK]
+  Running condition-propagation-1/test.desc  [FAILED]
+  Running condition-propagation-2/test.desc  [FAILED]
+  Running condition-propagation-3/test.desc  [FAILED]
+  Running condition-propagation-4/test.desc  [FAILED]
   Running const_ptr1/test.desc  [OK]
   Running constant_folding1/test.desc  [OK]
   Running constant_folding2/test.desc  [SKIPPED]
@@ -584,7 +589,7 @@ Running tests
   Running va_list1/test.desc  [OK]
   Running va_list2/test.desc  [SKIPPED]
   Running va_list3/test.desc  [SKIPPED]
-  Running variable-access-to-constant-array/test.desc  [OK]
+  Running variable-access-to-constant-array/test.desc  [FAILED]
   Running verifier_assume_lhs/test.desc  [SKIPPED]
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
@@ -601,4 +606,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  86 of 597 tests failed, 51 tests skipped
+  90 of 602 tests failed, 52 tests skipped
