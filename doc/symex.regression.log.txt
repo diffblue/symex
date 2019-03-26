@@ -1,5 +1,5 @@
 Loading
-  602 tests found
+  604 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -12,6 +12,7 @@ Running tests
   Running Array_Initialization1/test.desc  [OK]
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
+  Running Array_UF/test.desc  [SKIPPED]
   Running Array_operations1/test.desc  [FAILED]
   Running Associativity1/test.desc  [OK]
   Running Assumption1/test.desc  [OK]
@@ -504,6 +505,7 @@ Running tests
   Running struct10/test.desc  [OK]
   Running struct11/test.desc  [SKIPPED]
   Running struct12/test.desc  [OK]
+  Running struct13/test.desc  [OK]
   Running struct3/test.desc  [OK]
   Running struct4/test.desc  [OK]
   Running struct6/test.desc  [OK]
@@ -589,7 +591,7 @@ Running tests
   Running va_list1/test.desc  [OK]
   Running va_list2/test.desc  [SKIPPED]
   Running va_list3/test.desc  [SKIPPED]
-  Running variable-access-to-constant-array/test.desc  [FAILED]
+  Running variable-access-to-constant-array/test.desc  [OK]
   Running verifier_assume_lhs/test.desc  [SKIPPED]
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
@@ -606,4 +608,4 @@ Running tests
   Running while1/test.desc  [OK]
 
 Tests failed
-  90 of 602 tests failed, 52 tests skipped
+  89 of 604 tests failed, 53 tests skipped
