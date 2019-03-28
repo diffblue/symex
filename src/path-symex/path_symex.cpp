@@ -76,6 +76,11 @@ bool path_symext::propagate(const exprt &src)
   {
     return propagate(to_array_of_expr(src).what());
   }
+  else if(src.id()==ID_with)
+  {
+    // used by array theory
+    return propagate(to_with_expr(src).old());
+  }
   else if(src.id()==ID_union)
   {
     return propagate(to_union_expr(src).op());
@@ -398,7 +403,12 @@ void path_symext::assign_rec_index(
 
   const exprt new_ssa_lhs=index_expr.array();
 
-  const exprt new_ssa_rhs=with_exprt(index_expr.array(), index_expr.index(), ssa_rhs);
+  // can now constant-propagate the array in the RHS
+  assert(new_ssa_lhs.get_bool(ID_C_SSA_symbol));
+  const exprt new_array_rhs = 
+    state.read(symbol_exprt(new_ssa_lhs.get(ID_C_full_identifier), new_ssa_lhs.type()));
+
+  const exprt new_ssa_rhs=with_exprt(new_array_rhs, index_expr.index(), ssa_rhs);
 
   assign_rec(state, guard, new_ssa_lhs, new_ssa_rhs);
 }
