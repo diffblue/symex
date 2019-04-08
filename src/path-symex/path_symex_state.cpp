@@ -13,7 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/arith_tools.h>
 #include <util/c_types.h>
-#include <util/decision_procedure.h>
+#include <solvers/decision_procedure.h>
 
 #include <langapi/language_util.h>
 
@@ -127,7 +127,7 @@ bool path_symex_statet::check_assertion(
   decision_procedure.set_to(assertion, false);
 
   // check whether SAT
-  switch(decision_procedure.dec_solve())
+  switch(decision_procedure())
   {
   case decision_proceduret::resultt::D_SATISFIABLE:
     return false; // error

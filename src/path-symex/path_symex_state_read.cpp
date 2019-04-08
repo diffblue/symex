@@ -133,7 +133,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
     if(to_integer(vector_type.size(), size))
       throw "failed to convert vector size";
 
-    std::size_t size_int=integer2size_t(size);
+    const auto size_int=numeric_cast_v<std::size_t>(size);
 
     vector_exprt result(vector_type);
     exprt::operandst &operands=result.operands();

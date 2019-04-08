@@ -1,5 +1,5 @@
 Loading
-  604 tests found
+  606 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -530,6 +530,7 @@ Running tests
   Running sync_val_compare_three/test.desc  [SKIPPED]
   Running trace-strings/test.desc  [FAILED]
   Running trace-values/trace-values.desc  [FAILED]
+  Running trace-values/unbounded_array.desc  [FAILED]
   Running trace_address_arithmetic1/test.desc  [FAILED]
   Running trace_options_json_extended/extended.desc  [FAILED]
   Running trace_options_json_extended/non-extended.desc  [FAILED]
@@ -606,6 +607,7 @@ Running tests
   Running void_pointer3/test.desc  [OK]
   Running void_pointer4/test.desc  [OK]
   Running while1/test.desc  [OK]
+  Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  88 of 604 tests failed, 51 tests skipped
+  90 of 606 tests failed, 51 tests skipped

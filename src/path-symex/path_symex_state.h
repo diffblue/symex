@@ -47,7 +47,7 @@ public:
 
     var_statet():
       value(nil_exprt()),
-      ssa_symbol(irep_idt())
+      ssa_symbol(irep_idt(), typet())
     {
     }
   };

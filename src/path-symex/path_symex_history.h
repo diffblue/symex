@@ -117,7 +117,13 @@ public:
 
   // for function call
   irep_idt called_function;
-  struct function_argumentt { symbol_exprt ssa_lhs; exprt ssa_rhs; };
+  struct function_argumentt
+  {
+    symbol_exprt ssa_lhs; exprt ssa_rhs;
+    function_argumentt():ssa_lhs(symbol_exprt(irep_idt(), typet()))
+    {
+    }
+  };
   std::vector<function_argumentt> function_arguments;
 
   path_symex_stept():
@@ -125,6 +131,7 @@ public:
     thread_nr(0),
     lhs(nil_exprt()),
     ssa_guard(nil_exprt()),
+    ssa_lhs(symbol_exprt(irep_idt(), typet())),
     ssa_rhs(nil_exprt()),
     hidden(false)
   {

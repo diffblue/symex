@@ -13,7 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_PATH_SYMEX_BUILD_GOTO_TRACE_H
 #define CPROVER_PATH_SYMEX_BUILD_GOTO_TRACE_H
 
-#include <util/decision_procedure.h>
+#include <solvers/decision_procedure.h>
 #include <goto-programs/goto_trace.h>
 
 #include "path_symex_state.h"

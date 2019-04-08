@@ -13,7 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <algorithm>
 
-#include <util/decision_procedure.h>
+#include <solvers/decision_procedure.h>
 
 #include <langapi/language_util.h>
 

@@ -17,7 +17,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/pointer_offset_size.h>
 #include <util/simplify_expr.h>
 
-inline static typet c_sizeof_type_rec(const exprt &expr)
+inline static optionalt<typet> c_sizeof_type_rec(const exprt &expr)
 {
   const irept &sizeof_type=expr.find(ID_C_c_sizeof_type);
 
@@ -29,13 +29,13 @@ inline static typet c_sizeof_type_rec(const exprt &expr)
   {
     forall_operands(it, expr)
     {
-      typet t=c_sizeof_type_rec(*it);
-      if(t.is_not_nil())
+      auto t=c_sizeof_type_rec(*it);
+      if(t.has_value())
         return t;
     }
   }
 
-  return nil_typet();
+  return {};
 }
 
 void path_symext::symex_allocate(
@@ -59,7 +59,7 @@ void path_symext::symex_allocate(
   unsigned dynamic_count=++state.config.var_map.dynamic_count;
 
   exprt size=code.op0();
-  typet object_type=nil_typet();
+  optionalt<typet> object_type={};
 
   // is the object type given as return type?
   if(code.type().id()==ID_pointer &&
@@ -76,18 +76,18 @@ void path_symext::symex_allocate(
        tmp_size.operands().size()==2 &&
        tmp_size.op0().find(ID_C_c_sizeof_type).is_not_nil())
     {
-      object_type=array_typet(
-        c_sizeof_type_rec(tmp_size.op0()),
+      object_type = array_typet(
+        c_sizeof_type_rec(tmp_size.op0()).value(),
         tmp_size.op1());
     }
     else
     {
-      typet tmp_type=c_sizeof_type_rec(tmp_size);
+      auto tmp_type=c_sizeof_type_rec(tmp_size);
 
-      if(tmp_type.is_not_nil())
+      if(tmp_type.has_value())
       {
         // Did the size get multiplied?
-        const auto elem_size=pointer_offset_size(tmp_type, state.config.ns);
+        const auto elem_size=pointer_offset_size(tmp_type.value(), state.config.ns);
         const auto alloc_size=numeric_cast<mp_integer>(tmp_size);
         if(!elem_size.has_value() || !alloc_size.has_value())
         {
@@ -102,22 +102,22 @@ void path_symext::symex_allocate(
 
             if(elements*elem_size.value()==alloc_size)
               object_type=
-                array_typet(tmp_type, from_integer(elements, tmp_size.type()));
+                array_typet(tmp_type.value(), from_integer(elements, tmp_size.type()));
           }
         }
       }
     }
 
-    if(object_type.is_nil())
+    if(!object_type.has_value())
       object_type=array_typet(unsigned_char_type(), tmp_size);
 
     // we introduce a fresh symbol for the size
     // to prevent any issues of the size getting ever changed
 
-    if(object_type.id()==ID_array &&
-       !to_array_type(object_type).size().is_constant())
+    if(object_type->id()==ID_array &&
+       !to_array_type(*object_type).size().is_constant())
     {
-      exprt &size=to_array_type(object_type).size();
+      exprt &size=to_array_type(*object_type).size();
 
       symbolt size_symbol;
 
@@ -143,17 +143,15 @@ void path_symext::symex_allocate(
     "dynamic_object"+std::to_string(state.config.var_map.dynamic_count);
   value_symbol.name="symex_dynamic::"+id2string(value_symbol.base_name);
   value_symbol.is_lvalue=true;
-  value_symbol.type=object_type;
+  value_symbol.type=object_type.value();
   value_symbol.type.set("#dynamic", true);
   value_symbol.mode=mode;
 
   exprt rhs;
 
-  if(object_type.id()==ID_array)
+  if(object_type->id()==ID_array)
   {
-    index_exprt index_expr(value_symbol.type.subtype());
-    index_expr.array()=value_symbol.symbol_expr();
-    index_expr.index()=from_integer(0, index_type());
+    index_exprt index_expr(value_symbol.symbol_expr(), from_integer(0, index_type()), value_symbol.type.subtype());
     rhs=address_of_exprt(
       index_expr, pointer_type(value_symbol.type.subtype()));
   }
@@ -239,9 +237,7 @@ void path_symext::symex_new(
 
   if(do_array)
   {
-    index_exprt index_expr(pointer_type.subtype());
-    index_expr.array()=value_symbol.symbol_expr();
-    index_expr.index()=from_integer(0, index_type());
+    index_exprt index_expr(value_symbol.symbol_expr(), from_integer(0, index_type()), pointer_type.subtype());
     rhs=address_of_exprt(index_expr, pointer_type);
   }
   else

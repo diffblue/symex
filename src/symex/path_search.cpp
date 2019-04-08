@@ -373,9 +373,7 @@ void path_searcht::check_assertion(statet &state)
   auto solver_start_time=std::chrono::steady_clock::now();
 
   satcheckt satcheck(get_message_handler());
-  bv_pointerst bv_pointers(ns, satcheck);
-
-  bv_pointers.set_message_handler(get_message_handler());
+  bv_pointerst bv_pointers(ns, satcheck, get_message_handler());
 
   if(!state.check_assertion(bv_pointers))
   {
@@ -414,9 +412,7 @@ bool path_searcht::is_feasible(const statet &state)
   auto solver_start_time=std::chrono::steady_clock::now();
 
   satcheckt satcheck(get_message_handler());
-  bv_pointerst bv_pointers(ns, satcheck);
-
-  bv_pointers.set_message_handler(get_message_handler());
+  bv_pointerst bv_pointers(ns, satcheck, get_message_handler());
 
   bool result=state.is_feasible(bv_pointers);
 
