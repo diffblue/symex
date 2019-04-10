@@ -83,7 +83,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
       result.operands()[i]=expand_structs_and_arrays(new_src);
     }
 
-    return result; // done
+    return std::move(result); // done
   }
   else if(src_type.id()==ID_array) // src is an array
   {
@@ -114,7 +114,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
         result.operands()[i]=expand_structs_and_arrays(new_src);
       }
 
-      return result; // done
+      return std::move(result); // done
     }
     else
     {
@@ -153,7 +153,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
       operands[i]=expand_structs_and_arrays(new_src);
     }
 
-    return result; // done
+    return std::move(result); // done
   }
 
   return src;
@@ -198,7 +198,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
           cond_expr.add_case(index_equal, new_src);
         }
 
-        return cond_expr; // done
+        return std::move(cond_expr); // done
       }
     }
   }
@@ -366,7 +366,7 @@ exprt path_symex_statet::read_symbol_member_index(
     index_exprt new_src=to_index_expr(src);
     new_src.array()=read_symbol_member_index(new_src.array(), propagate); // rec. call
     new_src.index()=instantiate_rec(new_src.index(), propagate); // rec. call
-    return new_src;
+    return std::move(new_src);
   }
 
   // is this a struct/array/vector that needs to be expanded?

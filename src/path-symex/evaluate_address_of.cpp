@@ -62,7 +62,7 @@ exprt evaluate_address_of_rec(
     new_if_expr.false_case()=
       evaluate_address_of_rec(new_if_expr.false_case(), ns);
     new_if_expr.type()=pointer_type(src.type());
-    return new_if_expr;
+    return std::move(new_if_expr);
   }
   else
   {
