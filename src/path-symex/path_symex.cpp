@@ -764,6 +764,7 @@ void path_symext::function_call_symbol(
   state.recursion_map[function_identifier]++;
 
   // set the new PC
+  assert(!function_entry.body.instructions.empty());
   thread.pc=
     loc_reft(function_identifier, function_entry.body.instructions.begin());
   thread.function_id=function_identifier;

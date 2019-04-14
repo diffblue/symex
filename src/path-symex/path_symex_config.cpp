@@ -33,6 +33,9 @@ path_symex_statet path_symex_configt::initial_state()
   if(!f_it->second.body_available())
     throw "no entry point";
 
+  if(f_it->second.body.instructions.empty())
+    throw "no entry point";
+
   path_symex_statet s(*this);
 
   // create one new thread
