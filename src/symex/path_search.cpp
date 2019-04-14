@@ -20,9 +20,8 @@ Author: Daniel Kroening, kroening@kroening.com
 path_searcht::resultt path_searcht::operator()(
   const goto_functionst &goto_functions)
 {
-  path_symex_configt config(ns);
+  path_symex_configt config(ns, goto_functions);
   config.set_message_handler(get_message_handler());
-  config.locs.build(goto_functions);
 
   status() << "Starting symbolic simulation" << eom;
 
@@ -30,6 +29,11 @@ path_searcht::resultt path_searcht::operator()(
   path_symex_historyt history;
 
   queue.push_back(config.initial_state());
+
+  // count locs
+  std::size_t loc_count = 0;
+  for(auto &f : goto_functions.function_map)
+    loc_count += f.second.body.instructions.size();
 
   // set up the statistics
   number_of_dropped_states=0;
@@ -40,7 +44,7 @@ path_searcht::resultt path_searcht::operator()(
   number_of_infeasible_paths=0;
   number_of_VCCs_after_simplification=0;
   number_of_failed_properties=0;
-  number_of_locs=config.locs.size();
+  number_of_locs=loc_count;
 
   // stop the time
   start_time=std::chrono::steady_clock::now();
@@ -67,9 +71,9 @@ path_searcht::resultt path_searcht::operator()(
       statet &state=tmp_queue.front();
 
       // record we have seen it
-      loc_data[state.pc().loc_number].visited=true;
+      loc_data[state.pc()].visited=true;
 
-      debug() << "Loc: #" << state.pc().loc_number
+      debug() << "Loc: " << state.pc()
               << ", queue: " << queue.size()
               << ", depth: " << state.get_depth();
       for(const auto &s : queue)
@@ -175,7 +179,7 @@ void path_searcht::report_statistics()
 {
   std::size_t number_of_visited_locations=0;
   for(const auto &l : loc_data)
-    if(l.visited)
+    if(l.second.visited)
       number_of_visited_locations++;
 
   #if 0

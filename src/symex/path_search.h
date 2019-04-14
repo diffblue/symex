@@ -139,7 +139,7 @@ protected:
     loc_datat():visited(false) { }
   };
 
-  expanding_vectort<loc_datat> loc_data;
+  std::map<loc_reft, loc_datat> loc_data;
 
   bool execute(queuet::iterator state);
   void check_assertion(statet &);

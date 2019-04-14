@@ -601,12 +601,14 @@ void path_symext::function_call_symbol(
     function.get_identifier();
 
   // find the function
-  locst::function_mapt::const_iterator f_it=
-    state.config.locs.function_map.find(function_identifier);
+  auto f_it=
+    state.config.goto_functions.function_map.find(function_identifier);
 
-  if(f_it==state.config.locs.function_map.end())
+  if(f_it==state.config.goto_functions.function_map.end())
     throw
       "failed to find `"+id2string(function_identifier)+"' in function_map";
+
+  const auto &function_entry = f_it->second;
 
   // turn the arguments into SSA
   exprt::operandst ssa_arguments=call.arguments();
@@ -649,9 +651,7 @@ void path_symext::function_call_symbol(
   }
 
   // do we have a body?
-  const locst::function_entryt &function_entry=f_it->second;
-  loc_reft function_entry_point=function_entry.first_loc;
-  if(function_entry_point==loc_reft())
+  if(!function_entry.body_available())
   {
     // no body
     state.config.no_body(function_identifier);
@@ -673,7 +673,7 @@ void path_symext::function_call_symbol(
   thread.call_stack.back().return_location=thread.pc.next_loc();
   thread.call_stack.back().return_lhs=call.lhs();
   thread.call_stack.back().return_rhs=nil_exprt();
-  thread.call_stack.back().hidden_function=function_entry.hidden;
+  thread.call_stack.back().hidden_function=function_entry.is_hidden();
 
   #if 0
   for(loc_reft l=function_entry_point; ; ++l)
@@ -764,7 +764,8 @@ void path_symext::function_call_symbol(
   state.recursion_map[function_identifier]++;
 
   // set the new PC
-  thread.pc=function_entry_point;
+  thread.pc=
+    loc_reft(function_identifier, function_entry.body.instructions.begin());
   thread.function_id=function_identifier;
 }
 
@@ -888,16 +889,13 @@ void path_symext::do_goto(
     state.unwinding_map[state.pc()]++;
   }
 
-  const loct &loc=state.get_loc();
-  assert(!loc.branch_target.is_nil());
-
   exprt ssa_guard=state.read(instruction.get_condition());
 
   if(ssa_guard.is_true()) // branch taken always
   {
     state.record_step();
     state.history->branch=stept::BRANCH_TAKEN;
-    state.set_pc(loc.branch_target);
+    state.set_pc(state.pc().get_target());
     return; // we are done
   }
 
@@ -908,7 +906,7 @@ void path_symext::do_goto(
     further_states.push_back(state);
     further_states.back().record_step();
     further_states.back().history->branch=stept::BRANCH_TAKEN;
-    further_states.back().set_pc(loc.branch_target);
+    further_states.back().set_pc(state.pc().get_target());
     further_states.back().history->ssa_guard=ssa_guard;
   }
 
@@ -940,9 +938,7 @@ void path_symext::do_goto(
   if(taken)
   {
     // branch taken case
-    const loct &loc=state.get_loc();
-    assert(!loc.branch_target.is_nil());
-    state.set_pc(loc.branch_target);
+    state.set_pc(state.pc().get_target());
     state.history->ssa_guard=ssa_guard;
     state.history->branch=stept::BRANCH_TAKEN;
   }
@@ -993,8 +989,7 @@ void path_symext::operator()(
 
   case START_THREAD:
     {
-      const loct &loc=state.get_loc();
-      assert(!loc.branch_target.is_nil());
+      auto target = state.pc().get_target();
 
       state.record_step();
       state.next_pc();
@@ -1003,7 +998,7 @@ void path_symext::operator()(
       path_symex_statet::threadt &new_thread=state.add_thread();
       path_symex_statet::threadt &old_thread=
         state.threads[state.get_current_thread()];
-      new_thread.pc=loc.branch_target;
+      new_thread.pc=target;
       new_thread.local_vars=old_thread.local_vars;
     }
     break;

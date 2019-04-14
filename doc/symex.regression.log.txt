@@ -150,7 +150,7 @@ Running tests
   Running Linking5/test.desc  [OK]
   Running Linking6/test.desc  [FAILED]
   Running Linking7/member-name-mismatch.desc  [OK]
-  Running Linking7/return_type.desc  [SKIPPED]
+  Running Linking7/return_type.desc  [OK]
   Running Linking7/test.desc  [OK]
   Running Linking8/test.desc  [OK]
   Running Local_out_of_scope1/test.desc  [OK]
@@ -213,7 +213,7 @@ Running tests
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [OK]
   Running Pointer_byte_extract1/test.desc  [OK]
-  Running Pointer_byte_extract2/test.desc  [OK]
+  Running Pointer_byte_extract2/test.desc  [FAILED]
   Running Pointer_byte_extract3/test.desc  [OK]
   Running Pointer_byte_extract4/program-only.desc  [OK]
   Running Pointer_byte_extract4/test.desc  [OK]
@@ -617,4 +617,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  89 of 613 tests failed, 53 tests skipped
+  90 of 613 tests failed, 52 tests skipped

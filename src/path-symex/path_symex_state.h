@@ -12,6 +12,9 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 #define CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 
+#include <util/cprover_prefix.h>
+
+#include "loc_ref.h"
 #include "path_symex_config.h"
 
 struct path_symex_statet
@@ -135,14 +138,9 @@ public:
     current_thread=_thread;
   }
 
-  loct &get_loc() const
-  {
-    return config.locs[pc()];
-  }
-
   goto_programt::const_targett get_instruction() const
   {
-    return get_loc().target;
+    return pc().target;
   }
 
   bool is_executable() const
