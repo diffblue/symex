@@ -41,7 +41,6 @@ path_symex_statet path_symex_configt::initial_state()
   // create one new thread
   path_symex_statet::threadt &thread=s.add_thread();
   thread.pc=loc_reft(entry_function, f_it->second.body.instructions.begin()); // set its PC
-  thread.function_id=entry_function;
 
   if(thread.pc.is_nil())
     throw "no entry point";

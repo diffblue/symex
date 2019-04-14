@@ -103,7 +103,6 @@ public:
 
   // the instruction that was executed
   loc_reft pc;
-  irep_idt f_identifier;
 
   // pre SSA, but dereferenced
   exprt lhs;
