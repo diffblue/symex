@@ -1,5 +1,5 @@
 Loading
-  606 tests found
+  613 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -150,7 +150,7 @@ Running tests
   Running Linking5/test.desc  [OK]
   Running Linking6/test.desc  [FAILED]
   Running Linking7/member-name-mismatch.desc  [OK]
-  Running Linking7/return_type.desc  [OK]
+  Running Linking7/return_type.desc  [SKIPPED]
   Running Linking7/test.desc  [OK]
   Running Linking8/test.desc  [OK]
   Running Local_out_of_scope1/test.desc  [OK]
@@ -213,7 +213,7 @@ Running tests
   Running Pointer_array5/test.desc  [OK]
   Running Pointer_array6/test.desc  [OK]
   Running Pointer_byte_extract1/test.desc  [OK]
-  Running Pointer_byte_extract2/test.desc  [FAILED]
+  Running Pointer_byte_extract2/test.desc  [OK]
   Running Pointer_byte_extract3/test.desc  [OK]
   Running Pointer_byte_extract4/program-only.desc  [OK]
   Running Pointer_byte_extract4/test.desc  [OK]
@@ -283,6 +283,7 @@ Running tests
   Running Struct_Padding1/test.desc  [OK]
   Running Typecast1/test.desc  [OK]
   Running Typecast2/test.desc  [OK]
+  Running Typecast3/test.desc  [OK]
   Running Undefined_Function1/test.desc  [OK]
   Running Undefined_Function2/test.desc  [OK]
   Running Undefined_Shift1/test.desc  [OK]
@@ -407,6 +408,7 @@ Running tests
   Running gcc_bswap1/test.desc  [OK]
   Running gcc_builtin_va_arg_one/test.desc  [SKIPPED]
   Running gcc_c99-bool-1/test.desc  [OK]
+  Running gcc_clz1/test.desc  [OK]
   Running gcc_conditional_expr1/test.desc  [OK]
   Running gcc_local_label1/test.desc  [OK]
   Running gcc_popcount1/test.desc  [OK]
@@ -471,6 +473,9 @@ Running tests
   Running pointer-function-parameters-struct-simple-recursion-2/test.desc  [FAILED]
   Running pointer-overflow1/test.desc  [OK]
   Running printf1/test.desc  [FAILED]
+  Running r_w_ok1/test.desc  [OK]
+  Running r_w_ok2/test.desc  [OK]
+  Running r_w_ok3/test.desc  [SKIPPED]
   Running reachability-slice/test.desc  [FAILED]
   Running reachability-slice/test2.desc  [FAILED]
   Running reachability-slice/test3.desc  [FAILED]
@@ -574,6 +579,8 @@ Running tests
   Running union10/union_list2.desc  [SKIPPED]
   Running union11/union_list.desc  [FAILED]
   Running union12/test.desc  [FAILED]
+  Running union13/no-arch.desc  [OK]
+  Running union13/test.desc  [OK]
   Running union2/test.desc  [OK]
   Running union3/test.desc  [OK]
   Running union4/test.desc  [OK]
@@ -610,4 +617,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  90 of 606 tests failed, 51 tests skipped
+  89 of 613 tests failed, 53 tests skipped
