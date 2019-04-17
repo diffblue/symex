@@ -12,6 +12,9 @@ Author: Daniel Kroening, kroening@kroening.com
 #ifndef CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 #define CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 
+#include <util/cprover_prefix.h>
+
+#include "loc_ref.h"
 #include "path_symex_config.h"
 
 struct path_symex_statet
@@ -62,7 +65,7 @@ public:
   // procedure frame
   struct framet
   {
-    irep_idt previous_function, current_function;
+    irep_idt current_function;
     bool hidden_function;
     loc_reft return_location;
     exprt return_lhs;
@@ -81,7 +84,6 @@ public:
   struct threadt
   {
   public:
-    irep_idt function_id;
     loc_reft pc;
     call_stackt call_stack; // the call stack
     var_valt local_vars; // thread-local variables
@@ -135,14 +137,9 @@ public:
     current_thread=_thread;
   }
 
-  loct &get_loc() const
-  {
-    return config.locs[pc()];
-  }
-
   goto_programt::const_targett get_instruction() const
   {
-    return get_loc().target;
+    return pc().target;
   }
 
   bool is_executable() const
@@ -183,7 +180,7 @@ public:
   irep_idt function_id() const
   {
     PRECONDITION(current_thread<threads.size());
-    return threads[current_thread].function_id;
+    return threads[current_thread].pc.function_identifier;
   }
 
   bool get_hide() const

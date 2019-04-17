@@ -17,7 +17,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/base_exceptions.h>
 #include <util/std_expr.h>
 
-#include "goto-locs/loc_ref.h"
+#include "loc_ref.h"
 
 class path_symex_stept;
 
@@ -103,7 +103,6 @@ public:
 
   // the instruction that was executed
   loc_reft pc;
-  irep_idt f_identifier;
 
   // pre SSA, but dereferenced
   exprt lhs;

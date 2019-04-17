@@ -33,8 +33,8 @@ goto_tracet build_goto_trace(
     goto_trace_stept trace_step;
 
     assert(!step.pc.is_nil());
-    trace_step.pc=state.config.locs[step.pc].target;
-    trace_step.function_id=step.f_identifier;
+    trace_step.pc=step.pc.target;
+    trace_step.function_id=step.pc.function_identifier;
     trace_step.thread_nr=step.thread_nr;
     trace_step.step_nr=step_nr;
     trace_step.hidden=step.hidden;

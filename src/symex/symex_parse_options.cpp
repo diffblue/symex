@@ -200,15 +200,6 @@ int symex_parse_optionst::doit()
   if(set_properties())
     return 7;
 
-  if(cmdline.isset("show-locs"))
-  {
-    const namespacet ns(goto_model.symbol_table);
-    locst locs(ns);
-    locs.build(goto_model.goto_functions);
-    locs.output(std::cout);
-    return 0;
-  }
-
   // do actual Symex
 
   try

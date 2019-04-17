@@ -25,12 +25,22 @@ path_symex_statet path_symex_configt::initial_state()
 {
   const irep_idt entry_function = goto_functionst::entry_point();
 
+  // look that up
+  auto f_it = goto_functions.function_map.find(entry_function);
+  if(f_it == goto_functions.function_map.end())
+    throw "no entry point";
+
+  if(!f_it->second.body_available())
+    throw "no entry point";
+
+  if(f_it->second.body.instructions.empty())
+    throw "no entry point";
+
   path_symex_statet s(*this);
 
   // create one new thread
   path_symex_statet::threadt &thread=s.add_thread();
-  thread.pc=locs.first_loc(entry_function); // set its PC
-  thread.function_id=entry_function;
+  thread.pc=loc_reft(entry_function, f_it->second.body.instructions.begin()); // set its PC
 
   if(thread.pc.is_nil())
     throw "no entry point";
