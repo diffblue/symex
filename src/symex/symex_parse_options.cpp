@@ -57,7 +57,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "path_search.h"
 
 symex_parse_optionst::symex_parse_optionst(int argc, const char **argv):
-  parse_options_baset(SYMEX_OPTIONS, argc, argv, ui_message_handler),
+  parse_options_baset(SYMEX_OPTIONS, argc, argv, std::string("Symex ") + CBMC_VERSION),
   messaget(ui_message_handler),
   ui_message_handler(cmdline, std::string("Symex ") + CBMC_VERSION)
 {
@@ -187,13 +187,13 @@ int symex_parse_optionst::doit()
 
   if(cmdline.isset("show-goto-functions"))
   {
-    show_goto_functions(goto_model, get_message_handler(), get_ui());
+    show_goto_functions(goto_model, ui_message_handler, false);
     return 0;
   }
 
   if(cmdline.isset("show-properties"))
   {
-    show_properties(goto_model, get_message_handler(), get_ui());
+    show_properties(goto_model, ui_message_handler);
     return 0;
   }
 
