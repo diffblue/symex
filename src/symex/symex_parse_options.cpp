@@ -39,7 +39,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <goto-programs/read_goto_binary.h>
 #include <goto-programs/remove_complex.h>
 #include <goto-programs/remove_function_pointers.h>
-#include <goto-programs/remove_returns.h>
 #include <goto-programs/remove_skip.h>
 #include <goto-programs/remove_unused_functions.h>
 #include <goto-programs/remove_vector.h>
@@ -356,7 +355,6 @@ bool symex_parse_optionst::process_goto_program(const optionst &options)
     instrument_preconditions(goto_model);
 
     // remove more stuff
-    remove_returns(goto_model);
     remove_complex(goto_model);
     remove_vector(goto_model);
 
