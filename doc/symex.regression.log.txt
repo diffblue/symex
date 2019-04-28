@@ -605,7 +605,7 @@ Running tests
   Running va_list1/test.desc  [OK]
   Running va_list2/test.desc  [SKIPPED]
   Running va_list3/test.desc  [SKIPPED]
-  Running variable-access-to-constant-array/test.desc  [FAILED]
+  Running variable-access-to-constant-array/test.desc  [OK]
   Running verifier_assume_lhs/test.desc  [SKIPPED]
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
@@ -623,4 +623,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  93 of 619 tests failed, 54 tests skipped
+  92 of 619 tests failed, 54 tests skipped
