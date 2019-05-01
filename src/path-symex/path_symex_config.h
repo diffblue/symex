@@ -42,8 +42,11 @@ public:
 
   path_symex_statet initial_state();
 
-  virtual goto_functionst::function_mapt::const_iterator
+  goto_functionst::function_mapt::const_iterator
   get_function(const irep_idt &function_identifier);
+
+  // a hook for dynamic function loading
+  std::function<void(irep_idt)> load_function = nullptr;
 
 protected:
   std::set<irep_idt> body_warnings;

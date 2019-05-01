@@ -15,6 +15,10 @@ Author: Daniel Kroening, kroening@kroening.com
 goto_functionst::function_mapt::const_iterator
 path_symex_configt::get_function(const irep_idt &identifier)
 {
+  // trigger the hook
+  if(load_function != nullptr)
+    load_function(identifier);
+
   // find the function
   auto f_it = goto_functions.function_map.find(identifier);
 
