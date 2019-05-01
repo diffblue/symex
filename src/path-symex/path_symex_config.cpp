@@ -12,6 +12,19 @@ Author: Daniel Kroening, kroening@kroening.com
 #include "path_symex_config.h"
 #include "path_symex_state.h"
 
+goto_functionst::function_mapt::const_iterator
+path_symex_configt::get_function(const irep_idt &identifier)
+{
+  // find the function
+  auto f_it = goto_functions.function_map.find(identifier);
+
+  if(f_it==goto_functions.function_map.end())
+    throw
+      "failed to find `"+id2string(identifier)+"' in function_map";
+
+  return f_it;
+}
+
 void path_symex_configt::no_body(const irep_idt &identifier)
 {
   if(body_warnings.insert(identifier).second)

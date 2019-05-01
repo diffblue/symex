@@ -42,6 +42,9 @@ public:
 
   path_symex_statet initial_state();
 
+  virtual goto_functionst::function_mapt::const_iterator
+  get_function(const irep_idt &function_identifier);
+
 protected:
   std::set<irep_idt> body_warnings;
   void no_body(const irep_idt &);

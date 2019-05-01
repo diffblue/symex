@@ -601,13 +601,7 @@ void path_symext::function_call_symbol(
     function.get_identifier();
 
   // find the function
-  auto f_it=
-    state.config.goto_functions.function_map.find(function_identifier);
-
-  if(f_it==state.config.goto_functions.function_map.end())
-    throw
-      "failed to find `"+id2string(function_identifier)+"' in function_map";
-
+  auto f_it = state.config.get_function(function_identifier);
   const auto &function_entry = f_it->second;
 
   // turn the arguments into SSA
