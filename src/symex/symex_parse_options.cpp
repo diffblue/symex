@@ -276,6 +276,8 @@ int symex_parse_optionst::doit()
         report_failure();
         return 10;
 
+      case safety_checkert::resultt::ERROR:
+      case safety_checkert::resultt::PAUSED:
       default:
         return 8;
       }
@@ -507,6 +509,7 @@ void symex_parse_optionst::report_success()
     }
     break;
 
+  case ui_message_handlert::uit::JSON_UI:
   default:
     UNREACHABLE;
   }

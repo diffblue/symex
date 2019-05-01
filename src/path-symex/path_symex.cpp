@@ -1036,8 +1036,13 @@ void path_symext::operator()(
   case ASSERT:
   case SKIP:
   case LOCATION:
-  case DEAD:
     state.record_step();
+    state.next_pc();
+    break;
+
+  case DEAD:
+    // assigning an RHS of NIL means 'nondet'
+    assign(state, instruction.get_dead().symbol(), nil_exprt());
     state.next_pc();
     break;
 
@@ -1162,6 +1167,8 @@ void path_symext::operator()(
     state.next_pc();
     break;
 
+  case NO_INSTRUCTION_TYPE:
+  case INCOMPLETE_GOTO:
   default:
     throw "path_symext: unexpected instruction";
   }

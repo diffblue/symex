@@ -130,7 +130,16 @@ goto_tracet build_goto_trace(
       trace_step.type=goto_trace_stept::typet::ATOMIC_END;
       break;
 
-    default:
+    case NO_INSTRUCTION_TYPE:
+    case ASSERT:
+    case OTHER:
+    case SKIP:
+    case END_THREAD:
+    case LOCATION:
+    case RETURN:
+    case THROW:
+    case CATCH:
+    case INCOMPLETE_GOTO:
       trace_step.type=goto_trace_stept::typet::LOCATION;
     }
 

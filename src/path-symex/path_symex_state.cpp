@@ -134,6 +134,7 @@ bool path_symex_statet::check_assertion(
   case decision_proceduret::resultt::D_UNSATISFIABLE:
     return true; // no error
 
+  case decision_proceduret::resultt::D_ERROR:
   default:
     throw "error from decision procedure";
   }
