@@ -1162,7 +1162,11 @@ void path_symext::operator()(
     break;
 
   case NO_INSTRUCTION_TYPE:
+    throw "path_symext: got 'no instruction type'";
+
   case INCOMPLETE_GOTO:
+    throw "path_symext: got 'incomplete goto'";
+
   default:
     throw "path_symext: unexpected instruction";
   }
