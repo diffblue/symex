@@ -1,5 +1,5 @@
 Loading
-  619 tests found
+  622 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -442,6 +442,7 @@ Running tests
   Running inequality-with-constant-normalisation/test.desc  [OK]
   Running inline1/test.desc  [OK]
   Running integer-assignments1/test.desc  [FAILED]
+  Running json-interface1/test.desc  [FAILED]
   Running json-ui/no_entry.desc  [FAILED]
   Running json-ui/syntax_error.desc  [OK]
   Running json1/test.desc  [FAILED]
@@ -475,6 +476,7 @@ Running tests
   Running pointer-function-parameters-struct-simple-recursion/test.desc  [FAILED]
   Running pointer-function-parameters-struct-simple-recursion-2/test.desc  [FAILED]
   Running pointer-overflow1/test.desc  [OK]
+  Running pragma_cprover1/test.desc  [OK]
   Running printf1/test.desc  [FAILED]
   Running r_w_ok1/test.desc  [OK]
   Running r_w_ok2/test.desc  [OK]
@@ -620,7 +622,8 @@ Running tests
   Running void_pointer3/test.desc  [OK]
   Running void_pointer4/test.desc  [OK]
   Running while1/test.desc  [OK]
+  Running xml-interface1/test.desc  [FAILED]
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  92 of 619 tests failed, 54 tests skipped
+  94 of 622 tests failed, 54 tests skipped
