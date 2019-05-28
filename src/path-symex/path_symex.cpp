@@ -662,11 +662,13 @@ void path_symext::function_call_symbol(
   path_symex_statet::threadt &thread=
     state.threads[state.get_current_thread()];
   thread.call_stack.push_back(path_symex_statet::framet());
-  thread.call_stack.back().current_function=function_identifier;
-  thread.call_stack.back().return_location=thread.pc.next_loc();
-  thread.call_stack.back().return_lhs=call.lhs();
-  thread.call_stack.back().return_rhs=nil_exprt();
-  thread.call_stack.back().hidden_function=function_entry.is_hidden();
+  auto &frame = thread.call_stack.back();
+  frame.current_function=function_identifier;
+  frame.return_location=thread.pc.next_loc();
+  frame.return_lhs=call.lhs();
+  frame.return_rhs=nil_exprt();
+  frame.hidden_function=function_entry.is_hidden();
+  frame.ssa_arguments = ssa_arguments;
 
   #if 0
   for(loc_reft l=function_entry_point; ; ++l)

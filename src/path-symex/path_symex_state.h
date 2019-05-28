@@ -71,6 +71,7 @@ public:
     exprt return_lhs;
     exprt return_rhs;
     var_state_mapt saved_local_vars;
+    exprt::operandst ssa_arguments;
 
     framet():hidden_function(false)
     {
