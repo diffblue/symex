@@ -668,7 +668,7 @@ void path_symext::function_call_symbol(
   frame.return_lhs=call.lhs();
   frame.return_rhs=nil_exprt();
   frame.hidden_function=function_entry.is_hidden();
-  frame.ssa_arguments = ssa_arguments;
+  frame.va_count = 0; // set below
 
   #if 0
   for(loc_reft l=function_entry_point; ; ++l)
@@ -753,6 +753,8 @@ void path_symext::function_call_symbol(
       exprt::operandst _guard; // start with empty guard
       assign_rec(state, _guard, ssa_lhs, ssa_rhs);
     }
+
+    thread.call_stack.back().va_count = va_count;
   }
 
   // update statistics
