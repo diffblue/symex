@@ -129,11 +129,13 @@ void path_symext::assign(
     {
       // done in statet:instantiate_rec
     }
-    else if(statement==ID_gcc_builtin_va_arg_next)
+    #if 0
+    else if(statement==ID_va_arg_next)
     {
       symex_va_arg_next(state, lhs, side_effect_expr);
       return;
     }
+    #endif
     else
       throw "unexpected side-effect on rhs: "+id2string(statement);
   }
