@@ -129,9 +129,9 @@ void path_symext::assign(
     {
       // done in statet:instantiate_rec
     }
-    else if(statement==ID_gcc_builtin_va_arg_next)
+    else if(statement==ID_va_start)
     {
-      symex_va_arg_next(state, lhs, side_effect_expr);
+      symex_va_start(state, lhs, side_effect_expr);
       return;
     }
     else
@@ -175,82 +175,61 @@ void path_symext::assign(
   assign_rec(state, _guard, ssa_lhs, ssa_rhs);
 }
 
-static irep_idt get_old_va_symbol(
-  const path_symex_statet &state,
-  const exprt &src)
-{
-  if(src.id()==ID_typecast)
-    return get_old_va_symbol(state, to_typecast_expr(src).op());
-  else if(src.id()==ID_address_of)
-  {
-    const exprt &op=to_address_of_expr(src).object();
-
-    if(op.id()==ID_symbol)
-      return to_symbol_expr(op).get_identifier();
-  }
-
-  return irep_idt();
-}
-
-void path_symext::symex_va_arg_next(
+void path_symext::symex_va_start(
   path_symex_statet &state,
   const exprt &lhs,
   const side_effect_exprt &code)
 {
   if(code.operands().size()!=1)
-    throw "va_arg_next expected to have one operand";
+    throw "va_start expected to have one operand";
 
   if(lhs.is_nil())
     return; // ignore
 
-  exprt tmp=state.read(code.op0()); // constant prop on va_arg parameter
+  if(state.threads[state.get_current_thread()].call_stack.empty())
+    throw "va_start must be inside a function";
 
-  // Get old symbol of va_arg and modify it to generate a new one.
-  irep_idt id=get_old_va_symbol(state, tmp);
+  // create an array that holds pointers to the ... parameters
+  std::vector<exprt> va_args;
+  const irep_idt function_id = state.function_id();
+  const auto va_count =
+    state.threads[state.get_current_thread()].call_stack.back().va_count;
+  const auto element_type = pointer_type(void_type());
 
-  const auto zero_opt=
-    zero_initializer(
-      lhs.type(),
-      code.source_location(),
-      state.config.ns);
-  CHECK_RETURN(zero_opt.has_value());
-
-  exprt rhs = zero_opt.value();
-
-  if(!id.empty())
+  for(std::size_t i=0; i<va_count; i++)
   {
-    // strip last name off id to get function name
-    std::size_t pos=id2string(id).rfind("::");
-    if(pos!=std::string::npos)
-    {
-      irep_idt function_identifier=std::string(id2string(id), 0, pos);
-      std::string base=id2string(function_identifier)+"::va_arg";
-
-      /*
-       * Construct the identifier of the va_arg argument such that it
-       * corresponds to the respective one set upon function call
-       */
-      if(has_prefix(id2string(id), base))
-        id=base
-            +std::to_string(
-                safe_string2unsigned(
-                    std::string(id2string(id), base.size(), std::string::npos))
-                    +1);
-      else
-        id=base+"0";
-
-      const var_mapt::var_infot &var_info=state.config.var_map[id];
-
-      if(var_info.full_identifier==id)
-      {
-        const path_symex_statet::var_statet &var_state
-          =state.get_var_state(var_info);
-        const exprt symbol_expr=symbol_exprt(id, var_state.ssa_symbol.type());
-        rhs=address_of_exprt(symbol_expr);
-        rhs.make_typecast(lhs.type());
-      }
-    }
+    const irep_idt id=id2string(function_id)+"::va_arg"+std::to_string(i);
+    const var_mapt::var_infot &var_info=state.config.var_map[id];
+    const path_symex_statet::var_statet &var_state =
+      state.get_var_state(var_info);
+    const exprt symbol_expr=symbol_exprt(id, var_state.ssa_symbol.type());
+    auto address = address_of_exprt(symbol_expr);
+    auto casted = typecast_exprt::conditional_cast(address, element_type);
+    va_args.push_back(casted);
   }
+
+  // now build an array literal with those addresses
+  auto array_type = array_typet(element_type, from_integer(va_count, size_type()));
+
+  const irep_idt base_name = "va_args"+std::to_string(state.config.var_map.nondet_count);
+  const irep_idt id="symex::"+id2string(base_name);
+  state.config.var_map.nondet_count++;
+
+  auxiliary_symbolt va_args_symbol;
+  va_args_symbol.name=id;
+  va_args_symbol.base_name=base_name;
+  va_args_symbol.type=array_type;
+  const auto symbol_expr = va_args_symbol.symbol_expr();
+  state.config.var_map.new_symbols.add(std::move(va_args_symbol));
+
+  // assign array to va_args symbol
+  assign(state, symbol_expr, array_exprt(std::move(va_args), array_type));
+
+  // now assign the address of that to the lhs
+  exprt rhs =
+    typecast_exprt::conditional_cast(
+      address_of_exprt(symbol_expr, element_type),
+      lhs.type());
 
   assign(state, lhs, rhs);
 }
