@@ -156,12 +156,12 @@ path_searcht::resultt path_searcht::operator()(
     }
     catch(const std::string &e)
     {
-      error() << e << eom;
+      error() << bright_red << e << reset << eom;
       number_of_dropped_states++;
     }
     catch(const char *e)
     {
-      error() << e << eom;
+      error() << bright_red << e << reset << eom;
       number_of_dropped_states++;
     }
     catch(int)
