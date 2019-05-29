@@ -13,6 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 #define CPROVER_PATH_SYMEX_PATH_SYMEX_STATE_H
 
 #include <util/cprover_prefix.h>
+#include <util/expanding_vector.h>
 
 #include "loc_ref.h"
 #include "path_symex_config.h"
@@ -56,7 +57,7 @@ public:
   };
 
   // the values of the shared variables
-  typedef std::vector<var_statet> var_valt;
+  using var_valt = expanding_vectort<var_statet>;
   var_valt shared_vars;
 
   // save+restore procedure-local variables

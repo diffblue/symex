@@ -58,8 +58,7 @@ path_symex_statet::var_statet &path_symex_statet::get_var_state(
 
   var_valt &var_val=
     var_info.is_shared()?shared_vars:threads[current_thread].local_vars;
-  if(var_val.size()<=var_info.number)
-    var_val.resize(var_info.number+1);
+
   return var_val[var_info.number];
 }
 
