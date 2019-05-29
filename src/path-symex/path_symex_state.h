@@ -303,7 +303,7 @@ protected:
   exprt expand_structs_and_arrays(const exprt &src);
   exprt array_theory(const exprt &src, bool propagate);
 
-  exprt read_symbol_member_index(
+  optionalt<exprt> read_symbol_member_index(
     const exprt &src,
     bool propagate);
 

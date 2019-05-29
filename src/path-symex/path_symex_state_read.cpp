@@ -219,11 +219,11 @@ optionalt<exprt> path_symex_statet::instantiate_node(
 
   if(is_symbol_member_index(src))
   {
-    exprt tmp_symbol_member_index=
+    auto tmp_symbol_member_index=
       read_symbol_member_index(src, propagate);
 
-    assert(tmp_symbol_member_index.is_not_nil());
-    return tmp_symbol_member_index; // yes!
+    assert(tmp_symbol_member_index.has_value());
+    return tmp_symbol_member_index.value(); // yes!
   }
 
   if(src.id()==ID_address_of)
@@ -348,7 +348,7 @@ exprt path_symex_statet::instantiate_rec(
   return tmp_src;
 }
 
-exprt path_symex_statet::read_symbol_member_index(
+optionalt<exprt> path_symex_statet::read_symbol_member_index(
   const exprt &src,
   bool propagate)
 {
@@ -357,14 +357,15 @@ exprt path_symex_statet::read_symbol_member_index(
   // don't touch function symbols
   if(src_type.id()==ID_code ||
      src_type.id()==ID_mathematical_function)
-    return nil_exprt();
+    return {};
 
   // unbounded array?
   if(src.id()==ID_index &&
      var_mapt::is_unbounded_array(to_index_expr(src).array().type()))
   {
     index_exprt new_src=to_index_expr(src);
-    new_src.array()=read_symbol_member_index(new_src.array(), propagate); // rec. call
+    auto rec_opt = read_symbol_member_index(new_src.array(), propagate); // rec. call
+    new_src.array()=rec_opt.value();
     new_src.index()=instantiate_rec(new_src.index(), propagate); // rec. call
     return std::move(new_src);
   }
@@ -377,7 +378,10 @@ exprt path_symex_statet::read_symbol_member_index(
      final.id()==ID_vector)
   {
     for(auto & op : final.operands())
-      op=read_symbol_member_index(op, propagate); // rec. call
+    {
+      auto rec_opt = read_symbol_member_index(op, propagate); // rec. call
+      op = rec_opt.value();
+    }
 
     return final;
   }
@@ -412,7 +416,7 @@ exprt path_symex_statet::read_symbol_member_index(
         suffix="."+id2string(member_expr.get_component_name())+suffix;
       }
       else
-        return nil_exprt(); // includes unions, deliberately
+        return { }; // includes unions, deliberately
     }
     else if(current.id()==ID_index)
     {
