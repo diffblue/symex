@@ -431,7 +431,7 @@ optionalt<exprt> path_symex_statet::read_symbol_member_index(
       suffix=index_string+suffix;
     }
     else
-      return nil_exprt();
+      return {}; // not symbol, member, index
 
     // next round
     assert(next.is_not_nil());
@@ -441,7 +441,7 @@ optionalt<exprt> path_symex_statet::read_symbol_member_index(
   assert(current.id()==ID_symbol);
 
   if(current.get_bool(ID_C_SSA_symbol))
-    return nil_exprt(); // SSA already
+    return {}; // SSA already
 
   irep_idt identifier=
     to_symbol_expr(current).get_identifier();
