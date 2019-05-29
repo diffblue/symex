@@ -685,10 +685,14 @@ void path_symext::function_call_symbol(
   // now assign the argument values to parameters
   for(std::size_t i=0; i<ssa_arguments.size(); i++)
   {
+    if(function_parameters.size()!=f_it->second.parameter_identifiers.size())
+      throw "function " + id2string(function_identifier)
+          + " has wrong number of parameter identifiers";
+
     if(i<function_parameters.size())
     {
       const code_typet::parametert &function_parameter=function_parameters[i];
-      irep_idt identifier=function_parameter.get_identifier();
+      irep_idt identifier=f_it->second.parameter_identifiers[i];
 
       if(identifier.empty())
         throw "function_call " + id2string(function_identifier)
