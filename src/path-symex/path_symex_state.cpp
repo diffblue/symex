@@ -35,11 +35,11 @@ void path_symex_statet::output(const threadt &thread, std::ostream &out) const
 void path_symex_statet::output(std::ostream &out) const
 {
   for(const auto &v : shared_vars)
-    if(!v.ssa_symbol.get_identifier().empty())
+    if(v.ssa_symbol.has_value())
     {
-      out << from_expr(v.ssa_symbol);
-      if(v.value.is_not_nil())
-        out << " = " << from_expr(v.value);
+      out << from_expr(v.ssa_symbol.value());
+      if(v.value.has_value())
+        out << " = " << from_expr(v.value.value());
       out << '\n';
     }
 

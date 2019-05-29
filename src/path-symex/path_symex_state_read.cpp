@@ -457,20 +457,20 @@ optionalt<exprt> path_symex_statet::read_symbol_member_index(
   // warning: reference is not stable
   var_statet &var_state=get_var_state(var_info);
 
-  if(propagate && var_state.value.is_not_nil())
+  if(propagate && var_state.value.has_value())
   {
-    return var_state.value; // propagate a value
+    return var_state.value.value(); // propagate a value
   }
   else
   {
     // we do some SSA symbol
-    if(var_state.ssa_symbol.get_identifier().empty())
+    if(!var_state.ssa_symbol.has_value())
     {
       // produce one
       var_state.ssa_symbol=var_info.ssa_symbol();
 
       // ssa-ify the size
-      if(var_mapt::is_unbounded_array(var_state.ssa_symbol.type()))
+      if(var_mapt::is_unbounded_array(var_state.ssa_symbol.value().type()))
       {
         // disabled to preserve type consistency
         // exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
@@ -478,7 +478,7 @@ optionalt<exprt> path_symex_statet::read_symbol_member_index(
       }
     }
 
-    return var_state.ssa_symbol;
+    return var_state.ssa_symbol.value();
   }
 }
 

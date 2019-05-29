@@ -202,7 +202,7 @@ void path_symext::symex_va_start(
     const var_mapt::var_infot &var_info=state.config.var_map[id];
     const path_symex_statet::var_statet &var_state =
       state.get_var_state(var_info);
-    const exprt symbol_expr=symbol_exprt(id, var_state.ssa_symbol.type());
+    const exprt symbol_expr=symbol_exprt(id, var_state.ssa_symbol.value().type());
     auto address = address_of_exprt(symbol_expr);
     auto casted = typecast_exprt::conditional_cast(address, element_type);
     va_args.push_back(casted);
@@ -285,7 +285,7 @@ void path_symext::assign_rec_symbol(
   if(ssa_rhs.is_nil())
   {
     path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
-    var_state.value=nil_exprt();
+    var_state.value={};
   }
   else
   {
@@ -302,7 +302,11 @@ void path_symext::assign_rec_symbol(
     // propagate the rhs?
     // warning: reference var_state is not stable
     path_symex_statet::var_statet &var_state=state.get_var_state(var_info);
-    var_state.value=propagate(ssa_rhs)?ssa_rhs:nil_exprt();
+
+    if(propagate(ssa_rhs))
+      var_state.value=ssa_rhs;
+    else
+      var_state.value={};
   }
 
   // record the step
@@ -718,7 +722,7 @@ void path_symext::function_call_symbol(
       const symbol_exprt symbol_expr(id, ssa_rhs.type());
       auto &var_info=state.config.var_map(id, irep_idt(), symbol_expr);
       var_info.original=symbol_expr;
-      state.get_var_state(var_info).ssa_symbol.set_identifier(irep_idt());
+      state.get_var_state(var_info).ssa_symbol = {};
 
       va_count++;
 

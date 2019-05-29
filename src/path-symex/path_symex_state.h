@@ -34,26 +34,14 @@ public:
 
   path_symex_configt &config;
 
-  typedef path_symex_stept stept;
+  using stept = path_symex_stept;
 
   // the value of a variable
   struct var_statet
   {
     // it's a given explicit value or a symbol with given identifier
-    exprt value;
-    symbol_exprt ssa_symbol;
-
-    // for uninterpreted functions or arrays we maintain an index set
-    #if 0
-    typedef std::set<exprt> index_sett;
-    index_sett index_set;
-    #endif
-
-    var_statet():
-      value(nil_exprt()),
-      ssa_symbol(irep_idt(), typet())
-    {
-    }
+    optionalt<exprt> value;
+    optionalt<symbol_exprt> ssa_symbol;
   };
 
   // the values of the shared variables
