@@ -649,7 +649,7 @@ void path_symext::function_call_symbol(
   frame.current_function=function_identifier;
   frame.return_location=thread.pc.next_loc();
   frame.return_lhs=call.lhs();
-  frame.return_rhs=nil_exprt();
+  frame.return_rhs={};
   frame.hidden_function=function_entry.is_hidden();
   frame.va_count = 0; // set below
 
@@ -824,17 +824,21 @@ void path_symext::return_from_function(path_symex_statet &state)
     thread.pc=thread.call_stack.back().return_location;
 
     // assign the return value
-    if(thread.call_stack.back().return_rhs.is_not_nil() &&
-       thread.call_stack.back().return_lhs.is_not_nil())
-      assign(state, thread.call_stack.back().return_lhs,
-                    thread.call_stack.back().return_rhs);
+    if(thread.call_stack.back().return_rhs.has_value() &&
+       thread.call_stack.back().return_lhs.has_value())
+    {
+      assign(state, thread.call_stack.back().return_lhs.value(),
+                    thread.call_stack.back().return_rhs.value());
+    }
 
     // restore the local variables
     for(path_symex_statet::var_state_mapt::const_iterator
         it=thread.call_stack.back().saved_local_vars.begin();
         it!=thread.call_stack.back().saved_local_vars.end();
         it++)
+    {
       thread.local_vars[it->first]=it->second;
+    }
 
     // kill the frame
     thread.call_stack.pop_back();
