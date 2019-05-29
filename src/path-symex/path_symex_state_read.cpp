@@ -11,8 +11,9 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "path_symex_state.h"
 
-#include <util/simplify_expr.h>
 #include <util/arith_tools.h>
+#include <util/expr_initializer.h>
+#include <util/simplify_expr.h>
 
 #ifdef DEBUG
 #include <iostream>
@@ -461,20 +462,37 @@ optionalt<exprt> path_symex_statet::read_symbol_member_index(
   {
     return var_state.value.value(); // propagate a value
   }
-  else
+  else if(var_state.ssa_symbol.has_value())
   {
-    // we do some SSA symbol
-    if(!var_state.ssa_symbol.has_value())
-    {
-      // produce one
-      var_state.ssa_symbol=var_info.ssa_symbol();
+    // we have got an SSA symbol
+    return var_state.ssa_symbol.value();
+  }
+  else // never read before, no value
+  {
+    // produce symbolic symbol
+    var_state.ssa_symbol=var_info.ssa_symbol();
 
-      // ssa-ify the size
-      if(var_mapt::is_unbounded_array(var_state.ssa_symbol.value().type()))
+    // ssa-ify the size
+    if(var_mapt::is_unbounded_array(var_state.ssa_symbol.value().type()))
+    {
+      // disabled to preserve type consistency
+      // exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
+      // size=read(size);
+    }
+
+    if(propagate)
+    {
+      // produce 'zero'
+      auto zero_opt =
+        zero_initializer(
+          var_state.ssa_symbol.value().type(),
+          source_locationt(),
+          config.ns);
+
+      if(zero_opt.has_value() && propagate)
       {
-        // disabled to preserve type consistency
-        // exprt &size=to_array_type(var_state.ssa_symbol.type()).size();
-        // size=read(size);
+        var_state.value = zero_opt.value();
+        return var_state.value.value();
       }
     }
 
