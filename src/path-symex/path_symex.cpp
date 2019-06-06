@@ -137,6 +137,15 @@ void path_symext::assign(
     else
       throw "unexpected side-effect on rhs: "+id2string(statement);
   }
+  else if(rhs.id()==ID_typecast &&
+          to_typecast_expr(rhs).op().id()==ID_side_effect)
+  {
+    // cast + side effect: push to lhs
+    auto new_lhs = typecast_exprt(lhs, rhs.type());
+    auto new_rhs = to_typecast_expr(rhs).op();
+    assign(state, new_lhs, new_rhs);
+    return;
+  }
 
   // The Java frontend generates nondet on the lhs
   if(lhs.id()==ID_side_effect)
