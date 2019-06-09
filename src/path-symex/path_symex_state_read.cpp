@@ -263,16 +263,23 @@ optionalt<exprt> path_symex_statet::instantiate_node(
   {
     // dereferencet produces these for stuff like *(T *)123.
     // Will transform into __CPROVER_memory[] eventually.
-    irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
-    config.var_map.nondet_count++;
+    if(src.type().id()==ID_code)
+    {
+      return {}; // don't change
+    }
+    else
+    {
+      irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
+      config.var_map.nondet_count++;
 
-    auxiliary_symbolt nondet_symbol;
-    nondet_symbol.name=id;
-    nondet_symbol.base_name=id;
-    nondet_symbol.type=src.type();
-    config.var_map.new_symbols.add(nondet_symbol);
+      auxiliary_symbolt nondet_symbol;
+      nondet_symbol.name=id;
+      nondet_symbol.base_name=id;
+      nondet_symbol.type=src.type();
+      config.var_map.new_symbols.add(nondet_symbol);
 
-    return nondet_symbol.symbol_expr();
+      return nondet_symbol.symbol_expr();
+    }
   }
   else if(src.id()==ID_member)
   {
@@ -308,7 +315,7 @@ optionalt<exprt> path_symex_statet::instantiate_node(
   {
     if(src.type().id()==ID_code)
     {
-      return {}; // dont' change
+      return {}; // don't change
     }
     else
     {
