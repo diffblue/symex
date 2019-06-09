@@ -306,16 +306,23 @@ optionalt<exprt> path_symex_statet::instantiate_node(
   }
   else if(src.id()=="dereference_failure")
   {
-    irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
-    config.var_map.nondet_count++;
+    if(src.type().id()==ID_code)
+    {
+      return {}; // dont' change
+    }
+    else
+    {
+      irep_idt id="symex::deref"+std::to_string(config.var_map.nondet_count);
+      config.var_map.nondet_count++;
 
-    auxiliary_symbolt nondet_symbol;
-    nondet_symbol.name=id;
-    nondet_symbol.base_name=id;
-    nondet_symbol.type=src.type();
-    config.var_map.new_symbols.add(nondet_symbol);
+      auxiliary_symbolt nondet_symbol;
+      nondet_symbol.name=id;
+      nondet_symbol.base_name=id;
+      nondet_symbol.type=src.type();
+      config.var_map.new_symbols.add(nondet_symbol);
 
-    return nondet_symbol.symbol_expr();
+      return nondet_symbol.symbol_expr();
+    }
   }
 
   return { }; // no change
