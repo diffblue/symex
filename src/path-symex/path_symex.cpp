@@ -810,6 +810,11 @@ void path_symext::function_call_rec(
     function_call_rec(
       state, call, to_typecast_expr(function).op(), further_states);
   }
+  else if(function.id()=="dereference_failure")
+  {
+    // give up
+    throw "function_call_rec got dereference_failure";
+  }
   else
     // NOLINTNEXTLINE(readability/throw)
     throw "TODO: function_call "+function.id_string();
