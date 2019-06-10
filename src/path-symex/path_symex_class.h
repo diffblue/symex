@@ -52,13 +52,9 @@ protected:
     std::list<path_symex_statet> &further_states);
 
   void function_call(
-    path_symex_statet &state,
-    const code_function_callt &call,
-    std::list<path_symex_statet> &further_states)
-  {
-    exprt f=state.read(call.function());
-    function_call_rec(state, call, f, further_states);
-  }
+    path_symex_statet &,
+    const code_function_callt &,
+    std::list<path_symex_statet> &further_states);
 
   void function_call_rec(
     path_symex_statet &,

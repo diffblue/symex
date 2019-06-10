@@ -763,6 +763,15 @@ void path_symext::function_call_symbol(
     loc_reft(function_identifier, function_entry.body.instructions.begin());
 }
 
+void path_symext::function_call(
+  path_symex_statet &state,
+  const code_function_callt &call,
+  std::list<path_symex_statet> &further_states)
+{
+  exprt f=state.read(call.function());
+  function_call_rec(state, call, f, further_states);
+}
+
 void path_symext::function_call_rec(
   path_symex_statet &state,
   const code_function_callt &call,
