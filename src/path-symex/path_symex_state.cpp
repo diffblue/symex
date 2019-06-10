@@ -24,12 +24,22 @@ Author: Daniel Kroening, kroening@kroening.com
 void path_symex_statet::output(const threadt &thread, std::ostream &out) const
 {
   out << "  PC: " << thread.pc << '\n';
+
   out << "  Call stack:";
 
   for(const auto &frame : thread.call_stack)
-    out << " " << frame.return_location;
+    out << ' ' << frame.return_location;
 
   out << '\n';
+
+  for(const auto &v : thread.local_vars)
+    if(v.ssa_symbol.has_value())
+    {
+      out << "  " << format(v.ssa_symbol.value());
+      if(v.value.has_value())
+        out << " = " << format(v.value.value());
+      out << '\n';
+    }
 }
 
 void path_symex_statet::output(std::ostream &out) const

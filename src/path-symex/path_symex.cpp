@@ -583,6 +583,17 @@ void path_symext::assign_rec(
   }
 }
 
+static std::vector<symbol_exprt> get_local_variables(const goto_functiont &f)
+{
+  std::vector<symbol_exprt> result;
+
+  for(auto &i : f.body.instructions)
+    if(i.is_decl())
+      result.push_back(i.get_decl().symbol());
+
+  return result;
+}
+
 void path_symext::function_call_symbol(
   path_symex_statet &state,
   const code_function_callt &call,
@@ -662,31 +673,24 @@ void path_symext::function_call_symbol(
   frame.hidden_function=function_entry.is_hidden();
   frame.va_count = 0; // set below
 
-  #if 0
-  for(loc_reft l=function_entry_point; ; ++l)
+  // save the locals into the frame, in case of recursion
+  for(const auto &v : get_local_variables(function_entry))
   {
-    if(locs[l].target->is_end_function())
-      break;
-    if(locs[l].target->is_decl())
-    {
-      // make sure we have the local in the var_map
-      state.
-    }
+    const auto nr=state.config.var_map(v).number;
+    thread.save_local_var(nr);
   }
-
-  // save the locals into the frame
-  for(locst::local_variablest::const_iterator
-      it=function_entry.local_variables.begin();
-      it!=function_entry.local_variables.end();
-      it++)
-  {
-    unsigned nr=state.config.var_map[*it].number;
-    thread.call_stack.back().saved_local_vars[nr]=thread.local_vars[nr];
-  }
-  #endif
 
   const code_typet &code_type=function_entry.type;
   const code_typet::parameterst &function_parameters=code_type.parameters();
+
+  // save the parameters into the frame, in case of recursion
+  for(std::size_t i = 0; i<function_parameters.size(); i++)
+  {
+    auto v = symbol_exprt(
+      f_it->second.parameter_identifiers[i], function_parameters[i].type());
+    const auto nr=state.config.var_map(v).number;
+    thread.save_local_var(nr);
+  }
 
   // keep track when va arguments begin.
   std::size_t va_args_start_index=0;
@@ -762,6 +766,15 @@ void path_symext::function_call_symbol(
     loc_reft(function_identifier, function_entry.body.instructions.begin());
 }
 
+void path_symext::function_call(
+  path_symex_statet &state,
+  const code_function_callt &call,
+  std::list<path_symex_statet> &further_states)
+{
+  exprt f=state.read(call.function());
+  function_call_rec(state, call, f, further_states);
+}
+
 void path_symext::function_call_rec(
   path_symex_statet &state,
   const code_function_callt &call,
@@ -813,11 +826,16 @@ void path_symext::function_call_rec(
   else if(function.id()=="dereference_failure")
   {
     // give up
-    throw errort() << "function_call_rec got dereference_failure";
+    throw errort()
+      << "function_call_rec got dereference_failure at "
+      << state.pc();
   }
   else
-    // NOLINTNEXTLINE(readability/throw)
-    throw errort() << "TODO: function_call " << function.id();
+  {
+    throw errort()
+      << "TODO: function_call " << function.id()
+      << " at " << state.pc();
+  }
 }
 
 void path_symext::return_from_function(path_symex_statet &state)
@@ -841,21 +859,18 @@ void path_symext::return_from_function(path_symex_statet &state)
     // set PC to return location
     thread.pc=thread.call_stack.back().return_location;
 
+    // restore the local variables
+    for(const auto &v : thread.call_stack.back().saved_local_vars)
+    {
+      thread.local_vars[v.first]=v.second;
+    }
+
     // assign the return value
     if(thread.call_stack.back().return_rhs.has_value() &&
        thread.call_stack.back().return_lhs.has_value())
     {
       assign(state, thread.call_stack.back().return_lhs.value(),
                     thread.call_stack.back().return_rhs.value());
-    }
-
-    // restore the local variables
-    for(path_symex_statet::var_state_mapt::const_iterator
-        it=thread.call_stack.back().saved_local_vars.begin();
-        it!=thread.call_stack.back().saved_local_vars.end();
-        it++)
-    {
-      thread.local_vars[it->first]=it->second;
     }
 
     // kill the frame
