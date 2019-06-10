@@ -814,11 +814,16 @@ void path_symext::function_call_rec(
   else if(function.id()=="dereference_failure")
   {
     // give up
-    throw errort() << "function_call_rec got dereference_failure";
+    throw errort()
+      << "function_call_rec got dereference_failure at "
+      << state.pc();
   }
   else
-    // NOLINTNEXTLINE(readability/throw)
-    throw errort() << "TODO: function_call " << function.id();
+  {
+    throw errort()
+      << "TODO: function_call " << function.id()
+      << " at " << state.pc();
+  }
 }
 
 void path_symext::return_from_function(path_symex_statet &state)
