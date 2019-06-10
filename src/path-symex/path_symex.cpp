@@ -860,18 +860,18 @@ void path_symext::return_from_function(path_symex_statet &state)
     // set PC to return location
     thread.pc=thread.call_stack.back().return_location;
 
+    // restore the local variables
+    for(const auto &v : thread.call_stack.back().saved_local_vars)
+    {
+      thread.local_vars[v.first]=v.second;
+    }
+
     // assign the return value
     if(thread.call_stack.back().return_rhs.has_value() &&
        thread.call_stack.back().return_lhs.has_value())
     {
       assign(state, thread.call_stack.back().return_lhs.value(),
                     thread.call_stack.back().return_rhs.value());
-    }
-
-    // restore the local variables
-    for(const auto &v : thread.call_stack.back().saved_local_vars)
-    {
-      thread.local_vars[v.first]=v.second;
     }
 
     // kill the frame
