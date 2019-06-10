@@ -70,6 +70,8 @@ public:
     const irep_idt &suffix,
     const exprt &original);
 
+  var_infot &operator()(const symbol_exprt &original);
+
   var_infot &operator[](const irep_idt &full_identifier)
   {
     return id_map[full_identifier];
