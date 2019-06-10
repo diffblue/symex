@@ -13,9 +13,9 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/arith_tools.h>
 #include <util/c_types.h>
-#include <solvers/decision_procedure.h>
+#include <util/format_expr.h>
 
-#include <langapi/language_util.h>
+#include <solvers/decision_procedure.h>
 
 #ifdef DEBUG
 #include <iostream>
@@ -37,9 +37,9 @@ void path_symex_statet::output(std::ostream &out) const
   for(const auto &v : shared_vars)
     if(v.ssa_symbol.has_value())
     {
-      out << from_expr(v.ssa_symbol.value());
+      out << format(v.ssa_symbol.value());
       if(v.value.has_value())
-        out << " = " << from_expr(v.value.value());
+        out << " = " << format(v.value.value());
       out << '\n';
     }
 
