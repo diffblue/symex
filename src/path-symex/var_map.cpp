@@ -65,6 +65,11 @@ var_mapt::var_infot &var_mapt::operator()(
   return result.first->second;
 }
 
+var_mapt::var_infot &var_mapt::operator()(const symbol_exprt &s)
+{
+  return operator()(s.get_identifier(), irep_idt(), s);
+}
+
 void var_mapt::var_infot::output(std::ostream &out) const
 {
   out << "full_identifier: " << full_identifier << "\n";

@@ -84,6 +84,12 @@ public:
     threadt():active(true)
     {
     }
+
+    void save_local_var(unsigned nr)
+    {
+      PRECONDITION(!call_stack.empty());
+      call_stack.back().saved_local_vars[nr] = local_vars[nr];
+    }
   };
 
   typedef std::vector<threadt> threadst;
