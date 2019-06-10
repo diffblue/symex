@@ -17,6 +17,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "loc_ref.h"
 #include "path_symex_config.h"
+#include "path_symex_error.h"
 
 struct path_symex_statet
 {
@@ -35,6 +36,7 @@ public:
   path_symex_configt &config;
 
   using stept = path_symex_stept;
+  using errort = path_symex_errort;
 
   // the value of a variable
   struct var_statet

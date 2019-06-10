@@ -96,7 +96,7 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
       auto size_int=numeric_cast<std::size_t>(to_constant_expr(array_type.size()));
 
       if(!size_int.has_value())
-        throw "failed to convert array size";
+        throw errort() << "failed to convert array size";
 
       array_exprt result(array_type);
       result.operands().resize(size_int.value());
@@ -128,11 +128,11 @@ exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
     const typet &subtype=vector_type.subtype();
 
     if(!vector_type.size().is_constant())
-      throw "vector with non-constant size";
+      throw errort() << "vector with non-constant size";
 
     mp_integer size;
     if(to_integer(vector_type.size(), size))
-      throw "failed to convert vector size";
+      throw errort() << "failed to convert vector size";
 
     const auto size_int=numeric_cast_v<std::size_t>(size);
 
@@ -182,7 +182,7 @@ exprt path_symex_statet::array_theory(const exprt &src, bool propagate)
         const auto size_int=numeric_cast<std::size_t>(array_type.size());
 
         if(!size_int.has_value())
-          throw "failed to convert array size";
+          throw errort() << "failed to convert array size";
 
         // Split it up using a cond_exprt.
         // A cond_exprt is depth 1 compared to depth n when
@@ -251,7 +251,10 @@ optionalt<exprt> path_symex_statet::instantiate_node(
       return read_symbol_member_index(nondet_symbol.symbol_expr(), false);
     }
     else
-      throw "instantiate_rec: unexpected side effect "+id2string(statement);
+    {
+      throw errort()
+        << "instantiate_rec: unexpected side effect " << statement;
+    }
   }
   else if(src.id()==ID_dereference)
   {
@@ -293,11 +296,11 @@ optionalt<exprt> path_symex_statet::instantiate_node(
     else if(compound_type.id()==ID_union)
     {
       // should already have been rewritten to byte_extract
-      throw "unexpected union member";
+      throw errort() << "unexpected union member";
     }
     else
     {
-      throw "member expects struct or union type"+src.pretty();
+      throw errort() << "member expects struct or union type" << src.pretty();
     }
   }
   else if(src.id()==ID_byte_extract_little_endian ||

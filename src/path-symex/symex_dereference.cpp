@@ -10,6 +10,7 @@ Author: Daniel Kroening, kroening@kroening.com
 /// Pointer Dereferencing
 
 #include "symex_dereference.h"
+#include "path_symex_error.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -30,8 +31,9 @@ Author: Daniel Kroening, kroening@kroening.com
 exprt symex_dereferencet::operator()(const exprt &pointer)
 {
   if(pointer.type().id()!=ID_pointer)
-    throw "dereference expected pointer type, but got "+
-          pointer.type().pretty();
+    throw path_symex_errort()
+      << "dereference expected pointer type, but got "
+      << pointer.type().pretty();
 
   // type of the object
   const typet &type=pointer.type().subtype();
@@ -83,7 +85,8 @@ exprt symex_dereferencet::read_object(
     auto size_opt=size_of_expr(object_type, ns);
 
     if(!size_opt.has_value())
-      throw "dereference failed to get object size for index";
+      throw path_symex_errort()
+        << "dereference failed to get object size for index";
 
     index.make_typecast(simplified_offset.type());
     exprt casted_size = typecast_exprt(*size_opt, index.type());
@@ -108,7 +111,8 @@ exprt symex_dereferencet::read_object(
         struct_type, member_expr.get_component_name(), ns);
 
       if(!member_offset_opt.has_value())
-        throw "dereference failed to get member offset";
+        throw path_symex_errort()
+          << "dereference failed to get member offset";
 
       const exprt member_offset =
         typecast_exprt::conditional_cast(*member_offset_opt, simplified_offset.type());
@@ -214,7 +218,8 @@ exprt symex_dereferencet::dereference_rec(
   {
     // pointer arithmetic
     if(address.operands().size()<2)
-      throw "plus with less than two operands";
+      throw path_symex_errort()
+        << "plus with fewer than two operands";
 
     return dereference_plus(address, offset, type);
   }
@@ -237,7 +242,9 @@ exprt symex_dereferencet::dereference_rec(
         typecast_exprt(zero, address.type()), offset, type);
     }
     else
-      throw "symex_dereferencet: unexpected pointer constant "+address.pretty();
+      throw path_symex_errort()
+        << "symex_dereferencet: unexpected pointer constant "
+        << address.pretty();
   }
   else
   {
@@ -282,7 +289,8 @@ exprt symex_dereferencet::dereference_plus(
   // multiply integer by object size
   const auto size_opt=size_of_expr(pointer.type().subtype(), ns);
   if(!size_opt.has_value())
-    throw "dereference failed to get object size for pointer arithmetic";
+    throw path_symex_errort()
+      << "dereference failed to get object size for pointer arithmetic";
 
   // we use the type of 'offset' as common ground,
   // which is usually index_type()
@@ -320,7 +328,7 @@ exprt symex_dereferencet::dereference_typecast(
     return unary_exprt("integer_dereference", integer, type);
   }
   else
-    throw "symex_dereferencet: unexpected cast";
+    throw path_symex_errort() << "symex_dereferencet: unexpected cast";
 }
 
 bool symex_dereferencet::type_compatible(

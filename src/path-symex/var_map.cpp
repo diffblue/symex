@@ -10,6 +10,7 @@ Author: Daniel Kroening, kroening@kroening.com
 /// Variable Numbering
 
 #include "var_map.h"
+#include "path_symex_error.h"
 
 #include <ostream>
 
@@ -113,10 +114,14 @@ void var_mapt::init(var_infot &var_info)
     else
     {
       const symbolt *symbol=nullptr;
+
       if(ns.lookup(var_info.symbol, symbol))
-        throw "var_mapt::init identifier \""
-          +id2string(var_info.full_identifier)
-          +"\" lookup in ns failed";
+      {
+        throw path_symex_errort()
+          << "var_mapt::init identifier \""
+          << var_info.full_identifier
+          << "\" lookup in ns failed";
+      }
 
       if(symbol->is_static_lifetime)
       {

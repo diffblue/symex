@@ -14,6 +14,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include "var_map.h"
 #include "path_symex_history.h"
+#include "path_symex_error.h"
 
 #include <util/message.h>
 
@@ -53,6 +54,8 @@ protected:
   void no_body(const irep_idt &);
   
   friend class path_symext;
+
+  using errort = path_symex_errort;
 };
 
 #endif // CPROVER_PATH_SYMEX_PATH_SYMEX_CONFIG_H

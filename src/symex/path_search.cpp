@@ -154,6 +154,11 @@ path_searcht::resultt path_searcht::operator()(
       // put at head of main queue
       queue.splice(queue.begin(), tmp_queue);
     }
+    catch(const cprover_exception_baset &e)
+    {
+      error() << bright_red << e.what() << reset << eom;
+      number_of_dropped_states++;
+    }
     catch(const std::string &e)
     {
       error() << bright_red << e << reset << eom;

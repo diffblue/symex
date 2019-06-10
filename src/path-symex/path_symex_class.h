@@ -44,6 +44,8 @@ public:
 
   typedef path_symex_stept stept;
 
+  using errort = path_symex_errort;
+
 protected:
   void do_goto(
     path_symex_statet &state,

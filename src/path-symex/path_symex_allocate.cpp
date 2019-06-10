@@ -44,10 +44,10 @@ void path_symext::symex_allocate(
   const side_effect_exprt &code)
 {
   if(code.operands().size()!=2)
-    throw "allocate expected to have two operands";
+    throw errort() << "allocate expected to have two operands";
 
   if(code.type().id()!=ID_pointer)
-    throw "allocate expected to return a pointer";
+    throw errort() << "allocate expected to return a pointer";
 
   // get a mode, from the call site
   const symbolt &calling_function=
@@ -192,10 +192,10 @@ void path_symext::symex_new(
   const side_effect_exprt &code)
 {
   if(code.operands().size()!=0)
-    throw "new expected to have no operands";
+    throw errort() << "new expected to have no operands";
 
   if(code.type().id()!=ID_pointer)
-    throw "new expected to return a pointer";
+    throw errort() << "new expected to return a pointer";
 
   const auto &pointer_type = to_pointer_type(code.type());
 

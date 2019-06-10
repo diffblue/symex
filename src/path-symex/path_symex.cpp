@@ -135,7 +135,7 @@ void path_symext::assign(
       return;
     }
     else
-      throw "unexpected side-effect on rhs: "+id2string(statement);
+      throw errort() << "unexpected side-effect on rhs: " << statement;
   }
   else if(rhs.id()==ID_typecast &&
           to_typecast_expr(rhs).op().id()==ID_side_effect)
@@ -159,7 +159,7 @@ void path_symext::assign(
       return;
     }
     else
-      throw "unexpected side-effect on lhs: "+id2string(statement);
+      throw errort() << "unexpected side-effect on lhs: " << statement;
   }
 
   // read the address of the lhs, with propagation
@@ -190,13 +190,13 @@ void path_symext::symex_va_start(
   const side_effect_exprt &code)
 {
   if(code.operands().size()!=1)
-    throw "va_start expected to have one operand";
+    throw errort() << "va_start expected to have one operand";
 
   if(lhs.is_nil())
     return; // ignore
 
   if(state.threads[state.get_current_thread()].call_stack.empty())
-    throw "va_start must be inside a function";
+    throw errort() << "va_start must be inside a function";
 
   // create an array that holds pointers to the ... parameters
   std::vector<exprt> va_args;
@@ -305,7 +305,7 @@ void path_symext::assign_rec_symbol(
       std::cout << "ssa_rhs: " << ssa_rhs.pretty() << '\n';
       std::cout << "new_ssa_lhs: " << new_ssa_lhs.pretty() << '\n';
       #endif
-      throw "assign_rec got different types";
+      throw errort() << "assign_rec got different types";
     }
 
     // propagate the rhs?
@@ -374,7 +374,7 @@ void path_symext::assign_rec_member(
     assign_rec(state, guard, new_ssa_lhs, ssa_rhs);
   }
   else
-    throw "assign_rec: member expects struct or union type";
+    throw errort() << "assign_rec: member expects struct or union type";
 }
 
 void path_symext::assign_rec_index(
@@ -391,7 +391,7 @@ void path_symext::assign_rec_index(
 
   // This must be an unbounded array.
   if(!var_mapt::is_unbounded_array(index_expr.array().type()))
-    throw "unexpected array index on lhs";
+    throw errort() << "unexpected array index on lhs";
 
   const exprt new_ssa_lhs=index_expr.array();
 
@@ -534,7 +534,7 @@ void path_symext::assign_rec(
     const typet &ssa_lhs_type=state.config.ns.follow(ssa_lhs.type());
 
     if(ssa_lhs_type.id()!=ID_array)
-      throw "array constructor must have array type";
+      throw errort() << "array constructor must have array type";
 
     const array_typet &array_type=
       to_array_type(ssa_lhs_type);
@@ -579,7 +579,8 @@ void path_symext::assign_rec(
   else
   {
     // ignore
-    throw "path_symext::assign_rec(): unexpected lhs: "+ssa_lhs.id_string();
+    throw errort()
+      << "path_symext::assign_rec(): unexpected lhs: " << ssa_lhs.id();
   }
 }
 
@@ -695,8 +696,8 @@ void path_symext::function_call_symbol(
   for(std::size_t i=0; i<ssa_arguments.size(); i++)
   {
     if(function_parameters.size()!=f_it->second.parameter_identifiers.size())
-      throw "function " + id2string(function_identifier)
-          + " has wrong number of parameter identifiers";
+      throw errort() << "function " << function_identifier
+        << " has wrong number of parameter identifiers";
 
     if(i<function_parameters.size())
     {
@@ -704,8 +705,8 @@ void path_symext::function_call_symbol(
       irep_idt identifier=f_it->second.parameter_identifiers[i];
 
       if(identifier.empty())
-        throw "function_call " + id2string(function_identifier)
-            + " no identifier for function parameter";
+        throw errort() << "function_call " << function_identifier
+          << " no identifier for function parameter";
 
       symbol_exprt lhs(identifier, function_parameter.type());
 
@@ -779,7 +780,7 @@ void path_symext::function_call_rec(
   else if(function.id()==ID_dereference)
   {
     // should not happen, we read() before
-    throw "function_call_rec got dereference";
+    throw errort() << "function_call_rec got dereference";
   }
   else if(function.id()==ID_if)
   {
@@ -813,11 +814,11 @@ void path_symext::function_call_rec(
   else if(function.id()=="dereference_failure")
   {
     // give up
-    throw "function_call_rec got dereference_failure";
+    throw errort() << "function_call_rec got dereference_failure";
   }
   else
     // NOLINTNEXTLINE(readability/throw)
-    throw "TODO: function_call "+function.id_string();
+    throw errort() << "TODO: function_call " << function.id();
 }
 
 void path_symext::return_from_function(path_symex_statet &state)
@@ -1022,7 +1023,8 @@ void path_symext::operator()(
 
   case THROW:
     state.record_step();
-    throw "THROW not yet implemented"; // NOLINT(readability/throw)
+    throw errort()
+      << "THROW not yet implemented"; // NOLINT(readability/throw)
 
   case ASSUME:
     state.record_step();
@@ -1057,7 +1059,7 @@ void path_symext::operator()(
 
   case ATOMIC_BEGIN:
     if(state.inside_atomic_section)
-      throw "nested ATOMIC_BEGIN";
+      throw errort() << "nested ATOMIC_BEGIN";
 
     state.record_step();
     state.next_pc();
@@ -1066,7 +1068,7 @@ void path_symext::operator()(
 
   case ATOMIC_END:
     if(!state.inside_atomic_section)
-      throw "ATOMIC_END unmatched"; // NOLINT(readability/throw)
+      throw errort() << "ATOMIC_END unmatched"; // NOLINT(readability/throw)
 
     state.record_step();
     state.next_pc();
@@ -1094,7 +1096,7 @@ void path_symext::operator()(
       if(statement==ID_array_set)
       {
         if(code.operands().size()!=2)
-          throw "array_set expects two operands";
+          throw errort() << "array_set expects two operands";
 
         // read the address of the lhs, with propagation
         const exprt lhs=state.read(code.op0());
@@ -1102,16 +1104,16 @@ void path_symext::operator()(
         // must be address_of index of array symbol
         if(lhs.id()!=ID_address_of ||
            lhs.operands().size()!=1)
-          throw "array_set expects address";
+          throw errort() << "array_set expects address";
 
         if(lhs.op0().id()!=ID_index ||
            lhs.op0().operands().size()!=2)
-          throw "array_set expects address_of index";
+          throw errort() << "array_set expects address_of index";
 
         const exprt &array=lhs.op0().op0();
 
         if(array.id()!=ID_symbol)
-          throw "array_set expects address_of of index of symbol";
+          throw errort() << "array_set expects address_of of index of symbol";
 
         const auto &array_type=to_array_type(array.type());
 
@@ -1164,20 +1166,20 @@ void path_symext::operator()(
         // just needs to be recorded
       }
       else
-        throw "unexpected OTHER statement: "+id2string(statement);
+        throw errort() << "unexpected OTHER statement: " << statement;
     }
 
     state.next_pc();
     break;
 
   case NO_INSTRUCTION_TYPE:
-    throw "path_symext: got 'no instruction type'";
+    throw errort() << "path_symext: got 'no instruction type'";
 
   case INCOMPLETE_GOTO:
-    throw "path_symext: got 'incomplete goto'";
+    throw errort() << "path_symext: got 'incomplete goto'";
 
   default:
-    throw "path_symext: unexpected instruction";
+    throw errort() << "path_symext: unexpected instruction";
   }
 }
 
@@ -1186,7 +1188,7 @@ void path_symext::operator()(path_symex_statet &state)
   std::list<path_symex_statet> further_states;
   operator()(state, further_states);
   if(!further_states.empty())
-    throw "path_symext got unexpected further states";
+    throw errort() << "path_symext got unexpected further states";
 }
 
 void path_symex(
