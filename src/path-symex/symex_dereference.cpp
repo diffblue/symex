@@ -20,7 +20,6 @@ Author: Daniel Kroening, kroening@kroening.com
 #include <util/std_expr.h>
 #include <util/byte_operators.h>
 #include <util/pointer_offset_size.h>
-#include <util/base_type.h>
 #include <util/simplify_expr.h>
 #include <util/arith_tools.h>
 
@@ -64,7 +63,7 @@ exprt symex_dereferencet::read_object(
   if(simplified_offset.is_zero())
   {
     // check type
-    if(base_type_eq(object_type, dest_type, ns))
+    if(object_type == dest_type)
     {
       return object; // trivial case
     }
@@ -131,7 +130,7 @@ exprt symex_dereferencet::read_object(
 
   // check if we have an array with the right subtype
   if(object_type.id()==ID_array &&
-     base_type_eq(object_type.subtype(), dest_type, ns))
+     object_type.subtype() == dest_type)
   {
     // check proper alignment
     auto element_size_opt=size_of_expr(dest_type, ns);
@@ -338,7 +337,7 @@ bool symex_dereferencet::type_compatible(
   if(dereference_type.id()==ID_empty)
     return true; // always ok
 
-  if(base_type_eq(object_type, dereference_type, ns))
+  if(object_type == dereference_type)
     return true; // ok, they just match
 
   // check for struct prefixes

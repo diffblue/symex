@@ -10,7 +10,6 @@ Author: Daniel Kroening, kroening@kroening.com
 /// Concrete Symbolic Transformer
 
 #include <util/arith_tools.h>
-#include <util/base_type.h>
 #include <util/byte_operators.h>
 #include <util/c_types.h>
 #include <util/expr_initializer.h>
@@ -299,7 +298,7 @@ void path_symext::assign_rec_symbol(
   else
   {
     // consistency check
-    if(!base_type_eq(ssa_rhs.type(), new_ssa_lhs.type(), state.config.ns))
+    if(ssa_rhs.type() != new_ssa_lhs.type())
     {
       #ifdef DEBUG
       std::cout << "ssa_rhs: " << ssa_rhs.pretty() << '\n';
