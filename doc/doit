@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd ~/progr/cbmc-git/regression/cbmc
+../test.pl -c "symex --max-search-time 120" |
+   ~/progr/symex/doc/filter > ~/progr/symex/doc/symex.regression.log.txt

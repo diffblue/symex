@@ -1,5 +1,5 @@
 Loading
-  661 tests found
+  660 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -13,7 +13,6 @@ Running tests
   Running Array_Initialization2/test.desc  [OK]
   Running Array_Initialization3/test.desc  [OK]
   Running Array_Propagation1/test.desc  [SKIPPED]
-  Running Array_UF/test.desc  [SKIPPED]
   Running Array_operations1/test.desc  [FAILED]
   Running Associativity1/test.desc  [OK]
   Running Assumption1/test.desc  [OK]
@@ -311,7 +310,7 @@ Running tests
   Running always_inline3/test.desc  [OK]
   Running argv1/test.desc  [FAILED]
   Running array-function-parameters/test.desc  [FAILED]
-  Running array-tests/test.desc  [FAILED]
+  Running array-tests/test.desc  [OK]
   Running array-tests/uf-always.desc  [FAILED]
   Running array-tests/zero-sized.desc  [FAILED]
   Running array_constraints1/test.desc  [OK]
@@ -645,7 +644,7 @@ Running tests
   Running va_list3/test.desc  [OK]
   Running va_list3/windows-preprocessed.desc  [FAILED]
   Running va_list4/test.desc  [OK]
-  Running variable-access-to-constant-array/test.desc  [FAILED]
+  Running variable-access-to-constant-array/test.desc  [OK]
   Running verifier_assume_lhs/test.desc  [SKIPPED]
   Running verifier_assume_one/test.desc  [OK]
   Running verifier_error_lhs/test.desc  [SKIPPED]
@@ -665,4 +664,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  118 of 661 tests failed, 46 tests skipped
+  116 of 660 tests failed, 45 tests skipped
