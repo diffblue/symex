@@ -711,6 +711,10 @@ void path_symext::function_call_symbol(
         throw errort() << "function_call " << function_identifier
           << " no identifier for function parameter";
 
+      if(function_parameter.type()!=ssa_arguments[i].type())
+        throw errort() << "function_call " << function_identifier
+          << " function argument " << i << " has wrong type";
+
       symbol_exprt lhs(identifier, function_parameter.type());
 
       const exprt ssa_rhs=ssa_arguments[i];
