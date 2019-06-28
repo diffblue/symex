@@ -215,7 +215,7 @@ Running tests
   Running Pointer_array3/test.desc  [OK]
   Running Pointer_array4/test.desc  [OK]
   Running Pointer_array5/test.desc  [OK]
-  Running Pointer_array6/test.desc  [OK]
+  Running Pointer_array6/test.desc  [FAILED]
   Running Pointer_byte_extract1/test.desc  [OK]
   Running Pointer_byte_extract2/test.desc  [OK]
   Running Pointer_byte_extract3/test.desc  [OK]
@@ -664,4 +664,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  115 of 660 tests failed, 46 tests skipped
+  116 of 660 tests failed, 46 tests skipped
