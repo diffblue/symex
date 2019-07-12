@@ -15,7 +15,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <solvers/decision_procedure.h>
 
-#include <langapi/language_util.h>
+#include <util/format_expr.h>
 
 void path_symex_stept::output(std::ostream &out) const
 {
@@ -29,10 +29,10 @@ void path_symex_stept::output(std::ostream &out) const
  */
   out << "\n";
 
-  out << "SSA Guard: " << from_expr(ssa_guard) << "\n";
-  out << "LHS: " << from_expr(lhs) << "\n";
-  out << "SSA LHS: " << from_expr(ssa_lhs) << "\n";
-  out << "SSA RHS: " << from_expr(ssa_rhs) << "\n";
+  out << "SSA Guard: " << format(ssa_guard) << "\n";
+  out << "LHS: " << format(lhs) << "\n";
+  out << "SSA LHS: " << format(ssa_lhs) << "\n";
+  out << "SSA RHS: " << format(ssa_rhs) << "\n";
   out << "\n";
 }
 
