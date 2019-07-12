@@ -13,6 +13,7 @@ Author: Daniel Kroening, kroening@kroening.com
 
 #include <util/arith_tools.h>
 #include <util/expr_initializer.h>
+#include <util/mathematical_expr.h>
 #include <util/simplify_expr.h>
 
 #ifdef DEBUG
@@ -332,6 +333,19 @@ optionalt<exprt> path_symex_statet::instantiate_node(
       config.var_map.new_symbols.add(nondet_symbol);
 
       return nondet_symbol.symbol_expr();
+    }
+  }
+  else if(src.id()==ID_function_application)
+  {
+    // we expand applications of functions given as symbol
+    const auto &application = to_function_application_expr(src);
+    const auto &function = application.function();
+    if(function.id()==ID_symbol)
+    {
+      const auto &s = config.ns.lookup(to_symbol_expr(function));
+      if(s.value.id()!=ID_lambda)
+        throw errort() << "function symbol that's not a lambda";
+      return to_lambda_expr(s.value).application(application.arguments());
     }
   }
 
