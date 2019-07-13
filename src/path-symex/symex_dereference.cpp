@@ -327,7 +327,9 @@ exprt symex_dereferencet::dereference_typecast(
     return unary_exprt("integer_dereference", integer, type);
   }
   else
-    throw path_symex_errort() << "symex_dereferencet: unexpected cast";
+    throw path_symex_errort()
+      << "symex_dereferencet: unexpected cast from "
+      << op_type.id();
 }
 
 bool symex_dereferencet::type_compatible(
