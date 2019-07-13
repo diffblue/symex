@@ -345,7 +345,12 @@ optionalt<exprt> path_symex_statet::instantiate_node(
       const auto &s = config.ns.lookup(to_symbol_expr(function));
       if(s.value.id()!=ID_lambda)
         throw errort() << "function symbol that's not a lambda";
-      return to_lambda_expr(s.value).application(application.arguments());
+
+      auto applied =
+        to_lambda_expr(s.value).application(application.arguments());
+
+      // need to instantiate the result
+      return instantiate_rec(applied, propagate);
     }
   }
 
@@ -367,7 +372,9 @@ exprt path_symex_statet::instantiate_rec(
     exprt &node = *stack.back();
     stack.pop_back();
 
+    // instantiate_node is called pre-traversal
     auto node_result = instantiate_node(node, propagate);
+
     if(node_result.has_value())
       node = node_result.value();
     else if(node.has_operands())
