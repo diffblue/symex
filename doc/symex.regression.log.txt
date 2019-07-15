@@ -1,5 +1,5 @@
 Loading
-  660 tests found
+  663 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -199,6 +199,7 @@ Running tests
   Running Pointer_Arithmetic11/test.desc  [OK]
   Running Pointer_Arithmetic12/test.desc  [FAILED]
   Running Pointer_Arithmetic13/test.desc  [SKIPPED]
+  Running Pointer_Arithmetic14/test.desc  [OK]
   Running Pointer_Arithmetic15/test.desc  [OK]
   Running Pointer_Arithmetic16/test.desc  [OK]
   Running Pointer_Arithmetic2/test.desc  [OK]
@@ -271,6 +272,7 @@ Running tests
   Running String4/test.desc  [OK]
   Running String5/test.desc  [OK]
   Running String7/test.desc  [OK]
+  Running String8/test.desc  [OK]
   Running String_Literal1/test.desc  [OK]
   Running Struct_Bytewise1/test.desc  [OK]
   Running Struct_Bytewise2/test.desc  [OK]
@@ -488,6 +490,7 @@ Running tests
   Running null4/test.desc  [OK]
   Running null5/test.desc  [OK]
   Running null6/test.desc  [OK]
+  Running null7/test.desc  [OK]
   Running offsetof1/test.desc  [OK]
   Running overflow/mod_overflow.desc  [OK]
   Running path-branch-pointer-call/test.desc  [FAILED]
@@ -616,7 +619,7 @@ Running tests
   Running typedef-union2/test.desc  [OK]
   Running uncaught_exceptions_analysis1/test.desc  [OK]
   Running uniform_array1/test.desc  [OK]
-  Running uninterpreted_function/uf1.desc  [OK]
+  Running uninterpreted_function/uf1.desc  [FAILED]
   Running uninterpreted_function/uf2.desc  [OK]
   Running union1/test.desc  [SKIPPED]
   Running union10/union_list2.desc  [SKIPPED]
@@ -664,4 +667,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  116 of 660 tests failed, 46 tests skipped
+  117 of 663 tests failed, 46 tests skipped
