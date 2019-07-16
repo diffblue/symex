@@ -619,7 +619,7 @@ Running tests
   Running typedef-union2/test.desc  [OK]
   Running uncaught_exceptions_analysis1/test.desc  [OK]
   Running uniform_array1/test.desc  [OK]
-  Running uninterpreted_function/uf1.desc  [FAILED]
+  Running uninterpreted_function/uf1.desc  [OK]
   Running uninterpreted_function/uf2.desc  [OK]
   Running union1/test.desc  [SKIPPED]
   Running union10/union_list2.desc  [SKIPPED]
@@ -667,4 +667,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  117 of 663 tests failed, 46 tests skipped
+  116 of 663 tests failed, 46 tests skipped

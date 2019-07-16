@@ -343,14 +343,18 @@ optionalt<exprt> path_symex_statet::instantiate_node(
     if(function.id()==ID_symbol)
     {
       const auto &s = config.ns.lookup(to_symbol_expr(function));
-      if(s.value.id()!=ID_lambda)
-        throw errort() << "function symbol that's not a lambda";
+      if(s.value.id()==ID_lambda)
+      {
+        auto applied =
+          to_lambda_expr(s.value).application(application.arguments());
 
-      auto applied =
-        to_lambda_expr(s.value).application(application.arguments());
-
-      // need to instantiate the result
-      return instantiate_rec(applied, propagate);
+        // need to instantiate the result
+        return instantiate_rec(applied, propagate);
+      }
+      else
+      {
+        // it's an uninterpreted function
+      }
     }
   }
 
