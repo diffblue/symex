@@ -1,5 +1,5 @@
 Loading
-  663 tests found
+  676 tests found
 
 Running tests
   Running ACSL/operators.desc  [OK]
@@ -420,6 +420,19 @@ Running tests
   Running extern3/test.desc  [OK]
   Running extern_initialization1/test.desc  [OK]
   Running extern_initialization2/test.desc  [OK]
+  Running field-sensitivity1/test.desc  [FAILED]
+  Running field-sensitivity10/test.desc  [FAILED]
+  Running field-sensitivity11/test.desc  [FAILED]
+  Running field-sensitivity12/test.desc  [FAILED]
+  Running field-sensitivity13/test.desc  [FAILED]
+  Running field-sensitivity2/test.desc  [FAILED]
+  Running field-sensitivity3/test.desc  [FAILED]
+  Running field-sensitivity4/test.desc  [SKIPPED]
+  Running field-sensitivity5/test.desc  [FAILED]
+  Running field-sensitivity6/test.desc  [FAILED]
+  Running field-sensitivity7/test.desc  [FAILED]
+  Running field-sensitivity8/test.desc  [FAILED]
+  Running field-sensitivity9/test.desc  [FAILED]
   Running for-break1/test.desc  [OK]
   Running for1/test.desc  [OK]
   Running for2/test.desc  [OK]
@@ -667,4 +680,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  116 of 663 tests failed, 46 tests skipped
+  128 of 676 tests failed, 47 tests skipped
