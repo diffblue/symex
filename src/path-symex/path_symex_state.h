@@ -230,6 +230,8 @@ public:
     return read(src, false);
   }
 
+  exprt expand_macro_symbols(const exprt &);
+
   exprt dereference_rec(const exprt &src, bool propagate);
   exprt dereference_rec_address(const exprt &src, bool propagate);
 

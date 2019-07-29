@@ -30,23 +30,26 @@ exprt path_symex_statet::read(const exprt &src, bool propagate)
   std::cout << "path_symex_statet::read " << from_expr(src) << '\n';
   #endif
 
-  // This has three phases!
+  // This has found phases!
   // 1. Dereferencing, including propagation of pointers.
-  // 2. Rewriting to SSA symbols
-  // 3. Simplifier
+  // 2. Macro symbol expansion
+  // 3. Rewriting to SSA symbols
+  // 4. Simplifier
 
   // we force propagation for dereferencing
   exprt tmp1=dereference_rec(src, true);
 
-  exprt tmp2=instantiate_rec(tmp1, propagate);
+  exprt tmp2=expand_macro_symbols(tmp1);
 
-  exprt tmp3=simplify_expr(tmp2, config.ns);
+  exprt tmp3=instantiate_rec(tmp2, propagate);
+
+  exprt tmp4=simplify_expr(tmp3, config.ns);
 
   #ifdef DEBUG
-  std::cout << " ==> " << from_expr(tmp3) << '\n';
+  std::cout << " ==> " << from_expr(tmp4) << '\n';
   #endif
 
-  return tmp3;
+  return tmp4;
 }
 
 exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
@@ -643,6 +646,50 @@ exprt path_symex_statet::dereference_rec(
     for(auto &op : src2.operands())
     {
       exprt tmp_op=dereference_rec(op, propagate);
+      op=tmp_op;
+    }
+  }
+
+  return src2;
+}
+
+exprt path_symex_statet::expand_macro_symbols(const exprt &src)
+{
+  if(src.id()==ID_symbol)
+  {
+    // look up
+    const symbolt *symbol;
+    auto identifier = to_symbol_expr(src).get_identifier();
+
+    if(!config.ns.lookup(identifier, symbol))
+    {
+      if(!symbol->is_state_var &&
+         symbol->is_macro)
+      {
+        DATA_INVARIANT(symbol->value.is_not_nil(),
+          "macro symbols must have value");
+
+        // expand, recursively
+        return expand_macro_symbols(symbol->value);
+      }
+    }
+  }
+  else if(src.id()==ID_address_of)
+  {
+    // ignore
+    return src;
+  }
+
+  if(!src.has_operands())
+    return src;
+
+  exprt src2=src;
+
+  {
+    // recursive calls on structure of 'src'
+    for(auto &op : src2.operands())
+    {
+      exprt tmp_op=expand_macro_symbols(op);
       op=tmp_op;
     }
   }
