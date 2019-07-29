@@ -36,17 +36,17 @@ exprt path_symex_statet::read(const exprt &src, bool propagate)
   // 3. Simplifier
 
   // we force propagation for dereferencing
-  exprt tmp3=dereference_rec(src, true);
+  exprt tmp1=dereference_rec(src, true);
 
-  exprt tmp4=instantiate_rec(tmp3, propagate);
+  exprt tmp2=instantiate_rec(tmp1, propagate);
 
-  exprt tmp5=simplify_expr(tmp4, config.ns);
+  exprt tmp3=simplify_expr(tmp2, config.ns);
 
   #ifdef DEBUG
-  std::cout << " ==> " << from_expr(tmp5) << '\n';
+  std::cout << " ==> " << from_expr(tmp3) << '\n';
   #endif
 
-  return tmp5;
+  return tmp3;
 }
 
 exprt path_symex_statet::expand_structs_and_arrays(const exprt &src)
