@@ -1,8 +1,9 @@
 Loading
-  676 tests found
+  680 tests found
 
 Running tests
-  Running ACSL/operators.desc  [OK]
+  Running ACSL/operators.desc  [FAILED]
+  Running ACSL/quantifier-precedence.desc  [FAILED]
   Running ASHR1/test.desc  [OK]
   Running Address_of1/test.desc  [OK]
   Running Address_of2/test.desc  [OK]
@@ -202,6 +203,7 @@ Running tests
   Running Pointer_Arithmetic14/test.desc  [OK]
   Running Pointer_Arithmetic15/test.desc  [OK]
   Running Pointer_Arithmetic16/test.desc  [OK]
+  Running Pointer_Arithmetic17/test.desc  [FAILED]
   Running Pointer_Arithmetic2/test.desc  [OK]
   Running Pointer_Arithmetic3/test.desc  [OK]
   Running Pointer_Arithmetic4/test.desc  [OK]
@@ -236,6 +238,7 @@ Running tests
   Running Quantifiers-assertion/test.desc  [FAILED]
   Running Quantifiers-assignment/test.desc  [FAILED]
   Running Quantifiers-copy/test.desc  [FAILED]
+  Running Quantifiers-expr-cleaning/test.desc  [FAILED]
   Running Quantifiers-if/test.desc  [FAILED]
   Running Quantifiers-initialisation/test.desc  [FAILED]
   Running Quantifiers-initialisation2/test.desc  [FAILED]
@@ -420,6 +423,7 @@ Running tests
   Running extern3/test.desc  [OK]
   Running extern_initialization1/test.desc  [OK]
   Running extern_initialization2/test.desc  [OK]
+  Running field-sensitivity-trace-wrong-counterexample-1/test.desc  [OK]
   Running field-sensitivity1/test.desc  [FAILED]
   Running field-sensitivity10/test.desc  [FAILED]
   Running field-sensitivity11/test.desc  [FAILED]
@@ -680,4 +684,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  128 of 676 tests failed, 47 tests skipped
+  132 of 680 tests failed, 47 tests skipped
