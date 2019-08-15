@@ -1,5 +1,5 @@
 Loading
-  680 tests found
+  683 tests found
 
 Running tests
   Running ACSL/operators.desc  [FAILED]
@@ -374,6 +374,8 @@ Running tests
   Running cprover_havoc_object_one/test.desc  [OK]
   Running cprover_input_lhs/test.desc  [SKIPPED]
   Running cprover_output_lhs/test.desc  [SKIPPED]
+  Running cprover_postcondition/test.desc  [OK]
+  Running cprover_precondition/test.desc  [OK]
   Running destructors/compound_literal.desc  [OK]
   Running destructors/enter_lexical_block.desc  [OK]
   Running divide-by-one-simplify/test.desc  [OK]
@@ -487,6 +489,7 @@ Running tests
   Running json-ui/no_entry.desc  [FAILED]
   Running json-ui/syntax_error.desc  [OK]
   Running json1/test.desc  [FAILED]
+  Running lhs-pointer-aliases-constant/test.desc  [OK]
   Running link_json_symtabs/test.desc  [FAILED]
   Running little-endian-array1/test.desc  [OK]
   Running locations1/test.desc  [OK]
@@ -684,4 +687,4 @@ Running tests
   Running xml-trace/test.desc  [FAILED]
 
 Tests failed
-  132 of 680 tests failed, 47 tests skipped
+  132 of 683 tests failed, 47 tests skipped
